@@ -1,15 +1,18 @@
+import { stravaHandler, type StravaEnv } from "./strava";
+export { StravaSession } from "./strava";
 import { serveMedia } from "./media";
 import { activation } from "./activation";
 export default {
   async fetch(
     r: Request,
-    env: {
+    env: StravaEnv & {
       SCENERY?: any;
       ASSETS: { fetch: (r: Request) => Promise<Response> };
     },
     context?: { waitUntil: (task: Promise<unknown>) => void },
   ) {
     const path = new URL(r.url).pathname;
+    if (path.startsWith("/api/strava/")) return stravaHandler(r, env);
     if (path.startsWith("/media/")) {
       if (!env.SCENERY)
         return new Response("Media unavailable", { status: 503 });
@@ -35,11 +38,12 @@ export default {
       if (r.method !== "GET")
         return new Response("Method not allowed", { status: 405 });
       try {
-        const upstream = await fetch(
-          "https://videos.fit.silvio.cloud/info.json",
-          { signal: AbortSignal.timeout(8000), redirect: "manual" },
-        );
-        if (!upstream.ok) throw Error("Catalogue upstream status " + upstream.status);
+        const upstream = await fetch("https://media.kwest.fit/info.json", {
+          signal: AbortSignal.timeout(8000),
+          redirect: "manual",
+        });
+        if (!upstream.ok)
+          throw Error("Catalogue upstream status " + upstream.status);
         if (Number(upstream.headers.get("Content-Length")) > 262144)
           throw Error("Catalogue too large");
         const reader = upstream.body?.getReader();

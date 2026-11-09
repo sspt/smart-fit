@@ -1,0 +1,10 @@
+{
+  "origin": "https://kwest.fit",
+  "capturedAt": "2026-11-09T21:10:49.329Z",
+  "originalHtmlSha256": "4eacd2129371533b34de8ed40b413af7dc970673de8b851153546f4965ff015f",
+  "visualVersion": "4f4c2b7f2a19",
+  "applicationScripts": [
+    "/assets/bluetooth-573f5e5911e7.js"
+  ],
+  "note": "Application JavaScript is unchanged from production. Worker code, credentials and deployment settings are untouched."
+}
