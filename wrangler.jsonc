@@ -1,0 +1,13 @@
+{
+  "name": "smart-fit",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-07",
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/ifit/*", "/api/*", "/media/*"],
+  },
+  "r2_buckets": [{ "binding": "SCENERY", "bucket_name": "smart-fit-scenery" }],
+  "routes": [{ "pattern": "fit.silvio.cloud", "custom_domain": true }],
+}

@@ -1,0 +1,212 @@
+/* One continuous film behind the entire app. Layout and touch targets stay intact. */
+#root {
+  isolation: isolate;
+  min-height: 100svh;
+}
+.world-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-color: #111b17;
+  overflow: hidden;
+}
+.world-film {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.world-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #030907b8, #040a0840 70%),
+    linear-gradient(0deg, #030907d6, transparent 45%, #03090766);
+}
+body {
+  background: #0b1310;
+}
+header {
+  background: #08120d52;
+  border-color: #ffffff18;
+  backdrop-filter: blur(14px);
+}
+nav {
+  background: #08120d66;
+  border-color: #ffffff18;
+  backdrop-filter: blur(18px);
+}
+main {
+  background: transparent;
+}
+main > section:not(.cinema-entrance) {
+  background: transparent;
+}
+.cinema-entrance {
+  background: transparent;
+}
+.entrance-shade {
+  background: linear-gradient(90deg, #03090750, transparent);
+}
+.entrance-story h1 {
+  text-shadow: 0 4px 42px #0008;
+}
+main > section > h1,
+.section-head h1,
+.setup-intro h1 {
+  text-shadow: 0 3px 28px #000b;
+}
+.panel,
+.programme-card,
+.route-card,
+.setup-programme,
+.setup-review,
+.history-card,
+.settings-group,
+.settings-media,
+.settings-data,
+.device-card,
+.active-session {
+  background-color: #07120db3;
+  backdrop-filter: blur(12px);
+  border-color: #ffffff29;
+  box-shadow: 0 12px 38px #0002;
+}
+.setup-scene,
+.setup-review {
+  background-color: #0a17116b;
+}
+.setup-review {
+  background-blend-mode: soft-light;
+}
+.route-photo {
+  background-color: #ffffff09;
+}
+p,
+.subtle,
+.setup-hint,
+.empty,
+.footnote {
+  color: #d1d7cf;
+}
+input,
+select,
+textarea {
+  background-color: #07100ed9;
+  border-color: #ffffff35;
+}
+select option {
+  background: #101b15;
+}
+nav button {
+  color: #d7ded4;
+}
+nav button[aria-current="page"] {
+  background: #dfc39a23;
+}
+.background-motion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: 11px;
+  background: #06100a70;
+  border-color: #ffffff26;
+  color: #e5dfd0;
+}
+.video-mode.expanded,
+.scenic-mode.expanded {
+  backdrop-filter: none;
+}
+@media (max-width: 700px) {
+  .background-motion {
+    padding: 7px;
+    min-width: 32px;
+  }
+  .background-motion span {
+    display: none;
+  }
+  header .header-tools {
+    gap: 6px;
+  }
+}
+.programme-editor,
+.route-preview {
+  background: #07120deb;
+  backdrop-filter: blur(22px);
+}
+.editor-backdrop,
+.route-preview-backdrop {
+  background: #03090755;
+}
+.setup-scenes {
+  gap: 14px;
+}
+@media (max-width: 360px) {
+  header {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  header .brand {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  header .header-tools {
+    gap: 4px;
+  }
+  header .connection {
+    min-width: 0;
+    max-width: 82px;
+    padding-inline: 7px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+  header .background-motion {
+    min-width: 28px;
+    padding: 6px;
+  }
+}
+@media (max-height: 740px) and (max-width: 700px) {
+  .setup-scenes {
+    gap: 8px;
+  }
+  .setup-scenes:has(.phone-video-picker) .setup-scene {
+    min-height: 110px;
+  }
+  .setup-scenes .setup-hint {
+    margin-block: 4px;
+  }
+  .explore-screen .routes-grid {
+    gap: 8px;
+  }
+  .explore-screen .route-card {
+    min-height: 72px;
+  }
+  .explore-screen .route-photo {
+    height: 72px;
+    min-height: 72px;
+  }
+  .explore-screen .route-details {
+    padding: 8px;
+  }
+  .explore-screen .route-details h3 {
+    font-size: 16px;
+  }
+}
+.setup-scenes { gap: 10px; }
+@media (max-height: 740px) and (max-width: 700px) {
+  .setup-scenes:has(.phone-video-picker) .setup-scene { min-height: 90px; }
+  .explore-screen .routes-grid { gap: 6px; }
+}
+.phone-video-picker { margin: 0; }
+@media (max-height: 740px) and (max-width: 700px) {
+  .setup-scenes .setup-hint { font-size: 11px; line-height: 1.4; }
+}

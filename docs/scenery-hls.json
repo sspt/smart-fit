@@ -1,0 +1,737 @@
+{
+  "status": "local exports verified; not uploaded to cloud storage",
+  "delivery": "NAS/static HTTPS",
+  "scenes": [
+    {
+      "id": "forest-walk-v1",
+      "hlsSrc": "/media/hls/woodland-hls-7682cee41c48/master.m3u8",
+      "sourceSha256": "bd189d09f603af081c9aabaf79b9e7524e00144644608e35d6f1d24bbe33d816",
+      "source": "https://www.pexels.com/video/11351927/",
+      "author": "Michael Andrew",
+      "encoding": {
+        "version": 3,
+        "encoderVersion": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+        "threads": 2,
+        "tiers": [
+          360,
+          540,
+          720
+        ],
+        "fps": "30/1",
+        "preset": "veryfast",
+        "loop": true,
+        "reference": 5,
+        "name": "Woodland path",
+        "kind": "Treadmill",
+        "author": "Michael Andrew",
+        "source": "https://www.pexels.com/video/11351927/",
+        "fallback": "/media/forest-walk-v1.mp4"
+      },
+      "levels": [
+        {
+          "tier": 360,
+          "width": 360,
+          "height": 640,
+          "folder": "360p",
+          "bandwidth": 1360665,
+          "average": 1135138,
+          "codec": "avc1.64001f"
+        },
+        {
+          "tier": 540,
+          "width": 540,
+          "height": 960,
+          "folder": "540p",
+          "bandwidth": 2703910,
+          "average": 2271829,
+          "codec": "avc1.64001f"
+        },
+        {
+          "tier": 720,
+          "width": 720,
+          "height": 1280,
+          "folder": "720p",
+          "bandwidth": 5086301,
+          "average": 4239084,
+          "codec": "avc1.64001f"
+        }
+      ],
+      "files": [
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/index.m3u8",
+          "bytes": 311,
+          "sha256": "2bb581746ad6a41ca1695fa213b490a1c5c33d7ec38bb443c232ea1ed221ba13"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/init.mp4",
+          "bytes": 869,
+          "sha256": "4be5eb710756d188ddc2e88790c620aca4315137be782c6d007a210316c565fe"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/segment-00000.m4s",
+          "bytes": 618484,
+          "sha256": "76d0716773384c2c656ca448135997e4cd39ae18605747d3f804d9b22fcea642"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/segment-00001.m4s",
+          "bytes": 541989,
+          "sha256": "ae850fca886b27f2610528d3d42f15e2f410e5751b62d2026843349f29264d49"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/segment-00002.m4s",
+          "bytes": 539485,
+          "sha256": "a10a8a9e0dc9eee487cc2da7499f1d4b9955dde9ceb4edb48b14cc164efd5d34"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/360p/segment-00003.m4s",
+          "bytes": 523019,
+          "sha256": "f16d7e351d94a212c1ecd0b2e8c876f5dbf17ccb7f972e980bfa679407ddc2bd"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/index.m3u8",
+          "bytes": 311,
+          "sha256": "2bb581746ad6a41ca1695fa213b490a1c5c33d7ec38bb443c232ea1ed221ba13"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/init.mp4",
+          "bytes": 869,
+          "sha256": "447c6f24a0dc61d7447b7f654bf6689914f4affdde539314c1a52c5857067750"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/segment-00000.m4s",
+          "bytes": 1229050,
+          "sha256": "55e9ba156e6cb705d114815d1a828c619fa3af71b7803a5dec0569dfec3036f8"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/segment-00001.m4s",
+          "bytes": 1085453,
+          "sha256": "25bca90c62bf2a3c1c632a5b49267b5901d3be17301bf46a38839d4bbb3cb753"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/segment-00002.m4s",
+          "bytes": 1081085,
+          "sha256": "58c29ae2327e1c173c912aa2019b8ed5421bc0b9d6f6c88073be825a8714aa1f"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/540p/segment-00003.m4s",
+          "bytes": 1053410,
+          "sha256": "5dd6ebdac0fe54c06acdb55ed0dfa4de422155bc5b94e79bdc47e25f05435d30"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/index.m3u8",
+          "bytes": 311,
+          "sha256": "2bb581746ad6a41ca1695fa213b490a1c5c33d7ec38bb443c232ea1ed221ba13"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/init.mp4",
+          "bytes": 867,
+          "sha256": "00daea161607b6e215e43bee54308f7f9e9ead927e761b7c813df70fb0ec5a42"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/segment-00000.m4s",
+          "bytes": 2311955,
+          "sha256": "4c5e68a014c28acf22ab98bfb47a9cad68ce9236d072e4d8fe7b0178e854e113"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/segment-00001.m4s",
+          "bytes": 2046363,
+          "sha256": "1d810fe729df64bb5d30f948a89aecaa155d09c038efc1b2c053b6f75e2f052d"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/segment-00002.m4s",
+          "bytes": 2021778,
+          "sha256": "f24c93e4aa920708ff0ec6bff00df3822de2f37c69466f0ad7dbf5aaf854a1ba"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/720p/segment-00003.m4s",
+          "bytes": 1921443,
+          "sha256": "f55e7ee7b5a87eb404d8b56ee0f59d0902f103d494082967d63183cb80214d45"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/master.m3u8",
+          "bytes": 462,
+          "sha256": "8b8e367ac00491c0fbaa73d10bf13f62bd70d622147fc466da06453548fa35fe"
+        },
+        {
+          "key": "hls/woodland-hls-7682cee41c48/poster.jpg",
+          "bytes": 191780,
+          "sha256": "b01f68ec6e2b8b6cda519c461c80d63cf515ce109af2c84b2f7e1e334c33ea7c"
+        }
+      ]
+    },
+    {
+      "id": "autumn-cycle-v3",
+      "hlsSrc": "/media/hls/autumn-hls-248dbcfc41aa/master.m3u8",
+      "sourceSha256": "36b753eff18c6bc36ef35dbb415a6472e288309acf26bca1362cfe748d3e7be5",
+      "source": "https://www.pexels.com/video/34605588/",
+      "author": "Bejan Adrian",
+      "encoding": {
+        "version": 3,
+        "encoderVersion": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+        "threads": 2,
+        "tiers": [
+          360,
+          540
+        ],
+        "fps": "30/1",
+        "preset": "veryfast",
+        "loop": true,
+        "reference": 20,
+        "name": "Autumn forest ride",
+        "kind": "Bike",
+        "author": "Bejan Adrian",
+        "source": "https://www.pexels.com/video/34605588/",
+        "fallback": "/media/autumn-cycle-v3.mp4"
+      },
+      "levels": [
+        {
+          "tier": 360,
+          "width": 360,
+          "height": 640,
+          "folder": "360p",
+          "bandwidth": 1459800,
+          "average": 997334,
+          "codec": "avc1.64001f"
+        },
+        {
+          "tier": 540,
+          "width": 540,
+          "height": 960,
+          "folder": "540p",
+          "bandwidth": 2697548,
+          "average": 1644983,
+          "codec": "avc1.64001f"
+        }
+      ],
+      "files": [
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/index.m3u8",
+          "bytes": 1247,
+          "sha256": "dbb02eb155b56e76c92bb7bc8fe23d67e1207762c42f9a5d07f38fc970b2bd68"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/init.mp4",
+          "bytes": 869,
+          "sha256": "4be5eb710756d188ddc2e88790c620aca4315137be782c6d007a210316c565fe"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00000.m4s",
+          "bytes": 638738,
+          "sha256": "9e64a80daf79090beb289b906f7de7d56517ab43882f0a32218fb40174b85b38"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00001.m4s",
+          "bytes": 542070,
+          "sha256": "9f10f231bfaa3538420bbe643376b90356b79102ff2e14018af978a2a8ad9484"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00002.m4s",
+          "bytes": 541708,
+          "sha256": "ce53d95e0f758238ba5d8b474e547acfeb9a459c9de622d843faed952a8ec29a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00003.m4s",
+          "bytes": 540828,
+          "sha256": "10d0bde837ec044e9902f06bd003b7e234136cd17c86361799461e3ccc18cf8a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00004.m4s",
+          "bytes": 540643,
+          "sha256": "18b58197a031abb842bbe80100f9f85a4c19a796b4a4fb8d2b362d960f37d97b"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00005.m4s",
+          "bytes": 543874,
+          "sha256": "440896634acd73f2b8009d3251b1b0e082e4b7c5990d98dfdfd57bb5bd8e91aa"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00006.m4s",
+          "bytes": 542853,
+          "sha256": "aed25cc4548eefbebb489f9b7c26668bc5a48cdfdb9a2704dbc8ef520e5e6ede"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00007.m4s",
+          "bytes": 538947,
+          "sha256": "04fbb2c3abc63551a68c76ad35337f20fb0358ad4f7e230eb9352aedbfc38592"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00008.m4s",
+          "bytes": 532046,
+          "sha256": "dd95d6678415b74750fdad4654140e839e25b5db46f5ed2b1351e51bd1b87a0d"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00009.m4s",
+          "bytes": 554159,
+          "sha256": "fcab77157af21fd056936ee5a6ce0ea0b5d15063570451b29e3029c0cf073f0a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00010.m4s",
+          "bytes": 533143,
+          "sha256": "af0413601dd926f04229e6d0025fccb12568e1b19967a98cb0036ac865b15af7"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00011.m4s",
+          "bytes": 470876,
+          "sha256": "402774be0d6661c9440c9a81b2d7437174f5711240ff73678e66fea08bcb3cd3"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00012.m4s",
+          "bytes": 475659,
+          "sha256": "1dd39a9f95375583c2f689c29d54c0f551fc4751ddc5ba17cd9eb9b90bd30288"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00013.m4s",
+          "bytes": 493774,
+          "sha256": "a90349dc047af40dcf7a103e637a85f7922d6f0f43e74df91f9beac40412f6f9"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00014.m4s",
+          "bytes": 465596,
+          "sha256": "1270dc6fb7ddfc8937ba2b9d595dfec1a15363524e2a4a5e60f5a6aa4707b04b"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00015.m4s",
+          "bytes": 490552,
+          "sha256": "3ab1ba00877fdf854cbb613f980c5a53da88c333fd1843cec95f266ae781557b"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00016.m4s",
+          "bytes": 663545,
+          "sha256": "c591e203047cc809c9b225f4a07ab7ad8d272e747aa1de1c5e5a85fa9b675e5f"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00017.m4s",
+          "bytes": 541142,
+          "sha256": "9d94209b6bc0063f8cc95f00849a3dc1950b2718abc0b9588440cfd47ec9d111"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00018.m4s",
+          "bytes": 516855,
+          "sha256": "6f5f3500c6684d7c635e5f41ca2569d54f7b49a00bc646ff9efddaf468391a04"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00019.m4s",
+          "bytes": 464889,
+          "sha256": "d72ca12cbc5247abbc172bd6d345c0c2e538261f664fca5fe9b881cb05f79ca3"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00020.m4s",
+          "bytes": 362113,
+          "sha256": "cb134b6cb28934864e420672c3a834f8796e0b396c868a6ee79508e13564f32a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00021.m4s",
+          "bytes": 387414,
+          "sha256": "d8988536000c0426ce14d2381b37b7c13139b7a70d2f98089ce7511aacc5fc0b"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00022.m4s",
+          "bytes": 450128,
+          "sha256": "7fa61fabd36b3cc010b2f9515d0cb59f09c6b7a169da2921148adcd4fdec9279"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00023.m4s",
+          "bytes": 483367,
+          "sha256": "1995b09e4d018efd6e2fbb8f2403dbb19e8a1f6c5cb203f0f8ad4d13b314e2f3"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00024.m4s",
+          "bytes": 406962,
+          "sha256": "58e8f5a4043c0cd164cb1dd3df8eecc44a74ff85d4ce5fc4ab4b78b3462c7f69"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00025.m4s",
+          "bytes": 357367,
+          "sha256": "f4cc190332bf7de7d2c6590d588a312046c48f13affd7dec272a11a4fbda4166"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00026.m4s",
+          "bytes": 381816,
+          "sha256": "0c67e2f04f65c3fff95549cc44fb79034c7b2f802e9594043c5e2d63bb0bc6ba"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00027.m4s",
+          "bytes": 451645,
+          "sha256": "803e8299c587299df6bf8ca6f05edc5ebb54e767790d361065259abe2f8f5a35"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00028.m4s",
+          "bytes": 520025,
+          "sha256": "5de3e7ef8caf2a7bb9cbb7ceeb973cc970bc15ee2972f71803c70b913f3c3ef0"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/360p/segment-00029.m4s",
+          "bytes": 510640,
+          "sha256": "ba09e5b09411d270be3d36920c785aca80e33420664262d2eea2d1e8b6a89bf5"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/index.m3u8",
+          "bytes": 1247,
+          "sha256": "dbb02eb155b56e76c92bb7bc8fe23d67e1207762c42f9a5d07f38fc970b2bd68"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/init.mp4",
+          "bytes": 869,
+          "sha256": "447c6f24a0dc61d7447b7f654bf6689914f4affdde539314c1a52c5857067750"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00000.m4s",
+          "bytes": 1203285,
+          "sha256": "6b5c32f6ba35500cd9c88c1b6f4d13d469e5c078b029a0dc7c9a227e209f7347"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00001.m4s",
+          "bytes": 1154744,
+          "sha256": "f6d88c5646dff0af79a9b1f167f0b407c1be7e924cf155473a92a002880e26c9"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00002.m4s",
+          "bytes": 1082612,
+          "sha256": "3fcb5798f59d925444a66b5038cd96dac60d560c9ae4fc1cb3419564887ce91a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00003.m4s",
+          "bytes": 1088513,
+          "sha256": "6d330e8300fda360f91ad4eb06924ddec55a86356074e016a936d7f666b54443"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00004.m4s",
+          "bytes": 1071714,
+          "sha256": "5c1f5fb830943abf0265736966a60a5a4bb34c2ef10f657e905b8d1ddf5dd451"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00005.m4s",
+          "bytes": 1081993,
+          "sha256": "7e37249cbf9227486676bf7b3db84723657dd270c8924799e536bb7ab0fea6c5"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00006.m4s",
+          "bytes": 1062574,
+          "sha256": "7a8ed1574ca2590c4698b2eb0ead2cb478f8c8699d715a5781a9cb5e006a3542"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00007.m4s",
+          "bytes": 1062822,
+          "sha256": "21271d33d5adafbc71b0d3583f7779c7ed3821cacc05026854aa80a4fb2862ba"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00008.m4s",
+          "bytes": 769350,
+          "sha256": "b48ad768a1675d02e98f0e2a1a9d7a5a611df20ca463a459d5c0312da35347de"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00009.m4s",
+          "bytes": 781464,
+          "sha256": "2e0e751ceb426ac049a62083ad78697511812666bc58f6491f4f802155e9fa94"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00010.m4s",
+          "bytes": 754467,
+          "sha256": "40e1db4cd8be291c251c14b7bf38fed212ed91a791ae8aa5140fbec81e3a6529"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00011.m4s",
+          "bytes": 738998,
+          "sha256": "1cd0cfcdc31c4401fa616db5c2b2729b3c86525b5cfe1153985586baaabe72e5"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00012.m4s",
+          "bytes": 697984,
+          "sha256": "92a00d7461673a961f28ea1d9f5b132aea3b5b8f50bdbb4106e522ac24a8999a"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00013.m4s",
+          "bytes": 714083,
+          "sha256": "db223c71cb3aa4776df7dd762ab7eb54a0e0edee47c5c94e1b857c1f5ebd6794"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00014.m4s",
+          "bytes": 664350,
+          "sha256": "4e35f6f3d2b1613b1c20e1f1fc5289a6f377387e97487834ed7a7a97874ffda4"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00015.m4s",
+          "bytes": 723132,
+          "sha256": "dfc5ba3610046f3ffcfc7d3c269bf42b782ad2c8fc6b256dc256b9b141b08715"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00016.m4s",
+          "bytes": 981929,
+          "sha256": "2bac48c664c2918546e6bc2df2ba5bc70739c9f3dcbbee62c363158c09635250"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00017.m4s",
+          "bytes": 1226158,
+          "sha256": "e214e7d2c17be52771377cb3ac83c4bae2d2a57dd54093d4e2c3a65f7d0ad7c7"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00018.m4s",
+          "bytes": 928328,
+          "sha256": "b216837160b17a3caf89b649148c1f25370035dab1177286496e76fe1915814f"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00019.m4s",
+          "bytes": 662302,
+          "sha256": "31dbc7902cd5b76661ca052b2c48c23a6d11b26eac3f7f74724a902a37e1ecb6"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00020.m4s",
+          "bytes": 530957,
+          "sha256": "2e3cd7698ed1f5745509043eae56e42e195e6e331602e8cd29b65146b6db75fa"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00021.m4s",
+          "bytes": 554581,
+          "sha256": "c08eec8352abc1ab6ac1d2ad52956080ad9c38d05a3ddc44a19e337220b8aabf"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00022.m4s",
+          "bytes": 626478,
+          "sha256": "32f4db669b2d5728b2b560a67817043c8d52efb4c672531a5165b68fc8b76792"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00023.m4s",
+          "bytes": 682408,
+          "sha256": "092eb1fc3d4a248345115ef6599df59feab45efd547c16167e93965400b74ce2"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00024.m4s",
+          "bytes": 616677,
+          "sha256": "abad129f2d9cef1195e8c967994f89095e1f296e2f2a5fa6106e3e7509e99b97"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00025.m4s",
+          "bytes": 538720,
+          "sha256": "99756c0743ab61ecd3a6ddb5517559cc0f2efdec6e56f8a33baab5c0ca3566a6"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00026.m4s",
+          "bytes": 545718,
+          "sha256": "d719967e326776e80b7e199d5dfba0a1c2c6bf0ab90867eb020c21f903bccd62"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00027.m4s",
+          "bytes": 645651,
+          "sha256": "009c5516e323fa364fe475b8be2a491397e7d512ce7d29e2b67c8af0f6998021"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00028.m4s",
+          "bytes": 749311,
+          "sha256": "231938fc1a79713c544e70b72e0006a5b830c9949d8f42b17f8b95cfb3c07591"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/540p/segment-00029.m4s",
+          "bytes": 706016,
+          "sha256": "d49d5b36223dc386fe34829c110ddce9e0242ec5301f82bcb007493d8816f7fe"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/master.m3u8",
+          "bytes": 324,
+          "sha256": "993441b13421c4ee5292edddf931343453243a1d4afcbb23a19abcef80ac6e36"
+        },
+        {
+          "key": "hls/autumn-hls-248dbcfc41aa/poster.jpg",
+          "bytes": 52859,
+          "sha256": "3264276df7ca583179df3d9580c772c085a1bbb4aa958ab656c8b5f823812adb"
+        }
+      ]
+    },
+    {
+      "id": "river-canoe-v2",
+      "hlsSrc": "/media/hls/river-hls-59050892ab5e/master.m3u8",
+      "sourceSha256": "62112533ad99145ee51f677248498916df1dae32a9dcfee28a907d7c128a2f65",
+      "source": "https://www.pexels.com/video/11496495/",
+      "author": "Altaf Shah",
+      "encoding": {
+        "version": 3,
+        "encoderVersion": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers",
+        "threads": 2,
+        "tiers": [
+          360,
+          540
+        ],
+        "fps": "30/1",
+        "preset": "veryfast",
+        "loop": true,
+        "reference": 8,
+        "name": "River canoe POV",
+        "kind": "Rower",
+        "author": "Altaf Shah",
+        "source": "https://www.pexels.com/video/11496495/",
+        "fallback": "/media/river-canoe-v2.mp4"
+      },
+      "levels": [
+        {
+          "tier": 360,
+          "width": 360,
+          "height": 640,
+          "folder": "360p",
+          "bandwidth": 1417920,
+          "average": 999186,
+          "codec": "avc1.64001f"
+        },
+        {
+          "tier": 540,
+          "width": 540,
+          "height": 960,
+          "folder": "540p",
+          "bandwidth": 2682249,
+          "average": 1829664,
+          "codec": "avc1.64001f"
+        }
+      ],
+      "files": [
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/index.m3u8",
+          "bytes": 599,
+          "sha256": "bc94529c105c306b86f1579b9c12b6239691faa3f9c7685057034fb9d87f5ed2"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/init.mp4",
+          "bytes": 869,
+          "sha256": "4be5eb710756d188ddc2e88790c620aca4315137be782c6d007a210316c565fe"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00000.m4s",
+          "bytes": 380174,
+          "sha256": "76915c11f22276a02280d5f6a1cfff3980ce3dda6e237c819f8c4feca3d0b775"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00001.m4s",
+          "bytes": 426863,
+          "sha256": "1714eaaa65698b26f4f2569c3d66ec0fa6b866587696a3feb124aac478ffaf2f"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00002.m4s",
+          "bytes": 418142,
+          "sha256": "8b8b8867410da42cbe6f9e1c680ec8206d91cae3cb23e1164628c085f0623bb0"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00003.m4s",
+          "bytes": 441785,
+          "sha256": "c3e703c1c3a75366be59c8e4e2980bb0f6d1d4708c81e17f314c7c9396255f91"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00004.m4s",
+          "bytes": 502517,
+          "sha256": "a5d823e531de23e94bdd80f9de151484eebfc9e52d50e6955d84ffdf307b6313"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00005.m4s",
+          "bytes": 465589,
+          "sha256": "bf015b2c078dc636aa75eceedabb0a62f545e5bd440405c5ac093eeb5cc12b8b"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00006.m4s",
+          "bytes": 644509,
+          "sha256": "9ae4d8323ebc368ca345cc34f46c3c8d43c7e5d9ebf0a1bec5745e117c18178f"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00007.m4s",
+          "bytes": 558455,
+          "sha256": "dda7b2855fa58ca3c8fe946dd6732272caca282964ea40304cc2b7842ea863a7"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00008.m4s",
+          "bytes": 538032,
+          "sha256": "5d597eed9bb88dacb4c6da350edaf45acfe8f8179721421d667e10c3cb9a9841"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00009.m4s",
+          "bytes": 540332,
+          "sha256": "9d463463c03a1f8334c70450e4daaaf3ef0b509893958a5dd2ba50adcf9bb33a"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00010.m4s",
+          "bytes": 546039,
+          "sha256": "f5078d07713faf5f17962bfbfb144a4012c40173b3dab81c9920f8eb743b1253"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/360p/segment-00011.m4s",
+          "bytes": 299532,
+          "sha256": "adee4389ab113f8a6e63af0d667f174087820bc631e97b95fb1b6f7d2df6a6b7"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/index.m3u8",
+          "bytes": 599,
+          "sha256": "bc94529c105c306b86f1579b9c12b6239691faa3f9c7685057034fb9d87f5ed2"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/init.mp4",
+          "bytes": 869,
+          "sha256": "447c6f24a0dc61d7447b7f654bf6689914f4affdde539314c1a52c5857067750"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00000.m4s",
+          "bytes": 594451,
+          "sha256": "cced1ec7708cca2645ad7f5fc1ac72cdf010dacaa72d1bafe046089ff68a6b38"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00001.m4s",
+          "bytes": 675525,
+          "sha256": "66d730a49156c5111c104d47554590ae4284fb4da5f648d4f92317d46f1846bc"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00002.m4s",
+          "bytes": 670588,
+          "sha256": "5d90e7a839af758d5960c81392ce27b72dc15454eb2a5f9c7068c570d38ec3b2"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00003.m4s",
+          "bytes": 722632,
+          "sha256": "8a689d96d6b50a5693ab286932164c08edfd5567065c492443401ed701455b9b"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00004.m4s",
+          "bytes": 864821,
+          "sha256": "194ec46e27d956e7d754e2e4d665561edef74fc342f76f4036b5217dcf212995"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00005.m4s",
+          "bytes": 794766,
+          "sha256": "61d60bdb61afcac807d5003d0c8cac3c91ec41b2dcd5f2dd49ca9c7a79bfcd13"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00006.m4s",
+          "bytes": 1070086,
+          "sha256": "92e51ec7d1b71b920deae14aa92cfa83dcc014f27c2f5a30e4275ab6cd7316e5"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00007.m4s",
+          "bytes": 1180562,
+          "sha256": "acdce1bb2d281455fd041cbc71446568144c9f2cb7d7d1563b90ec8c3d7046ab"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00008.m4s",
+          "bytes": 1219204,
+          "sha256": "a4df40ea08e7e05f74b7f463323be214986102ba7a248be7347a99fe4cac99fb"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00009.m4s",
+          "bytes": 1078771,
+          "sha256": "472088fb67dc6ee7e618d581ae86daeac948a5b23e0bfabb7bdd1b7991b03e9b"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00010.m4s",
+          "bytes": 1076509,
+          "sha256": "d5c845e2110c8865bc9ca77d6813a53b9e1d2fe5e4ce5eeebcba3d5a65e53387"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/540p/segment-00011.m4s",
+          "bytes": 603146,
+          "sha256": "8463499be04a1a1e8120355e69ee6a1b006d216ab7ee1ba5ba8160fef31e6afa"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/master.m3u8",
+          "bytes": 324,
+          "sha256": "420ec23c0ac8d82ab4dbdb7d3800afefe19a6962975d3bb4a35cd84280230311"
+        },
+        {
+          "key": "hls/river-hls-59050892ab5e/poster.jpg",
+          "bytes": 45799,
+          "sha256": "540b02cb2474209a25226597e4e932c49a90f1948eddb407a9dbe7f04a619600"
+        }
+      ]
+    }
+  ]
+}

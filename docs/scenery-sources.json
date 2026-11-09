@@ -1,0 +1,83 @@
+[
+  {
+    "id": "forest-walk-v1",
+    "title": "Walking on a Forest Path Point of View",
+    "author": "Michael Andrew",
+    "source": "https://www.pexels.com/video/11351927/",
+    "licence": "https://www.pexels.com/license/",
+    "sourceFile": "https://videos.pexels.com/video-files/11351927/11351927-hd_720_1280_60fps.mp4",
+    "sourceDuration": 16,
+    "encoding": "H.264/yuv420p, 30fps, silent, faststart; resized to fit 720x1280",
+    "sha256": "bd189d09f603af081c9aabaf79b9e7524e00144644608e35d6f1d24bbe33d816",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 720,
+          "height": 1280,
+          "pix_fmt": "yuv420p"
+        }
+      ],
+      "format": {
+        "duration": "15.666667",
+        "size": "9888001"
+      }
+    }
+  },
+  {
+    "id": "autumn-cycle-v3",
+    "title": "POV Mountain Biking Through Scenic Autumn Trails",
+    "author": "Bejan  Adrian",
+    "source": "https://www.pexels.com/video/34605588/",
+    "licence": "https://www.pexels.com/license/",
+    "sourceFile": "https://videos.pexels.com/video-files/34605588/14666221_720_1280_60fps.mp4",
+    "sourceDuration": 119,
+    "encoding": "H.264/yuv420p 30fps silent faststart; fit 540x960, bitrate capped for mobile",
+    "sha256": "36b753eff18c6bc36ef35dbb415a6472e288309acf26bca1362cfe748d3e7be5",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 540,
+          "height": 960,
+          "pix_fmt": "yuv420p"
+        }
+      ],
+      "format": {
+        "duration": "119.866667",
+        "size": "8338664"
+      }
+    }
+  },
+  {
+    "id": "river-canoe-v2",
+    "title": "Canoe on River",
+    "author": "Altaf Shah",
+    "source": "https://www.pexels.com/video/11496495/",
+    "licence": "https://www.pexels.com/license/",
+    "sourceFile": "https://videos.pexels.com/video-files/11496495/11496495-hd_720_1280_60fps.mp4",
+    "sourceDuration": 46,
+    "encoding": "H.264/yuv420p 30fps silent faststart; fit 540x960, bitrate capped for mobile",
+    "sha256": "62112533ad99145ee51f677248498916df1dae32a9dcfee28a907d7c128a2f65",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 540,
+          "height": 960,
+          "pix_fmt": "yuv420p"
+        }
+      ],
+      "format": {
+        "duration": "46.133333",
+        "size": "5440967"
+      }
+    }
+  }
+]
