@@ -79,3 +79,16 @@ Validate the prepared directory on port 5174 with
 `python scripts/deploy-visual-release.py` to publish the assets while retaining
 the live Worker. The programme preparation script stops if the production markup
 contract has changed. Do not rerun the older equipment patch against this release.
+
+## Simplified header and settings
+
+Prepare the current production snapshot with `node scripts/prepare-visual-release.mjs`,
+then run `node scripts/prepare-settings-release.mjs`. This removes the header
+animation toggle, moves the existing cache action to Settings, removes the video
+server and user speed cap, and expands the data and Strava sections. Device-reported
+range validation and protocol clamping remain in place. Old backup speed caps
+are ignored. The source app mirrors these changes in `src/main.tsx`.
+
+Run `node scripts/settings-release-smoke.cjs` against the release on port 5174,
+plus the programme and equipment smoke checks. The release remains local until
+explicitly deployed with `python scripts/deploy-visual-release.py`.

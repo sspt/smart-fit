@@ -594,3 +594,29 @@ nav button:hover {
     font-size: 12px;
   }
 }
+
+.settings-maintenance {
+  grid-column: 1 / -1;
+  padding-block: 20px;
+  border-top: 1px solid var(--line);
+}
+.settings-maintenance h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+  letter-spacing: -0.3px;
+}
+.settings-maintenance p {
+  font-size: 12px;
+  margin: 0 0 16px;
+}
+.settings .cache-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings .cache-refresh span {
+  display: inline;
+}
+.settings-data[open] {
+  grid-column: 1 / -1;
+}

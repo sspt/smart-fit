@@ -5,7 +5,6 @@ import {
   type RememberedDevice,
 } from "./rememberedDevice";
 import { useImmersiveBackground } from "./useImmersiveBackground";
-import { MediaServerSettings } from "./MediaServerSettings";
 import { videoRoutes as starterRoutes } from "./videoRoutes";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
 import { Pagination, usePageSize } from "./Pagination";
@@ -87,7 +86,6 @@ function App() {
     [ready, setReady] = useState(false),
     [install, setInstall] = useState<any>(null),
     [units, setUnits] = useState("km"),
-    [maxSpeed, setMaxSpeed] = useState(12),
     [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -240,7 +238,6 @@ function App() {
         setSession(s);
         setDemo(s?.demo ?? false);
         setUnits(c.units ?? "km");
-        setMaxSpeed(c.maxSpeed ?? 12);
         setReady(true);
         if (s)
           setError(
@@ -266,8 +263,8 @@ function App() {
     if (ready) persist("history", history);
   }, [history, ready]);
   useEffect(() => {
-    if (ready) persist("settings", { units, maxSpeed });
-  }, [units, maxSpeed, ready]);
+    if (ready) persist("settings", { units });
+  }, [units, ready]);
   useEffect(() => {
     if (ready && session) persist("active", session);
   }, [session, ready]);
@@ -430,13 +427,6 @@ function App() {
     if (session) throw Error("Finish the current workout first.");
     if (p.kind !== kind)
       throw Error("Select the matching equipment type in Devices.");
-    if (
-      p.kind === "Treadmill" &&
-      p.blocks.some(
-        (b) => b.speed > maxSpeed || (b.ramp && (b.endSpeed ?? 0) > maxSpeed),
-      )
-    )
-      throw Error("Programme exceeds your speed limit.");
     if (!demo && canControl) {
       const features = ft.targetFeatures;
       if (
@@ -531,7 +521,7 @@ function App() {
     };
     const token = epoch.current;
     if (kind === "Treadmill") {
-      await device.setTargetSpeed(Math.min(maxSpeed, b.speed));
+      await device.setTargetSpeed(b.speed);
       if (token !== epoch.current) return;
       if (it.connected || ft.targetFeatures?.incline)
         await device.setTargetIncline(b.incline);
@@ -1104,33 +1094,6 @@ function App() {
         </a>
         <span className="tag">A WINDOW TO ELSEWHERE.</span>
         <div className="header-tools">
-          {ambience.control}
-          <button
-            className="cache-refresh"
-            disabled={!ready || refreshing || busy || !!session}
-            aria-label="Clear app cache"
-            title={
-              session
-                ? "Finish your session before refreshing the app"
-                : "Clear app cache and reload. Keeps programmes, settings and history."
-            }
-            onClick={async () => {
-              setRefreshing(true);
-              setBusy(true);
-              try {
-                await refreshApp();
-              } catch {
-                setRefreshing(false);
-                setBusy(false);
-                setError(
-                  "Could not refresh the app. Check your internet connection and try again.",
-                );
-              }
-            }}
-          >
-            <AppIcon name="refresh" size={17} />
-            <span>{refreshing ? "Refreshing…" : "Clear cache"}</span>
-          </button>
           <button
             onClick={() => setPage("Devices")}
             aria-label="Equipment connection"
@@ -1642,23 +1605,43 @@ function App() {
                   <option value="mi">Miles</option>
                 </select>
               </label>
-              <label>
-                Maximum treadmill speed (km/h)
-                <input
-                  type="number"
-                  min="1"
-                  max="25"
-                  value={maxSpeed}
-                  disabled={!!session}
-                  onChange={(e) =>
-                    setMaxSpeed(
-                      Math.max(1, Math.min(25, Number(e.target.value) || 1)),
-                    )
+              <section
+                className="settings-maintenance"
+                aria-labelledby="maintenance-title"
+              >
+                <h2 id="maintenance-title">App maintenance</h2>
+                <p>
+                  Refresh the app while keeping programmes, settings and
+                  history.
+                </p>
+                <button
+                  className="cache-refresh"
+                  disabled={!ready || refreshing || busy || !!session}
+                  aria-label="Clear app cache"
+                  title={
+                    session
+                      ? "Finish your session before refreshing the app"
+                      : "Clear app cache and reload. Keeps programmes, settings and history."
                   }
-                />
-              </label>
-              <MediaServerSettings disabled={!!session} />
-              <details className="settings-data">
+                  onClick={async () => {
+                    setRefreshing(true);
+                    setBusy(true);
+                    try {
+                      await refreshApp();
+                    } catch {
+                      setRefreshing(false);
+                      setBusy(false);
+                      setError(
+                        "Could not refresh the app. Check your internet connection and try again.",
+                      );
+                    }
+                  }}
+                >
+                  <AppIcon name="refresh" size={17} />
+                  <span>{refreshing ? "Refreshing…" : "Clear cache"}</span>
+                </button>
+              </section>
+              <details className="settings-data" open>
                 <summary>Data, backups & installation</summary>
                 <div className="actions">
                   <button
@@ -1669,7 +1652,7 @@ function App() {
                           version: 1,
                           programmes,
                           history,
-                          settings: { units, maxSpeed },
+                          settings: { units },
                         }),
                       )
                     }
@@ -1717,12 +1700,6 @@ function App() {
                           );
                           if (v.settings) {
                             setUnits(v.settings.units === "mi" ? "mi" : "km");
-                            setMaxSpeed(
-                              Math.max(
-                                1,
-                                Math.min(25, Number(v.settings.maxSpeed) || 12),
-                              ),
-                            );
                           }
                         } catch (e: any) {
                           setError(e.message);
