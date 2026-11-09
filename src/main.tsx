@@ -779,7 +779,6 @@ function App() {
             fallback = it.connectWithDevice(selectedDevice, nextKind, detected);
           },
           detected,
-          true,
           selected,
         );
         if (fallback) await fallback;
@@ -813,7 +812,6 @@ function App() {
         fallback = it.connectWithDevice(selected, kind, detected);
       },
       detected,
-      true,
     );
     if (fallback) await fallback;
   }

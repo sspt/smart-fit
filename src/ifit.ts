@@ -1,3 +1,4 @@
+import { fitnessPickerOptions } from "./bluetoothPicker";
 // Monitor + best-effort control client for the iFit proprietary BLE protocol
 // (used by NordicTrack/ProForm treadmills and rowers, which don't implement
 // standard FTMS — see ble.ts's header). Implements the protocol exactly as
@@ -2656,14 +2657,10 @@ export function useIfitMonitor() {
       setReconnectAttempt(0);
       let device: BluetoothDevice;
       try {
-        // iFit gear doesn't reliably advertise its service UUID in the small
-        // advertisement packet (this is why it was invisible to a filtered
-        // picker earlier) — show every nearby device instead, same lesson
-        // learned building the diagnostic scanner.
-        device = await navigator.bluetooth.requestDevice({
-          acceptAllDevices: true,
-          optionalServices: [IFIT_SERVICE_UUID],
-        });
+        // Known iFIT names cover models that omit their service from advertising.
+        device = await navigator.bluetooth.requestDevice(
+          fitnessPickerOptions("iFIT"),
+        );
       } catch (err: any) {
         if (err?.name !== "NotFoundError") {
           logBleEvent(

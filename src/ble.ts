@@ -1,3 +1,4 @@
+import { fitnessPickerOptions } from "./bluetoothPicker";
 // Web Bluetooth gateway for cardio machines — FTMS (Fitness Machine Service,
 // GATT UUID 0x1826). Android/Chrome only; every entry point feature-detects
 // `navigator.bluetooth` (see web-bluetooth.d.ts for the ambient types) and
@@ -3100,19 +3101,9 @@ export function useFtms() {
       cardioType: CardioType,
       onFtmsUnavailable?: (device: BluetoothDevice) => void,
       onCardioTypeDetected?: (detected: CardioType) => void,
-      // Escape hatch for a device the name-prefix/service filters below don't
-      // match at all — some FTMS machines (various Domyos/Kettler/Sole/Horizon
-      // units observed in the wild) omit the FTMS service UUID from their
-      // small advertisement packet *and* aren't iFit-branded, so they never
-      // show up in the filtered picker with no indication why. runBleDiagnostic
-      // already solved this for the diagnostic flow with acceptAllDevices; this
-      // lets the same escape hatch be reached from the normal connect button.
-      findAnyDevice = false,
       previouslyGrantedDevice?: BluetoothDevice,
     ) => {
-      logBleEvent(
-        `FTMS connect() called for ${cardioType}${findAnyDevice ? " (showing all nearby devices)" : ""}`,
-      );
+      logBleEvent(`FTMS connect() called for ${cardioType}`);
       if (!supported) {
         setError(draftText("Web Bluetooth is not supported in this browser."));
         return;
@@ -3134,21 +3125,7 @@ export function useFtms() {
         // missed it entirely, so this matches the whole "I_" family instead.
         device =
           previouslyGrantedDevice ??
-          (findAnyDevice
-            ? await navigator.bluetooth!.requestDevice({
-                acceptAllDevices: true,
-                optionalServices: [FTMS_SERVICE, IFIT_SERVICE_UUID],
-              })
-            : await navigator.bluetooth!.requestDevice({
-                filters: [
-                  { services: [FTMS_SERVICE] },
-                  { namePrefix: "NordicTrack" },
-                  { namePrefix: "ProForm" },
-                  { namePrefix: "iFit" },
-                  { namePrefix: "I_" },
-                ],
-                optionalServices: [FTMS_SERVICE, IFIT_SERVICE_UUID],
-              }));
+          (await navigator.bluetooth!.requestDevice(fitnessPickerOptions()));
       } catch (err: any) {
         // A user-cancelled chooser dialog (or no matching device found at all)
         // also throws NotFoundError here — that's not a real error, stay silent.

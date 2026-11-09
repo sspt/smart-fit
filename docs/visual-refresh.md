@@ -92,3 +92,18 @@ are ignored. The source app mirrors these changes in `src/main.tsx`.
 Run `node scripts/settings-release-smoke.cjs` against the release on port 5174,
 plus the programme and equipment smoke checks. The release remains local until
 explicitly deployed with `python scripts/deploy-visual-release.py`.
+
+## Filtered Bluetooth workout pickers
+
+Run `node scripts/prepare-visual-release.mjs` then
+`node scripts/prepare-bluetooth-release.mjs` to apply the shared
+`src/bluetoothPicker.ts` filters to all three production workout picker paths.
+FTMS and iFIT service UUIDs are matched, along with known iFIT name prefixes for
+machines that omit their service UUID from advertisements. Direct iFIT selection
+uses the iFIT subset. Remembered devices reuse their existing grant without a
+new picker; the separate explicit diagnostic scanner is unchanged.
+
+Validate with `FIT_TEST_URL=http://localhost:5176 node scripts/bluetooth-release-smoke.cjs`
+against the prepared release, then publish using the existing asset deployment
+script. The smoke test captures the native API options without connecting to or
+controlling physical equipment.
