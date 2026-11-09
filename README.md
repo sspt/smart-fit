@@ -111,3 +111,16 @@ finish cue at the end. Paused sessions and Follow machine mode suppress cues.
 Validation: 202 unit tests, both builds, three demo equipment types, Strava
 settings, programme/settings/Bluetooth release checks, and feedback browser
 checks at 320, 412 and 1280 pixels. These do not replace physical device testing.
+
+## Simplified equipment screen
+
+The equipment screen and its shared setup panel expose only Connect equipment
+and Export diagnostics. Equipment type uses a compact dropdown, locked while
+connected or in a session. The unified picker retains protocol detection and
+remembered-device reconnection. Connected equipment displays a disabled Connected
+button. Protocol-specific connection buttons, demo actions, extra connection
+options and the secondary readings have been removed from this panel.
+
+`node scripts/equipment-simple-smoke.mjs` checks both entry points at 320, 412
+and 1280 pixels, the filtered Bluetooth picker and an actual diagnostics download.
+This replaces the old manual FTMS/iFIT and demo-button UI assertions.

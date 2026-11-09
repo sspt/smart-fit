@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-const baseline=JSON.parse(await readFile('production/baseline.json','utf8'));
+const baseline=JSON.parse(await readFile('production/expected-live.json','utf8'));
 const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
 try{
  const page=await browser.newPage();await page.goto(baseline.origin,{waitUntil:'domcontentloaded'});

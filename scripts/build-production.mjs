@@ -1,3 +1,4 @@
+import ts from "typescript";
 import fs from "node:fs/promises";
 import prettier from "prettier";
 import { build, transform } from "esbuild";
@@ -17,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -51,6 +52,38 @@ once(
   "c.jsx(__workoutPatch.WorkoutReadings, {",
   "c.jsx(__feedback.IntervalCue,{text:__nextCue}), c.jsx(__workoutPatch.WorkoutReadings, {",
 );
+// Replace the equipment panel as one parsed expression, leaving Bluetooth logic intact.
+const ast = ts.createSourceFile(
+  "production.js",
+  code,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.JS,
+);
+const panels = [];
+function visit(node) {
+  if (
+    ts.isVariableDeclaration(node) &&
+    node.name.getText(ast) === "Pr" &&
+    node.initializer?.getText(ast).includes("equipment-screen ")
+  )
+    panels.push(node.initializer);
+  ts.forEachChild(node, visit);
+}
+visit(ast);
+if (panels.length !== 1)
+  throw Error("Production equipment panel contract changed");
+const panel = panels[0];
+code =
+  code.slice(0, panel.getStart(ast)) +
+  `c.jsx(__feedback.EquipmentConnection,{
+ kind:H,connected:Ne,busy:Ce,running:xe,hasSession:!!v,
+ deviceName:J.deviceName||K.deviceName,hint:Cn,
+ error:J.connected?J.error||J.controlError:K.connected?K.error||K.controlError:J.error||K.error,
+ onKind:(kind)=>{Me(kind);$t(false)},onConnect:()=>void mt(fr),
+ onExport:()=>Il("kwest-fit-diagnostics.json",JSON.stringify(dg(),null,2))
+})` +
+  code.slice(panel.end);
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";
