@@ -18,7 +18,8 @@
     "media:publish-nas": "node scripts/publish-nas.mjs",
     "media:upload-r2": "node scripts/upload-hls.mjs",
     "test:nas": "node scripts/nas-smoke.mjs",
-    "test:hls": "node scripts/hls-smoke.mjs"
+    "test:hls": "node scripts/hls-smoke.mjs",
+    "build:production": "tsc --noEmit && node scripts/build-production.mjs"
   },
   "dependencies": {
     "hls.js": "^1.7.4",

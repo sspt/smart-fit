@@ -1,0 +1,28 @@
+.workout-recap {
+  margin-bottom: 16px;
+}
+.workout-recap h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+.workout-recap p {
+  margin: 8px 0;
+}
+.weekly-progress {
+  margin: 12px 0;
+  color: var(--muted, #c8d2cc);
+}
+.interval-cue {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(8, 24, 17, 0.92);
+  color: #fff;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  text-align: center;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+.immersion-bottom .interval-cue {
+  margin-bottom: 6px;
+}

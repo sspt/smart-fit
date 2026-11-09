@@ -75,10 +75,18 @@ function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){
 """
 manifest = json.loads(subprocess.check_output(['node', '-e', node, str(RELEASE)], cwd=ROOT))
 assert '/index.html' in manifest and '/logo.svg' in manifest
+# The release is based on a versioned production snapshot. Refuse stale releases.
+baseline = json.loads((ROOT / 'production/baseline.json').read_text())
+with urllib.request.urlopen(baseline['origin'] + '/?release-check=' + uuid.uuid4().hex, timeout=30) as response:
+    live_html = response.read()
+assert hashlib.sha256(live_html).hexdigest() == baseline['originalHtmlSha256'], 'Frontend changed since baseline capture; reconcile before deploying'
 settings = request(WORKER + '/settings')
 deployment = request(WORKER + '/deployments')['deployments'][0]
 version = request(WORKER + '/versions/' + deployment['versions'][0]['version_id'])
 source, content_type = request(WORKER, raw=True)
+baseline_worker = (ROOT / 'production/worker/index.js').read_bytes()
+check_message = BytesParser(policy=default).parsebytes(('Content-Type: ' + content_type + '\r\n\r\n').encode() + source)
+assert any(p.get_payload(decode=True) == baseline_worker for p in check_message.iter_parts()), 'Worker changed since baseline capture; reconcile before deploying'
 (BACKUP / 'worker.multipart').write_bytes(source)
 (BACKUP / 'worker-content-type.txt').write_text(content_type)
 (BACKUP / 'settings.json').write_text(json.dumps(settings, indent=2))

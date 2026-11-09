@@ -86,3 +86,28 @@ The app shares one full-viewport decorative video across Home, Discover, Library
 After a successful FTMS/iFIT connection, the app stores the device ID, name, equipment type and protocol on that phone. On a later launch it makes one reconnect attempt using `navigator.bluetooth.getDevices()` if supported, selecting only that exact authorised ID. It does not open a chooser automatically. If enumeration is unsupported or permission is missing, the main Connect button offers the user-initiated picker; a missing grant requires a further explicit Connect tap. Unavailable devices can be retried with Connect or replaced using More connection options. That section also has an automatic-reconnect preference and Forget remembered device. Manual Disconnect suppresses automatic connection for the rest of that app instance. Existing mid-session GATT retry logic remains in the protocol hooks.
 
 A reconnect never calls Start/Resume or applies workout targets. Recovered workouts stay paused and machine-control verification resets. Browser simulation: `PLAYWRIGHT_BROWSERS_PATH=/tmp/smart-fit-browsers node scripts/auto-connect-smoke.mjs`. Physical-device and Android-browser compatibility still require testing on the actual hardware.
+
+## Production reconciliation and workout feedback (2026-11-09)
+
+The live Worker TypeScript has been recovered from its published source map,
+including Strava and the current media endpoint. The complete live frontend is
+versioned under `production/assets`; it was published without source maps.
+See `production/README.md` for the temporary frontend source boundary.
+
+`npm run build:production` compiles `WorkoutFeedback.tsx` and `feedbackStats.ts`
+and applies guarded changes to that baseline. This is the current release path.
+Serve `artifacts/visual-release` on port 5174, run
+`node scripts/feedback-smoke.mjs` and the existing release smoke checks, then use
+`python scripts/deploy-visual-release.py`. Deployment refuses a changed baseline
+and preserves the live Worker and bindings. Do not deploy the older Vite shell.
+
+Completion now shows a dismissible recap with duration, distance and available
+average speed/power; the previous completed attempt is shown only for the same
+programme revision and demo category. Journal shows Monday-to-now local weekly
+session count and minutes, excluding demos. Immersive scenery briefly shows the
+next interval within ten seconds (or twenty metres), with target values and a
+finish cue at the end. Paused sessions and Follow machine mode suppress cues.
+
+Validation: 202 unit tests, both builds, three demo equipment types, Strava
+settings, programme/settings/Bluetooth release checks, and feedback browser
+checks at 320, 412 and 1280 pixels. These do not replace physical device testing.

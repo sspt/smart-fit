@@ -1,3 +1,6 @@
+import { WorkoutRecap, WeeklyProgress } from "./WorkoutFeedback";
+import { intervalCue } from "./feedbackStats";
+import "./workout-feedback.css";
 import { equipmentControlAvailable } from "./equipmentControl";
 import {
   grantedRememberedDevice,
@@ -56,6 +59,7 @@ const clock = (s: number) =>
     .toString()
     .padStart(2, "0")}`;
 function App() {
+ const [recap,setRecap] = useState<Session|null>(null);
   const videoRoutes = useVideoRoutes();
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>("All"),
     [durationFilter, setDurationFilter] = useState("All"),
@@ -706,6 +710,7 @@ function App() {
     await save("history", [completed, ...history].slice(0, 200));
     await save("active", null);
     setHistory((h) => [completed, ...h].slice(0, 200));
+ setRecap(completed);
     setSession(null);
     setRunning(false);
     lockRelease.current?.();
@@ -1381,6 +1386,7 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
+ nextCue={intervalCue(session,running,units)}
                 autoImmerse={immersiveSession === session.id}
                 controlMode={controlMode}
                 onControlMode={changeControlMode}
@@ -1503,6 +1509,8 @@ function App() {
           <section>
             <p className="eyebrow">SCENES FROM YOUR JOURNEY</p>
             <h1>Your journey.</h1>
+<WorkoutRecap session={recap} history={history} units={units} onDismiss={()=>setRecap(null)} />
+<WeeklyProgress history={history} />
             <div className="history-overview">
               <div>
                 <strong>{history.length}</strong>

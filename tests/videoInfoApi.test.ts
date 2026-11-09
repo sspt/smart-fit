@@ -13,7 +13,7 @@ it("retrieves only the fixed public metadata endpoint", async () => {
     expect(await res.json()).toEqual({ videos: [] });
     expect(fetch.mock.calls[0][1]?.redirect).toBe("manual");
     expect(fetch.mock.calls[0][0]).toBe(
-      "https://videos.fit.silvio.cloud/info.json",
+      "https://media.kwest.fit/info.json",
     );
   } finally {
     fetch.mockRestore();

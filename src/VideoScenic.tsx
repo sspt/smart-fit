@@ -1,3 +1,4 @@
+import { IntervalCue } from "./WorkoutFeedback";
 import { WorkoutReadings } from "./WorkoutReadings";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
 import { AppIcon } from "./AppIcon";
@@ -26,6 +27,7 @@ export function VideoScenic({
   onStop,
   busy,
   initialRouteId,
+ nextCue,
   autoImmerse = false,
 }: {
   controlMode: MachineControlMode;
@@ -44,6 +46,7 @@ export function VideoScenic({
   onStop: () => void;
   busy: boolean;
   initialRouteId?: string;
+ nextCue?: string;
   autoImmerse?: boolean;
 }) {
   const videoRoutes = useVideoRoutes();
@@ -423,6 +426,7 @@ export function VideoScenic({
                 </button>
               </div>
               <div className="immersion-bottom">
+<IntervalCue text={nextCue ?? ""} />
                 <WorkoutReadings
                   kind={kind}
                   speed={speed}
