@@ -9,5 +9,9 @@ await writeFile(
 
 await writeFile(
   "dist/offline-assets.json",
-  JSON.stringify((await readdir("dist/assets")).map((n) => "/assets/" + n)),
+  JSON.stringify([
+    ...(await readdir("dist/assets")).map((n) => "/assets/" + n),
+    ...(await readdir("dist/fonts")).map((n) => "/fonts/" + n),
+    "/logo.svg",
+  ]),
 );

@@ -22,6 +22,7 @@ import { VideoCatalogProvider, useVideoRoutes } from "./VideoCatalog";
 import { VideoScenic as ScenicMode } from "./VideoScenic";
 import { ProgrammeEditor } from "./ProgrammeEditor";
 import { AppIcon } from "./AppIcon";
+import { AppLogo } from "./AppLogo";
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { useFtms } from "./ble";
@@ -46,6 +47,7 @@ import "./discovery.css";
 import "./cinematic.css";
 import "./compact.css";
 import "./immersive.css";
+import "./modern.css";
 type LastJourney = { programmeId: string; sceneId: string; kind: Kind };
 const clock = (s: number) =>
   `${Math.floor(s / 60)
@@ -1098,7 +1100,7 @@ function App() {
       {ambience.background}
       <header>
         <a className="brand" href="#" onClick={() => setPage("Train")}>
-          <span className="mark">›</span> smart<span>fit</span>
+          <AppLogo />
         </a>
         <span className="tag">A WINDOW TO ELSEWHERE.</span>
         <div className="header-tools">

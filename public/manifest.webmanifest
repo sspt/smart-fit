@@ -1,12 +1,12 @@
 {
   "id": "/",
-  "name": "Smart Fit \u2014 Connected Training",
-  "short_name": "Smart Fit",
+  "name": "kwest.fit \u2014 Immersive Training",
+  "short_name": "kwest.fit",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0c0e0e",
-  "theme_color": "#0c0e0e",
+  "background_color": "#0b1c16",
+  "theme_color": "#0b1c16",
   "icons": [
     {
       "src": "/icon-192.png",

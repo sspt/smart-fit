@@ -15,7 +15,7 @@ export function CinematicEntrance({
     <section className="cinema-entrance" aria-labelledby="entrance-title">
       <div className="entrance-shade" />
       <div className="opening-credit">
-        <span className="credit-line" /> A SMART FIT EXPERIENCE
+        <span className="credit-line" /> A KWEST.FIT EXPERIENCE
       </div>
       <div className="entrance-story">
         <p className="eyebrow">SOMEWHERE BEYOND THE EVERYDAY</p>
