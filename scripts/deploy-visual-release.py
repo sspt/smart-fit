@@ -38,7 +38,8 @@ def request(path, method='GET', data=None, token=TOKEN, content_type=None, raw=F
     except urllib.error.HTTPError as error:
         # Never log upload JWTs, secret values, or authorization headers.
         try:
-            codes = [e.get('code') for e in json.load(error).get('errors', [])]
+            errors = json.load(error).get('errors', [])
+            codes = [(e.get('code'), str(e.get('message', ''))[:1000]) for e in errors]
         except Exception:
             codes = []
         raise RuntimeError(f'Cloudflare {method} {path}: HTTP {error.code}, codes {codes}') from None
@@ -132,7 +133,8 @@ for key in ['observability', 'tail_consumers', 'placement', 'limits']:
 items = [('metadata', json.dumps(metadata).encode(), 'application/json', None)]
 for part in parts:
     name = part.get_param('name', header='content-disposition') or part.get_filename()
-    items.append((name, part.get_payload(decode=True), part.get_content_type(), part.get_filename() or name))
+    module_type = 'application/javascript+module' if part is script else part.get_content_type()
+    items.append((name, part.get_payload(decode=True), module_type, part.get_filename() or name))
 data, upload_type = multipart(items)
 request(WORKER, 'PUT', data, content_type=upload_type)
 active = request(WORKER + '/deployments')['deployments'][0]
