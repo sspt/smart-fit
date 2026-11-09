@@ -76,10 +76,7 @@ function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){
 manifest = json.loads(subprocess.check_output(['node', '-e', node, str(RELEASE)], cwd=ROOT))
 assert '/index.html' in manifest and '/logo.svg' in manifest
 # The release is based on a versioned production snapshot. Refuse stale releases.
-baseline = json.loads((ROOT / 'production/baseline.json').read_text())
-with urllib.request.urlopen(baseline['origin'] + '/?release-check=' + uuid.uuid4().hex, timeout=30) as response:
-    live_html = response.read()
-assert hashlib.sha256(live_html).hexdigest() == baseline['originalHtmlSha256'], 'Frontend changed since baseline capture; reconcile before deploying'
+subprocess.check_call(['node', 'scripts/verify-production-baseline.mjs'], cwd=ROOT)
 settings = request(WORKER + '/settings')
 deployment = request(WORKER + '/deployments')['deployments'][0]
 version = request(WORKER + '/versions/' + deployment['versions'][0]['version_id'])
