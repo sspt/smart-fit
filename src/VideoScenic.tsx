@@ -1,3 +1,4 @@
+import { WorkoutReadings } from "./WorkoutReadings";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
 import { AppIcon } from "./AppIcon";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +14,11 @@ export function VideoScenic({
   onControlMode,
   automaticUnavailable,
   speed,
+  incline,
+  power,
+  resistance,
+  distance,
+  calories,
   running,
   kind,
   time,
@@ -26,6 +32,11 @@ export function VideoScenic({
   onControlMode: (mode: MachineControlMode) => void;
   automaticUnavailable: string;
   speed: number | null;
+  incline?: number | null;
+  power?: number | null;
+  resistance?: number | null;
+  distance?: number | null;
+  calories?: number | null;
   running: boolean;
   kind: Kind;
   time: string;
@@ -412,26 +423,16 @@ export function VideoScenic({
                 </button>
               </div>
               <div className="immersion-bottom">
-                <div className="immersion-readings">
-                  <div>
-                    <small>DEVICE SPEED</small>
-                    <strong>
-                      {speed == null ? "—" : speed.toFixed(1)}
-                      <span>km/h</span>
-                    </strong>
-                  </div>
-                  <div>
-                    <small>WORKOUT TIME</small>
-                    <strong>{time}</strong>
-                  </div>
-                  <div className="immersion-rate">
-                    <small>VIDEO SPEED</small>
-                    <strong>
-                      {rate.toFixed(2)}
-                      <span>×</span>
-                    </strong>
-                  </div>
-                </div>
+                <WorkoutReadings
+                  kind={kind}
+                  speed={speed}
+                  time={time}
+                  incline={incline}
+                  power={power}
+                  resistance={resistance}
+                  distance={distance}
+                  calories={calories}
+                />
                 <div
                   className={
                     "immersion-status " + (videoError ? "has-error" : "")

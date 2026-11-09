@@ -49,3 +49,20 @@ and bindings, and records rollback details in `artifacts/visual-deploy`.
 An initial full workout smoke run could not load the starter media through the
 local Vite server. Physical equipment, Strava OAuth, and workout playback were
 not validated as part of this visual refresh.
+
+## Equipment controls and immersive readings
+
+For the equipment-control release, run `node scripts/prepare-visual-release.mjs`
+followed by `node scripts/prepare-equipment-release.mjs`. The second step applies
+guarded changes to the newer production JavaScript and compiles the checked-in
+`WorkoutReadings` and `equipmentControl` helpers into that shell. It retains the
+existing Strava integration; any changed production-code contracts stop the
+preparation rather than silently creating a partial patch. This bridge is needed
+until the newer production frontend has been reconciled with the source checkout.
+
+Validate the prepared directory on port 5174 with
+`node scripts/equipment-release-smoke.cjs`, then deploy with
+`python scripts/deploy-visual-release.py`. The deploy script retains the Worker
+modules, configuration, bindings, and OAuth callback fix. This release changes
+application JavaScript; the earlier visual-only byte-identity check does not apply.
+Physical Bluetooth control still requires validation on the actual equipment.

@@ -527,3 +527,31 @@ nav button:hover {
     animation: none;
   }
 }
+
+/* Five workout readings remain visible in tablet landscape and phone portrait. */
+.immersion-readings {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(12px, 2.5vw, 32px);
+  width: 100%;
+  max-width: 900px;
+}
+.immersion-readings > div {
+  min-width: 0;
+}
+.immersion-readings strong {
+  font-size: clamp(23px, 3.5vw, 38px);
+}
+@media (max-width: 600px) {
+  .immersion-readings {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+  .immersion-readings strong {
+    font-size: 25px;
+  }
+  .immersion-readings small {
+    font-size: 8px;
+    letter-spacing: 0.6px;
+  }
+}

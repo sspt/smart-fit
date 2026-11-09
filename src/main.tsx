@@ -1,3 +1,4 @@
+import { equipmentControlAvailable } from "./equipmentControl";
 import {
   grantedRememberedDevice,
   parseRememberedDevice,
@@ -87,7 +88,6 @@ function App() {
     [install, setInstall] = useState<any>(null),
     [units, setUnits] = useState("km"),
     [maxSpeed, setMaxSpeed] = useState(12),
-    [certified, setCertified] = useState(false),
     [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -132,6 +132,12 @@ function App() {
   }, []);
   const connected = demo || ft.connected || it.connected;
   const device = it.connected ? it : ft;
+  const canControl = equipmentControlAvailable(
+    kind,
+    device.controllable,
+    it.connected,
+    ft.targetFeatures,
+  );
   useEffect(() => {
     if (demo || (!ft.connected && !it.connected)) return;
     autoAttempted.current = true;
@@ -199,6 +205,9 @@ function App() {
                 )?.block.speed ?? 5)
           : 0,
         powerW: running ? 100 : 0,
+        inclinePct: null,
+        resistanceLevel: null,
+        caloriesKcal: null,
         totalDistanceM: (session?.elapsed ?? 0) * 1.4,
       }
     : it.connected
@@ -428,11 +437,7 @@ function App() {
       )
     )
       throw Error("Programme exceeds your speed limit.");
-    if (!demo && device.controllable && certified) {
-      if (it.connected && kind === "Bike")
-        throw Error(
-          "iFIT bike control is not implemented. Uncheck verification to track only.",
-        );
+    if (!demo && canControl) {
       const features = ft.targetFeatures;
       if (
         !it.connected &&
@@ -486,9 +491,8 @@ function App() {
       demo,
       samples: [],
       events: ["00:00 Workout started"],
-      automatic: demo || (device.controllable && certified),
-      controlMode:
-        demo || (device.controllable && certified) ? "automatic" : "follow",
+      automatic: demo || canControl,
+      controlMode: demo || canControl ? "automatic" : "follow",
       phase: 0,
       cycle: 0,
       phaseElapsed: 0,
@@ -497,8 +501,8 @@ function App() {
     });
     setLiveTab(sceneryId ? "Scenery" : "Session");
     setPage("Live");
-    setHold(!demo && (!device.controllable || !certified));
-    if (!demo && device.controllable && certified) {
+    setHold(!demo && !canControl);
+    if (!demo && canControl) {
       if (it.connected) {
         await it.resetToIdle();
         if (startToken !== epoch.current) return;
@@ -533,7 +537,7 @@ function App() {
         await device.setTargetIncline(b.incline);
     } else if (kind === "Rower") await device.setTargetResistance(b.resistance);
     else if (!it.connected) await ft.setTargetPower(b.power);
-    else throw Error("iFIT bike control is not verified. Tracking only.");
+    else throw Error("iFIT bike control is not implemented. Tracking only.");
   }
   const seg = session ? currentSegment(session) : null;
   useEffect(() => {
@@ -624,9 +628,11 @@ function App() {
       !demo &&
       session?.automatic &&
       session.controlMode !== "follow" &&
-      !certified
+      !canControl
     )
-      throw Error("Confirm device verification in Devices.");
+      throw Error(
+        "Equipment control is not available. Reconnect the equipment first.",
+      );
     if (
       !demo &&
       session?.automatic &&
@@ -651,14 +657,14 @@ function App() {
     setHold(!session?.automatic || session?.controlMode === "follow");
     event("Resumed explicitly");
   }
-  const automaticUnavailable = !session?.automatic
-    ? "Automatic control needs a verified control session."
+  const automaticUnavailable = !session
+    ? "Start a journey to use automatic control."
     : !connected
       ? "Reconnect equipment to use automatic control."
       : kind !== session.programme.kind
         ? "Connect the equipment type used by this session."
-        : !demo && (!device.controllable || !certified)
-          ? "Verify equipment in connection settings first."
+        : !demo && !canControl
+          ? "Equipment control is not available. Check the Bluetooth connection."
           : "";
   const controlMode: MachineControlMode =
     session?.automatic && !hold && session.controlMode !== "follow"
@@ -671,7 +677,15 @@ function App() {
     epoch.current++;
     sent.current = "";
     setHold(mode === "follow");
-    setSession((s) => (s ? { ...s, controlMode: mode } : s));
+    setSession((s) =>
+      s
+        ? {
+            ...s,
+            controlMode: mode,
+            automatic: s.automatic || mode === "automatic",
+          }
+        : s,
+    );
     event(
       mode === "follow"
         ? "Following machine: programme targets held"
@@ -749,7 +763,6 @@ function App() {
   useEffect(() => setHistoryPage(0), [pageSize, history.length]);
   async function reconnectKnownDevice() {
     if (!knownDevice || state.current.connected) return;
-    setCertified(false);
     setConnectionHint(`Reconnecting to ${knownDevice.name}…`);
     try {
       const selected = await grantedRememberedDevice(knownDevice);
@@ -799,7 +812,6 @@ function App() {
       navigator.bluetooth?.getDevices
     )
       return reconnectKnownDevice();
-    setCertified(false);
     const detected = (value: string) => {
       if (value === "Treadmill" || value === "Bike" || value === "Rower")
         setKind(value);
@@ -901,7 +913,6 @@ function App() {
                 aria-pressed={kind === type}
                 onClick={() => {
                   setKind(type);
-                  setCertified(false);
                 }}
               >
                 <AppIcon name={type} size={34} />
@@ -1025,7 +1036,6 @@ function App() {
                 ft.disconnect();
                 it.disconnect();
                 setDemo(!demo);
-                setCertified(false);
               }}
             >
               {demo ? "Exit demo" : "Explore demo"}
@@ -1038,7 +1048,6 @@ function App() {
                   ft.disconnect();
                   it.disconnect();
                   setDemo(false);
-                  setCertified(false);
                 }}
               >
                 Disconnect
@@ -1048,19 +1057,10 @@ function App() {
           {!demo && connected && (
             <>
               <p>
-                {device.controllable
-                  ? "Device offers control. Physical verification is required before automation."
-                  : "Telemetry only or control not ready."}
+                {canControl
+                  ? "Equipment control is available. Select Automatic to follow programme targets."
+                  : "Tracking only: this equipment does not currently offer the required controls."}
               </p>
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={certified}
-                  onChange={(e) => setCertified(e.target.checked)}
-                />
-                I have verified this model/firmware’s speed, incline or
-                resistance encoding and physical stop operation.
-              </label>
             </>
           )}
           <div className="metric-grid">
@@ -1077,9 +1077,9 @@ function App() {
             />
           </div>
           <p className="subtle">
-            FitPro2 is unsupported. iFIT activation may require internet; cached
-            activation reuse is not hardware-certified. Unknown device profiles
-            are not certified by this app.
+            FitPro2 is unsupported. iFIT activation may require internet;
+            control availability depends on the capabilities reported by your
+            equipment and the Bluetooth control connection.
           </p>
           <button
             onClick={() =>
@@ -1199,7 +1199,7 @@ function App() {
                 ? `Demo ${kind.toLowerCase()}`
                 : it.deviceName || ft.deviceName || kind
             }
-            automatic={demo || (device.controllable && certified)}
+            automatic={demo || canControl}
             busy={busy || !ready}
             onCancel={() => setPage("Train")}
             onStart={() => {
@@ -1433,6 +1433,13 @@ function App() {
                 onControlMode={changeControlMode}
                 automaticUnavailable={automaticUnavailable}
                 speed={connected ? (metrics.speedKmh ?? null) : null}
+                incline={connected ? (metrics.inclinePct ?? null) : null}
+                power={connected ? (metrics.powerW ?? null) : null}
+                resistance={
+                  connected ? (metrics.resistanceLevel ?? null) : null
+                }
+                distance={session.distance ?? 0}
+                calories={connected ? (metrics.caloriesKcal ?? null) : null}
                 running={running}
                 kind={session.programme.kind}
                 time={clock(session.elapsed)}
