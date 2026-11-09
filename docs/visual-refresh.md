@@ -66,3 +66,16 @@ Validate the prepared directory on port 5174 with
 modules, configuration, bindings, and OAuth callback fix. This release changes
 application JavaScript; the earlier visual-only byte-identity check does not apply.
 Physical Bluetooth control still requires validation on the actual equipment.
+
+## Programme duration tiles
+
+For the programme thumbnail update, run `node scripts/prepare-visual-release.mjs`
+and then `node scripts/prepare-programme-release.mjs`. The latter replaces only
+the current production programme thumbnail JSX, preserving its duration expression
+and all other application functionality, including the equipment-control release.
+Validate the prepared directory on port 5174 with
+`node scripts/programme-release-smoke.cjs` and
+`node scripts/equipment-release-smoke.cjs`, then use
+`python scripts/deploy-visual-release.py` to publish the assets while retaining
+the live Worker. The programme preparation script stops if the production markup
+contract has changed. Do not rerun the older equipment patch against this release.

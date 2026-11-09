@@ -1288,19 +1288,11 @@ function App() {
             <div className="cards">
               {filteredProgrammes
                 .slice(libraryPage * pageSize, (libraryPage + 1) * pageSize)
-                .map((p, i) => (
+                .map((p) => (
                   <article key={p.id} className="card">
-                    <div
-                      className={"equipment e" + (i % 3)}
-                      style={{
-                        backgroundImage: `url(${videoRoutes.find((r) => r.kind === p.kind)!.poster})`,
-                      }}
-                    >
-                      <AppIcon name={p.kind} size={40} />
-                      <span>{p.kind}</span>
-                      <strong className="programme-duration">
-                        {programmeSummary(p)}
-                      </strong>
+                    <div className="programme-duration-tile">
+                      <AppIcon name="clock" size={28} />
+                      <strong>{programmeSummary(p)}</strong>
                     </div>
                     <div className="card-body">
                       <small>
