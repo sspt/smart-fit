@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -84,6 +84,87 @@ code =
  onExport:()=>Il("kwest-fit-diagnostics.json",JSON.stringify(dg(),null,2))
 })` +
   code.slice(panel.end);
+// Reuse existing action handlers while giving Settings a smaller, shared layout.
+const settingsAst = ts.createSourceFile(
+  "settings.js",
+  code,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.JS,
+);
+function prop(node, key) {
+  return node?.properties?.find((p) => p.name?.getText(settingsAst) === key)
+    ?.initializer;
+}
+function jsxChildren(call) {
+  return prop(call.arguments?.[1], "children")?.elements;
+}
+const settingsPanels = [];
+function findSettings(node) {
+  if (
+    ts.isCallExpression(node) &&
+    node.expression.getText(settingsAst) === "c.jsxs" &&
+    node.arguments[0]?.text === "section" &&
+    node.getText(settingsAst).includes('className: "panel settings"')
+  )
+    settingsPanels.push(node);
+  ts.forEachChild(node, findSettings);
+}
+findSettings(settingsAst);
+if (settingsPanels.length !== 1)
+  throw Error("Production Settings contract changed");
+const settingsPanel = settingsPanels[0],
+  outer = jsxChildren(settingsPanel),
+  controls = jsxChildren(outer[2]);
+if (controls.length !== 5) throw Error("Unexpected Settings controls");
+const data = jsxChildren(controls[4]),
+  actions = jsxChildren(data[1]),
+  maintenance = jsxChildren(controls[1]);
+if (actions.length !== 4 || data.length !== 4 || maintenance.length !== 3)
+  throw Error("Unexpected Settings actions");
+const raw = (n) => n.getText(settingsAst);
+const replacement = `c.jsx(__feedback.SettingsLayout,{units:${raw(controls[0])},connection:${raw(controls[2])},backup:c.jsxs(c.Fragment,{children:[${raw(actions[0])},${raw(actions[1])}]}),refresh:${raw(maintenance[2])},install:${raw(actions[3])},erase:${raw(data[3])}})`;
+code =
+  code.slice(0, settingsPanel.getStart(settingsAst)) +
+  replacement +
+  code.slice(settingsPanel.end);
+// Strava keeps its existing status/actions, presented as a regular section.
+const connectionAst = ts.createSourceFile(
+    "connections.js",
+    code,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.JS,
+  ),
+  connectionEdits = [];
+function cleanConnection(node) {
+  if (
+    ts.isCallExpression(node) &&
+    node.arguments[0]?.text === "details" &&
+    node.arguments[1]
+      ?.getText(connectionAst)
+      .includes('className: "strava-settings"')
+  ) {
+    const body = node
+      .getText(connectionAst)
+      .replace('"details"', '"section"')
+      .replace("open: !0,", "")
+      .replace('"summary"', '"h2"')
+      .replaceAll("Connections \\xB7 Strava", "Strava")
+      .replace("Data, backups & installation", "Your data")
+      .replace(
+        "Older workouts can be synced individually from your Journal. Offline uploads wait on this device and resume when the app is open and online. Demo sessions are excluded.",
+        "Workouts sync when the app is open and online. Demo sessions are excluded.",
+      );
+    connectionEdits.push([node.getStart(connectionAst), node.end, body]);
+  }
+  ts.forEachChild(node, cleanConnection);
+}
+cleanConnection(connectionAst);
+if (connectionEdits.length !== 2)
+  throw Error("Strava section contract changed");
+for (const [start, end, value] of connectionEdits.sort((a, b) => b[0] - a[0]))
+  code = code.slice(0, start) + value + code.slice(end);
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";
@@ -93,7 +174,9 @@ const css = html.match(/href="(\/assets\/[^"\s]+\.css)"/)[1];
 const style =
   (await fs.readFile(root + css, "utf8")) +
   "\n" +
-  (await fs.readFile("src/workout-feedback.css", "utf8"));
+  (await fs.readFile("src/workout-feedback.css", "utf8")) +
+  "\n" +
+  (await fs.readFile("src/settings-clean.css", "utf8"));
 const cssPath =
   "/assets/feedback-" +
   createHash("sha256").update(style).digest("hex").slice(0, 12) +

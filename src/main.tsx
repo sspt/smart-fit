@@ -1,3 +1,5 @@
+import { SettingsLayout } from "./SettingsLayout";
+import "./settings-clean.css";
 import { EquipmentConnection } from "./EquipmentConnection";
 import { WorkoutRecap, WeeklyProgress } from "./WorkoutFeedback";
 import { intervalCue } from "./feedbackStats";
@@ -60,7 +62,7 @@ const clock = (s: number) =>
     .toString()
     .padStart(2, "0")}`;
 function App() {
- const [recap,setRecap] = useState<Session|null>(null);
+  const [recap, setRecap] = useState<Session | null>(null);
   const videoRoutes = useVideoRoutes();
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>("All"),
     [durationFilter, setDurationFilter] = useState("All"),
@@ -711,7 +713,7 @@ function App() {
     await save("history", [completed, ...history].slice(0, 200));
     await save("active", null);
     setHistory((h) => [completed, ...h].slice(0, 200));
- setRecap(completed);
+    setRecap(completed);
     setSession(null);
     setRunning(false);
     lockRelease.current?.();
@@ -889,13 +891,32 @@ function App() {
     starterRoutes.find((r) => r.kind === kind)!.poster,
     !!session,
   );
-  const equipmentPanel = <EquipmentConnection
-    kind={kind} connected={connected} busy={busy} running={running} hasSession={!!session}
-    deviceName={it.deviceName || ft.deviceName} hint={connectionHint}
-    error={it.connected ? it.error || it.controlError : ft.connected ? ft.error || ft.controlError : it.error || ft.error}
-    onKind={setKind} onConnect={()=>void action(connectEquipment)}
-    onExport={()=>download("smart-fit-diagnostics.json",JSON.stringify(buildPassiveReport(),null,2))}
-  />;
+  const equipmentPanel = (
+    <EquipmentConnection
+      kind={kind}
+      connected={connected}
+      busy={busy}
+      running={running}
+      hasSession={!!session}
+      deviceName={it.deviceName || ft.deviceName}
+      hint={connectionHint}
+      error={
+        it.connected
+          ? it.error || it.controlError
+          : ft.connected
+            ? ft.error || ft.controlError
+            : it.error || ft.error
+      }
+      onKind={setKind}
+      onConnect={() => void action(connectEquipment)}
+      onExport={() =>
+        download(
+          "smart-fit-diagnostics.json",
+          JSON.stringify(buildPassiveReport(), null, 2),
+        )
+      }
+    />
+  );
   return (
     <>
       {ambience.background}
@@ -1194,7 +1215,7 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
- nextCue={intervalCue(session,running,units)}
+                nextCue={intervalCue(session, running, units)}
                 autoImmerse={immersiveSession === session.id}
                 controlMode={controlMode}
                 onControlMode={changeControlMode}
@@ -1317,8 +1338,13 @@ function App() {
           <section>
             <p className="eyebrow">SCENES FROM YOUR JOURNEY</p>
             <h1>Your journey.</h1>
-<WorkoutRecap session={recap} history={history} units={units} onDismiss={()=>setRecap(null)} />
-<WeeklyProgress history={history} />
+            <WorkoutRecap
+              session={recap}
+              history={history}
+              units={units}
+              onDismiss={() => setRecap(null)}
+            />
+            <WeeklyProgress history={history} />
             <div className="history-overview">
               <div>
                 <strong>{history.length}</strong>
@@ -1405,10 +1431,8 @@ function App() {
           </section>
         )}
         {page === "Settings" && (
-          <section>
-            <p className="eyebrow">MAKE IT YOURS</p>
-            <h1>Your preferences</h1>
-            <div className="panel settings">
+          <SettingsLayout
+            units={
               <label>
                 Display units
                 <select
@@ -1419,150 +1443,126 @@ function App() {
                   <option value="mi">Miles</option>
                 </select>
               </label>
-              <section
-                className="settings-maintenance"
-                aria-labelledby="maintenance-title"
-              >
-                <h2 id="maintenance-title">App maintenance</h2>
-                <p>
-                  Refresh the app while keeping programmes, settings and
-                  history.
-                </p>
+            }
+            backup={
+              <>
                 <button
-                  className="cache-refresh"
-                  disabled={!ready || refreshing || busy || !!session}
-                  aria-label="Clear app cache"
-                  title={
-                    session
-                      ? "Finish your session before refreshing the app"
-                      : "Clear app cache and reload. Keeps programmes, settings and history."
+                  onClick={() =>
+                    download(
+                      "smart-fit-backup.json",
+                      JSON.stringify({
+                        version: 1,
+                        programmes,
+                        history,
+                        settings: { units },
+                      }),
+                    )
                   }
-                  onClick={async () => {
-                    setRefreshing(true);
-                    setBusy(true);
-                    try {
-                      await refreshApp();
-                    } catch {
-                      setRefreshing(false);
-                      setBusy(false);
-                      setError(
-                        "Could not refresh the app. Check your internet connection and try again.",
-                      );
-                    }
-                  }}
                 >
-                  <AppIcon name="refresh" size={17} />
-                  <span>{refreshing ? "Refreshing…" : "Clear cache"}</span>
+                  Export backup
                 </button>
-              </section>
-              <details className="settings-data" open>
-                <summary>Data, backups & installation</summary>
-                <div className="actions">
-                  <button
-                    onClick={() =>
-                      download(
-                        "smart-fit-backup.json",
-                        JSON.stringify({
-                          version: 1,
-                          programmes,
-                          history,
-                          settings: { units },
-                        }),
-                      )
-                    }
-                  >
-                    Export backup
-                  </button>
-                  <label className="button">
-                    Restore backup
-                    <input
-                      hidden
-                      type="file"
-                      accept="application/json"
-                      disabled={!!session}
-                      onChange={async (e) => {
-                        try {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          if (file.size > 20000000)
-                            throw Error("Backup too large");
-                          const v = JSON.parse(await file.text());
-                          if (
-                            v.version !== 1 ||
-                            !Array.isArray(v.programmes) ||
-                            !v.programmes.every(validProgramme) ||
-                            !Array.isArray(v.history)
-                          )
-                            throw Error("Invalid backup");
-                          if (
-                            !confirm(
-                              "Replace local programmes and history with this backup?",
-                            )
-                          )
-                            return;
-                          setProgrammes(v.programmes);
-                          setHistory(
-                            v.history
-                              .filter(
-                                (s: any) =>
-                                  s &&
-                                  validProgramme(s.programme) &&
-                                  Array.isArray(s.samples) &&
-                                  typeof s.started === "number",
-                              )
-                              .slice(0, 200),
-                          );
-                          if (v.settings) {
-                            setUnits(v.settings.units === "mi" ? "mi" : "km");
-                          }
-                        } catch (e: any) {
-                          setError(e.message);
-                        }
-                      }}
-                    />
-                  </label>
-                  <button
-                    onClick={() =>
-                      void navigator.storage
-                        ?.persist()
-                        .then((ok) =>
-                          setError(
-                            ok
-                              ? "Persistent storage granted. Keep backups too."
-                              : "Storage persistence was not granted. Keep backups.",
-                          ),
+                <label className="button">
+                  Restore backup
+                  <input
+                    hidden
+                    type="file"
+                    accept="application/json"
+                    disabled={!!session}
+                    onChange={async (e) => {
+                      try {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 20000000)
+                          throw Error("Backup too large");
+                        const v = JSON.parse(await file.text());
+                        if (
+                          v.version !== 1 ||
+                          !Array.isArray(v.programmes) ||
+                          !v.programmes.every(validProgramme) ||
+                          !Array.isArray(v.history)
                         )
-                    }
+                          throw Error("Invalid backup");
+                        if (
+                          !confirm(
+                            "Replace local programmes and history with this backup?",
+                          )
+                        )
+                          return;
+                        setProgrammes(v.programmes);
+                        setHistory(
+                          v.history
+                            .filter(
+                              (s: any) =>
+                                s &&
+                                validProgramme(s.programme) &&
+                                Array.isArray(s.samples) &&
+                                typeof s.started === "number",
+                            )
+                            .slice(0, 200),
+                        );
+                        if (v.settings) {
+                          setUnits(v.settings.units === "mi" ? "mi" : "km");
+                        }
+                      } catch (e: any) {
+                        setError(e.message);
+                      }
+                    }}
+                  />
+                </label>
+              </>
+            }
+            refresh={
+              <button
+                className="cache-refresh"
+                disabled={!ready || refreshing || busy || !!session}
+                aria-label="Clear app cache"
+                title={
+                  session
+                    ? "Finish your session before refreshing the app"
+                    : "Clear app cache and reload. Keeps programmes, settings and history."
+                }
+                onClick={async () => {
+                  setRefreshing(true);
+                  setBusy(true);
+                  try {
+                    await refreshApp();
+                  } catch {
+                    setRefreshing(false);
+                    setBusy(false);
+                    setError(
+                      "Could not refresh the app. Check your internet connection and try again.",
+                    );
+                  }
+                }}
+              >
+                <AppIcon name="refresh" size={17} />
+                <span>{refreshing ? "Refreshing…" : "Clear cache"}</span>
+              </button>
+            }
+            install={
+              <>
+                {install && (
+                  <button
+                    className="primary"
+                    onClick={() => void install.prompt()}
                   >
-                    Request persistent storage
+                    Install Smart Fit ›
                   </button>
-                  {install && (
-                    <button
-                      className="primary"
-                      onClick={() => void install.prompt()}
-                    >
-                      Install Smart Fit ›
-                    </button>
-                  )}
-                </div>
-                <p>
-                  Install from the Android Chrome menu if no install button
-                  appears. Bluetooth and automation require the app in the
-                  foreground.
-                </p>
-                <button
-                  className="danger"
-                  disabled={!!session}
-                  onClick={() => {
-                    if (confirm("Delete local workout history?"))
-                      setHistory([]);
-                  }}
-                >
-                  Delete history
-                </button>
-              </details>
-            </div>
-          </section>
+                )}
+              </>
+            }
+            erase={
+              <button
+                className="danger"
+                disabled={!!session}
+                onClick={() => {
+                  if (confirm("Delete local workout history?")) setHistory([]);
+                }}
+              >
+                Delete history
+              </button>
+            }
+          />
         )}
         {draft && (
           <ProgrammeEditor

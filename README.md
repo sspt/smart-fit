@@ -124,3 +124,14 @@ options and the secondary readings have been removed from this panel.
 `node scripts/equipment-simple-smoke.mjs` checks both entry points at 320, 412
 and 1280 pixels, the filtered Bluetooth picker and an actual diagnostics download.
 This replaces the old manual FTMS/iFIT and demo-button UI assertions.
+
+## Clean Settings
+
+Settings groups Preferences (display units), Strava and Your data (export/restore).
+App & data tools is collapsed by default and contains cache refresh, installation
+when available, and the confirmed history-delete action. The manual storage
+permission button and repeated platform/installation instructions were removed.
+Strava connection, automatic sync, backup validation and active-session guards
+retain their existing handlers. `node scripts/settings-clean-smoke.mjs` checks
+320/412/1280px layouts, persisted units, actual backup export/restore, connected
+and disconnected Strava states, and disclosure/confirmation behavior.
