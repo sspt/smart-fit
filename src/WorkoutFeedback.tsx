@@ -23,7 +23,6 @@ export function WorkoutRecap({
       <div className="section-head">
         <h2>
           {session.status === "completed" ? "Workout saved" : "Tracking saved"}
-          {session.demo ? " · Demo" : ""}
         </h2>
         <button onClick={onDismiss} aria-label="Dismiss workout recap">
           Done

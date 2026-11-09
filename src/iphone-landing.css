@@ -1,0 +1,116 @@
+.iphone-landing {
+  box-sizing: border-box;
+  min-height: 100svh;
+  width: 100%;
+  margin: 0;
+  padding: calc(24px + env(safe-area-inset-top)) 24px
+    calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(5, 20, 13, 0.75), rgba(5, 20, 13, 0.95)),
+    url("/iphone-forest.jpg") center/cover fixed;
+  color: #f3f5ed;
+  font-family: Manrope, system-ui, sans-serif;
+}
+.iphone-landing .iphone-brand {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 920px;
+  background: none;
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.iphone-brand > span > span {
+  font-weight: 400;
+  opacity: 0.75;
+}
+.iphone-content {
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  padding: 50px 0 32px;
+}
+.iphone-eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: #b4d1bc;
+}
+.iphone-content h1 {
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  margin: 16px 0 24px;
+  color: inherit;
+}
+.iphone-content > p:not(.iphone-eyebrow) {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #d3ded4;
+}
+.iphone-next {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid rgba(185, 220, 192, 0.2);
+  border-radius: 20px;
+  background: rgba(14, 38, 26, 0.75);
+}
+.iphone-next h2 {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+  color: inherit;
+}
+.iphone-next p {
+  line-height: 1.55;
+  margin: 10px 0;
+}
+.iphone-next .iphone-secondary {
+  font-size: 0.85rem;
+  color: #b7c9bc;
+}
+.iphone-next button {
+  margin-top: 12px;
+  min-height: 48px;
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: #bfead0;
+  color: #102a1c;
+  font: inherit;
+  font-weight: 700;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+.iphone-next .iphone-link {
+  min-height: 1.5em;
+  font-size: 0.78rem;
+  color: #bed3c3;
+  overflow-wrap: anywhere;
+  text-align: center;
+  margin-bottom: 0;
+}
+.iphone-landing footer {
+  position: static;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.75rem;
+  color: #a2b6a8;
+}
+.iphone-landing button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .iphone-landing {
+    background-attachment: scroll;
+  }
+}

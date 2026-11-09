@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -29,6 +29,20 @@ const built = await build({
   jsxFragment: "m.Fragment",
   tsconfigRaw: { compilerOptions: { jsx: "react" } },
   minify: false,
+  plugins: [
+    {
+      name: "production-react",
+      setup(b) {
+        b.onResolve({ filter: /^react$/ }, () => ({
+          path: "react",
+          namespace: "production-react",
+        }));
+        b.onLoad({ filter: /.*/, namespace: "production-react" }, () => ({
+          contents: "export const useState=(...args)=>m.useState(...args);",
+        }));
+      },
+    },
+  ],
 });
 code = built.outputFiles[0].text + "\n" + code;
 once(
@@ -154,7 +168,7 @@ function cleanConnection(node) {
       .replace("Data, backups & installation", "Your data")
       .replace(
         "Older workouts can be synced individually from your Journal. Offline uploads wait on this device and resume when the app is open and online. Demo sessions are excluded.",
-        "Workouts sync when the app is open and online. Demo sessions are excluded.",
+        "Workouts sync when the app is open and online.",
       );
     connectionEdits.push([node.getStart(connectionAst), node.end, body]);
   }
@@ -165,6 +179,51 @@ if (connectionEdits.length !== 2)
   throw Error("Strava section contract changed");
 for (const [start, end, value] of connectionEdits.sort((a, b) => b[0] - a[0]))
   code = code.slice(0, start) + value + code.slice(end);
+once(
+  ".then(([L, te, Le, st, _t]) => {",
+  ".then(([L, te, Le, st, _t]) => { if(Le?.demo)Le=null;",
+);
+once("$e(Le?.demo ?? !1)", "$e(!1)");
+once("Connect equipment or enable demo first.", "Connect equipment first.");
+once('X\n                  ? "\\u25CF Demo"\n                  : Ne', "Ne");
+once(
+  "deviceName: X\n                ? `Demo ${H.toLowerCase()}`\n                : J.deviceName || K.deviceName || H,",
+  "deviceName: J.deviceName || K.deviceName || H,",
+);
+once('v.demo ? "SIMULATED SESSION" : "YOUR SESSION"', '"YOUR SESSION"');
+// Hide old simulated records without rewriting or deleting the saved history.
+const journalAst = ts.createSourceFile(
+    "journal.js",
+    code,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.JS,
+  ),
+  journals = [];
+function findJournal(n) {
+  if (
+    ts.isCallExpression(n) &&
+    n.expression.getText(journalAst) === "c.jsxs" &&
+    n.arguments[0]?.text === "section" &&
+    n.getText(journalAst).includes('children: "Your journey."')
+  )
+    journals.push(n);
+  ts.forEachChild(n, findJournal);
+}
+findJournal(journalAst);
+if (journals.length !== 1) throw Error("Journal contract changed");
+const journal = journals[0],
+  journalText = journal
+    .getText(journalAst)
+    .replace(/\bQ\b/g, "Q.filter(session=>!session.demo)");
+code =
+  code.slice(0, journal.getStart(journalAst)) +
+  journalText +
+  code.slice(journal.end);
+once(
+  "c.jsx(oh, { children: c.jsx(Xv, {}) })",
+  "__feedback.needsIPhoneLanding() ? c.jsx(__feedback.IPhoneLanding,{}) : c.jsx(oh, { children: c.jsx(Xv, {}) })",
+);
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";
@@ -176,7 +235,9 @@ const style =
   "\n" +
   (await fs.readFile("src/workout-feedback.css", "utf8")) +
   "\n" +
-  (await fs.readFile("src/settings-clean.css", "utf8"));
+  (await fs.readFile("src/settings-clean.css", "utf8")) +
+  "\n" +
+  (await fs.readFile("src/iphone-landing.css", "utf8"));
 const cssPath =
   "/assets/feedback-" +
   createHash("sha256").update(style).digest("hex").slice(0, 12) +
@@ -184,12 +245,15 @@ const cssPath =
 await fs.writeFile(root + cssPath, style);
 html = html.replace(css, cssPath);
 await fs.writeFile(root + "/index.html", html);
+await fs.copyFile("public/iphone-forest.jpg", root + "/iphone-forest.jpg");
 const assets = JSON.parse(
   await fs.readFile(root + "/offline-assets.json", "utf8"),
 );
 await fs.writeFile(
   root + "/offline-assets.json",
-  JSON.stringify([...new Set([...assets, path, cssPath])]),
+  JSON.stringify([
+    ...new Set([...assets, path, cssPath, "/iphone-forest.jpg"]),
+  ]),
 );
 let sw = await fs.readFile(root + "/sw.js", "utf8");
 sw = sw.replace(

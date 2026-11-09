@@ -135,3 +135,23 @@ Strava connection, automatic sync, backup validation and active-session guards
 retain their existing handlers. `node scripts/settings-clean-smoke.mjs` checks
 320/412/1280px layouts, persisted units, actual backup export/restore, connected
 and disconnected Strava states, and disclosure/confirmation behavior.
+
+## iPhone compatibility landing and retired demo UI
+
+Unsupported iPhone/iPad browsers now receive a branded landing page before the
+app or video-catalogue provider mounts. Detection includes iPadOS desktop mode
+and checks for the actual Web Bluetooth requestDevice API, allowing compatible
+browsers through. The page explains the limitation, recommends Android Chrome
+or a compatible desktop browser, and offers a copy-link button with a readable
+fallback when clipboard access is unavailable. Its still image is cached with
+the application shell.
+
+Demo labels and connection instructions have been removed from the interface.
+Saved simulated sessions are no longer recovered and do not appear in Journal
+or its totals. The original history remains in storage and JSON backups;
+protocol markers and historical export metadata retain their meaning.
+`node scripts/iphone-landing-smoke.mjs` covers three iPhone viewport sizes,
+copying the link, absence of app API calls, normal app access, hidden simulated
+records and preservation of backup history. The previous feedback demo-recovery
+smoke fixture is no longer a supported entry path; feedback calculation tests
+remain in the unit suite.

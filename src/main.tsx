@@ -1,3 +1,6 @@
+import { IPhoneLanding } from "./IPhoneLanding";
+import { needsIPhoneLanding } from "./browserSupport";
+import "./iphone-landing.css";
 import { SettingsLayout } from "./SettingsLayout";
 import "./settings-clean.css";
 import { EquipmentConnection } from "./EquipmentConnection";
@@ -236,6 +239,7 @@ function App() {
       load<LastJourney | null>("lastJourney", null),
     ])
       .then(([p, h, s, c, last]) => {
+        if (s?.demo) s = null;
         setLastJourney(last);
         if (s) setKind(s.programme.kind);
         else if (last && ["Treadmill", "Bike", "Rower"].includes(last.kind))
@@ -243,7 +247,7 @@ function App() {
         setProgrammes(p);
         setHistory(h);
         setSession(s);
-        setDemo(s?.demo ?? false);
+        setDemo(false);
         setUnits(c.units ?? "km");
         setReady(true);
         if (s)
@@ -430,7 +434,7 @@ function App() {
     });
   }
   async function start(p: Programme, sceneryId?: string) {
-    if (!connected) throw Error("Connect equipment or enable demo first.");
+    if (!connected) throw Error("Connect equipment first.");
     if (session) throw Error("Finish the current workout first.");
     if (p.kind !== kind)
       throw Error("Select the matching equipment type in Devices.");
@@ -891,6 +895,7 @@ function App() {
     starterRoutes.find((r) => r.kind === kind)!.poster,
     !!session,
   );
+  const visibleHistory = history.filter((s) => !s.demo);
   const equipmentPanel = (
     <EquipmentConnection
       kind={kind}
@@ -931,11 +936,7 @@ function App() {
             aria-label="Equipment connection"
             className={"connection " + (connected ? "on" : "")}
           >
-            {demo
-              ? "● Demo"
-              : connected
-                ? "● Connected"
-                : "○ Offline equipment"}
+            {connected ? "● Connected" : "○ Offline equipment"}
           </button>
         </div>
       </header>
@@ -989,11 +990,7 @@ function App() {
             sceneId={setupScene}
             onScene={setSetupScene}
             devicePanel={equipmentPanel}
-            deviceName={
-              demo
-                ? `Demo ${kind.toLowerCase()}`
-                : it.deviceName || ft.deviceName || kind
-            }
+            deviceName={it.deviceName || ft.deviceName || kind}
             automatic={demo || canControl}
             busy={busy || !ready}
             onCancel={() => setPage("Train")}
@@ -1178,8 +1175,7 @@ function App() {
             <div className="section-head live-heading">
               <div>
                 <p className="eyebrow">
-                  {session.demo ? "SIMULATED SESSION" : "YOUR SESSION"} ·{" "}
-                  {session.programme.kind}
+                  YOUR SESSION · {session.programme.kind}
                 </p>
                 <h1>{session.programme.name}</h1>
               </div>
@@ -1347,13 +1343,13 @@ function App() {
             <WeeklyProgress history={history} />
             <div className="history-overview">
               <div>
-                <strong>{history.length}</strong>
+                <strong>{visibleHistory.length}</strong>
                 <span>Sessions recorded</span>
               </div>
               <div>
                 <strong>
                   {Math.floor(
-                    history.reduce(
+                    visibleHistory.reduce(
                       (n, s) =>
                         n +
                         (Number.isFinite(s.elapsed)
@@ -1367,7 +1363,7 @@ function App() {
                 <span>Total training time</span>
               </div>
             </div>
-            {history.length === 0 ? (
+            {visibleHistory.length === 0 ? (
               <div className="empty">
                 <h2>Your story starts here.</h2>
                 <p>Your completed sessions will find a home here.</p>
@@ -1376,7 +1372,7 @@ function App() {
                 </button>
               </div>
             ) : (
-              history
+              visibleHistory
                 .slice(historyPage * pageSize, (historyPage + 1) * pageSize)
                 .map((s) => (
                   <article className="panel history" key={s.id}>
@@ -1384,7 +1380,6 @@ function App() {
                       <small>
                         {new Date(s.started).toLocaleString()} ·{" "}
                         {s.programme.kind}
-                        {s.demo ? " · DEMO" : ""}
                       </small>
                       <h3>{s.programme.name}</h3>
                       <p>
@@ -1419,11 +1414,11 @@ function App() {
                   </article>
                 ))
             )}
-            {history.length > 0 && (
+            {visibleHistory.length > 0 && (
               <Pagination
                 page={historyPage}
                 size={pageSize}
-                count={history.length}
+                count={visibleHistory.length}
                 onChange={setHistoryPage}
                 label="History pages"
               />
@@ -1628,9 +1623,13 @@ function Metric({
   );
 }
 createRoot(document.getElementById("root")!).render(
-  <VideoCatalogProvider>
-    <App />
-  </VideoCatalogProvider>,
+  needsIPhoneLanding() ? (
+    <IPhoneLanding />
+  ) : (
+    <VideoCatalogProvider>
+      <App />
+    </VideoCatalogProvider>
+  ),
 );
 if ("serviceWorker" in navigator)
   navigator.serviceWorker.register("/sw.js").catch(console.error);
