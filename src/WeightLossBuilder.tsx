@@ -18,6 +18,11 @@ export function WeightLossBuilder({
     [minutes, setMinutes] = useState<WeightLossOptions["minutes"]>(20),
     [level, setLevel] = useState<WeightLossOptions["level"]>("starting"),
     [values, setValues] = useState({ Treadmill: "4", Bike: "60", Rower: "3" }),
+    [walking, setWalking] = useState({
+      minSpeed: "3",
+      maxSpeed: "4.5",
+      maxIncline: "2",
+    }),
     [error, setError] = useState("");
   const limits = weightLossLimits[kind];
   return (
@@ -32,10 +37,16 @@ export function WeightLossBuilder({
             setError("");
             onCreate(
               weightLossProgramme({
-                kind,
+                ...(kind === "Treadmill"
+                  ? {
+                      kind,
+                      minSpeed: Number(walking.minSpeed),
+                      maxSpeed: Number(walking.maxSpeed),
+                      maxIncline: Number(walking.maxIncline),
+                    }
+                  : { kind, comfortable: Number(values[kind]) }),
                 minutes,
                 level,
-                comfortable: Number(values[kind]),
               }),
             );
           } catch (error) {
@@ -90,23 +101,57 @@ export function WeightLossBuilder({
               <option value="active">Already active</option>
             </select>
           </label>
-          <label>
-            {limits.label}
-            <input
-              required
-              type="number"
-              inputMode="decimal"
-              min={limits.min}
-              max={limits.max}
-              step={limits.step}
-              value={values[kind]}
-              onChange={(e) => setValues({ ...values, [kind]: e.target.value })}
-            />
-          </label>
+          {kind === "Treadmill" ? (
+            <>
+              {(
+                [
+                  ["minSpeed", "Minimum walking speed (km/h)", 1, 8, 0.1],
+                  ["maxSpeed", "Maximum walking speed (km/h)", 1, 8, 0.1],
+                  ["maxIncline", "Maximum incline (%)", 0, 15, 0.5],
+                ] as const
+              ).map(([key, label, min, max, step]) => (
+                <label key={key}>
+                  {label}
+                  <input
+                    required
+                    type="number"
+                    inputMode="decimal"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={walking[key]}
+                    onChange={(e) => {
+                      setWalking({ ...walking, [key]: e.target.value });
+                      setError("");
+                    }}
+                  />
+                </label>
+              ))}
+            </>
+          ) : (
+            <>
+              <label>
+                {limits.label}
+                <input
+                  required
+                  type="number"
+                  inputMode="decimal"
+                  min={limits.min}
+                  max={limits.max}
+                  step={limits.step}
+                  value={values[kind]}
+                  onChange={(e) =>
+                    setValues({ ...values, [kind]: e.target.value })
+                  }
+                />
+              </label>
+            </>
+          )}
         </div>
         <p className="subtle">
-          Choose an effort where you can still talk. Warm-up and cooldown are
-          included. Review targets before saving.
+          {kind === "Treadmill"
+            ? "Keep a conversational effort. Hills use your mid-range speed; warm-up, recovery and cooldown stay flat at your minimum. Use 0% for flat walking."
+            : "Choose an effort where you can still talk. Warm-up and cooldown are included. Review targets before saving."}
         </p>
         <p className="subtle">
           Weight change also depends on nutrition and recovery.

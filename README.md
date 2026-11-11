@@ -159,12 +159,12 @@ remain in the unit suite.
 ## Tailored weight-loss sessions
 
 Library → Weight-loss programmes opens a small optional builder. Choose a
-machine, 15/20/30/45 minutes, activity level and your own comfortable walking
-speed, cycling power or rowing resistance. Starting out generates a steady
+machine, 15/20/30/45 minutes, activity level and your treadmill speed/incline
+limits, comfortable cycling power or rowing resistance. Starting out generates a steady
 session; Already active alternates comfortable effort with easier recovery.
 Every session includes warm-up and cooldown and stays at or below the supplied
-comfortable target. Longer durations add time rather than intensity; treadmill
-sessions stay flat. No body measurements, calorie targets or weight-loss
+comfortable target. Longer durations add time rather than intensity. Treadmill
+sessions use the selected speed and incline limits. No body measurements, calorie targets or weight-loss
 promises are used.
 
 Review programme opens the existing editor. Nothing is saved or started until
@@ -172,7 +172,19 @@ the user takes the usual explicit actions. Saved programmes use existing local
 storage, backup/restore, equipment-range checks and start controls. The library
 now also includes a 20-minute duration filter.
 
-Validation: 30 generation tests cover all machine/duration/level combinations,
+Validation: 47 generation tests cover all machine/duration/level combinations,
 exact duration, effort ceilings and invalid inputs.
 `node scripts/weight-loss-smoke.mjs` checks tailoring, editor review, saving,
 actual persisted targets, reload and re-editing at 320/412/1280 pixels.
+
+### Treadmill tailoring limits
+
+Minimum and maximum walking speeds (1–8 km/h, 0.1 steps) bound every generated
+segment. Maximum incline (0–15%, 0.5 steps) limits the grade; zero keeps the whole
+session flat. Starting out uses the midpoint speed with roughly half the incline
+limit. Already active alternates faster flat efforts at maximum speed with hills
+at midpoint speed (rounded down to 0.1 km/h). Warm-up, recovery and cooldown use minimum speed and 0% grade.
+Equal speed bounds create a fixed-speed session. Reversed/nonfinite/out-of-range
+limits are rejected. These are generation limits; saved programmes remain
+editable, and existing equipment capability/range validation still applies before
+starting. Previously saved programmes are unchanged.

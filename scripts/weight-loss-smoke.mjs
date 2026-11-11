@@ -15,6 +15,7 @@ try {
       "starting",
       "20",
     ],
+    [412, "Treadmill", "4.2", "", "active", "30"],
     [412, "Bike", "85", "Comfortable power (W)", "active", "30"],
     [1280, "Rower", "4", "Comfortable resistance level", "active", "45"],
   ]) {
@@ -38,10 +39,31 @@ try {
     await builder
       .getByRole("combobox", { name: "Activity level", exact: true })
       .selectOption(level);
-    await builder.getByLabel(label, { exact: true }).fill(target);
-    if (width === 412)
+    if (kind === "Treadmill") {
+      await builder
+        .getByLabel("Minimum walking speed (km/h)", { exact: true })
+        .fill("5");
+      await builder
+        .getByLabel("Maximum walking speed (km/h)", { exact: true })
+        .fill(target);
+      await builder
+        .getByLabel("Maximum incline (%)", { exact: true })
+        .fill("2");
+      await builder
+        .getByRole("button", { name: "Review programme", exact: true })
+        .click();
+      await builder
+        .getByRole("alert")
+        .filter({ hasText: "Minimum speed must be at most maximum speed." })
+        .waitFor();
+      assert.equal(await page.getByRole("dialog").count(), 0);
+      await builder
+        .getByLabel("Minimum walking speed (km/h)", { exact: true })
+        .fill("3");
+    } else await builder.getByLabel(label, { exact: true }).fill(target);
+    if (width === 412 && kind === "Treadmill")
       await page.screenshot({
-        path: "artifacts/previews/weight-loss-builder.png",
+        path: "artifacts/previews/weight-loss-treadmill-bounds.png",
         fullPage: true,
       });
     assert(
@@ -94,7 +116,29 @@ try {
     assert.equal(stored.kind, kind);
     const key =
       kind === "Treadmill" ? "speed" : kind === "Bike" ? "power" : "resistance";
-    assert.equal(Math.max(...stored.blocks.map((b) => b[key])), Number(target));
+    if (kind === "Treadmill") {
+      assert(
+        stored.blocks.every(
+          (b) =>
+            b.speed >= 3 &&
+            b.speed <= Number(target) &&
+            b.incline >= 0 &&
+            b.incline <= 2,
+        ),
+      );
+      assert(stored.blocks.some((b) => b.incline > 0));
+      assert.equal(stored.blocks[0].incline, 0);
+      assert.equal(stored.blocks.at(-1).incline, 0);
+      if (level === "active") {
+        const hills = stored.blocks.filter((b) => b.incline > 0);
+        assert(hills.every((b) => b.speed < Number(target)));
+        assert.equal(Math.max(...hills.map((b) => b.incline)), 2);
+      }
+    } else
+      assert.equal(
+        Math.max(...stored.blocks.map((b) => b[key])),
+        Number(target),
+      );
     await page.reload();
     await openLibrary(page);
     await page.getByRole("heading", { name, exact: true }).waitFor();
