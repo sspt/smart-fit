@@ -1,3 +1,5 @@
+import { WeightLossBuilder } from "./WeightLossBuilder";
+import "./weight-loss.css";
 import { IPhoneLanding } from "./IPhoneLanding";
 import { needsIPhoneLanding } from "./browserSupport";
 import "./iphone-landing.css";
@@ -1043,6 +1045,11 @@ function App() {
                 <span>Create programme</span>
               </button>
             </section>
+            <WeightLossBuilder
+              initialKind={kind}
+              onCreate={setDraft}
+              disabled={!!session || busy}
+            />
             <div className="programme-filters">
               <label className="programme-search">
                 <AppIcon name="search" size={18} />
@@ -1066,7 +1073,7 @@ function App() {
                 role="group"
                 aria-label="Filter by duration"
               >
-                {["All", "15", "30", "45"].map((duration) => (
+                {["All", "15", "20", "30", "45"].map((duration) => (
                   <button
                     key={duration}
                     aria-pressed={durationFilter === duration}

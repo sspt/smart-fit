@@ -155,3 +155,24 @@ copying the link, absence of app API calls, normal app access, hidden simulated
 records and preservation of backup history. The previous feedback demo-recovery
 smoke fixture is no longer a supported entry path; feedback calculation tests
 remain in the unit suite.
+
+## Tailored weight-loss sessions
+
+Library → Weight-loss programmes opens a small optional builder. Choose a
+machine, 15/20/30/45 minutes, activity level and your own comfortable walking
+speed, cycling power or rowing resistance. Starting out generates a steady
+session; Already active alternates comfortable effort with easier recovery.
+Every session includes warm-up and cooldown and stays at or below the supplied
+comfortable target. Longer durations add time rather than intensity; treadmill
+sessions stay flat. No body measurements, calorie targets or weight-loss
+promises are used.
+
+Review programme opens the existing editor. Nothing is saved or started until
+the user takes the usual explicit actions. Saved programmes use existing local
+storage, backup/restore, equipment-range checks and start controls. The library
+now also includes a 20-minute duration filter.
+
+Validation: 30 generation tests cover all machine/duration/level combinations,
+exact duration, effort ceilings and invalid inputs.
+`node scripts/weight-loss-smoke.mjs` checks tailoring, editor review, saving,
+actual persisted targets, reload and re-editing at 320/412/1280 pixels.

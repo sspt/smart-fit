@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -224,6 +224,11 @@ once(
   "c.jsx(oh, { children: c.jsx(Xv, {}) })",
   "__feedback.needsIPhoneLanding() ? c.jsx(__feedback.IPhoneLanding,{}) : c.jsx(oh, { children: c.jsx(Xv, {}) })",
 );
+once(
+  'c.jsx("div", {\n                  className: "programme-filters",',
+  'c.jsx(__feedback.WeightLossBuilder,{initialKind:H,onCreate:Ie,disabled:!!v||Ce}), c.jsx("div", {\n                  className: "programme-filters",',
+);
+once('["All", "15", "30", "45"]', '["All", "15", "20", "30", "45"]');
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";
@@ -237,7 +242,9 @@ const style =
   "\n" +
   (await fs.readFile("src/settings-clean.css", "utf8")) +
   "\n" +
-  (await fs.readFile("src/iphone-landing.css", "utf8"));
+  (await fs.readFile("src/iphone-landing.css", "utf8")) +
+  "\n" +
+  (await fs.readFile("src/weight-loss.css", "utf8"));
 const cssPath =
   "/assets/feedback-" +
   createHash("sha256").update(style).digest("hex").slice(0, 12) +
