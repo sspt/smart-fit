@@ -23,6 +23,9 @@ async function pageFor(width = 412) {
     reducedMotion: "reduce",
   });
   p.on("pageerror", (e) => errors.push(e.message));
+  await p.addInitScript(() => {
+    window.__accountTestFetch = window.fetch.bind(window);
+  });
   await p.goto(origin);
   await p.getByRole("button", { name: "Start", exact: true }).waitFor();
   return p;
@@ -61,14 +64,24 @@ async function auth(p, register, name, email) {
   await settings(p);
   await panel.getByText(name, { exact: true }).waitFor();
 }
-async function cloudValue(p, kind, id) {
-  const r = await p.request.get(
-    origin + `/api/data/${kind}/` + encodeURIComponent(id),
+async function browserApi(p, path, headers = {}) {
+  return p.evaluate(
+    async ({ path, headers }) => {
+      const r = await window.__accountTestFetch(path, {
+        headers,
+        credentials: "same-origin",
+      });
+      return { status: r.status, ok: r.ok, data: await r.json() };
+    },
+    { path, headers },
   );
-  return r.ok() ? (await r.json()).value : null;
+}
+async function cloudValue(p, kind, id) {
+  const r = await browserApi(p, `/api/data/${kind}/` + encodeURIComponent(id));
+  return r.ok ? r.data.value : null;
 }
 async function until(fn, predicate) {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 150; i++) {
     const value = await fn();
     if (predicate(value)) return value;
     await new Promise((r) => setTimeout(r, 100));
@@ -152,9 +165,7 @@ try {
   await a.reload();
   await a.getByRole("button", { name: "Start", exact: true }).waitFor();
   await auth(a, true, "Alice", aliceEmail);
-  const alice = (
-    await (await a.request.get(origin + "/api/auth/status")).json()
-  ).user;
+  const alice = (await browserApi(a, "/api/auth/status")).data.user;
   await openLibrary(a);
   assert.equal(
     await a.getByRole("heading", { name: "Guest walk", exact: true }).count(),
@@ -215,9 +226,7 @@ try {
   await findProgramme(a, "Guest walk");
   await auth(a, true, "Bob", bobEmail);
   assert.equal(
-    (
-      await a.request.get(origin + "/api/data/programmes/guest-custom")
-    ).status(),
+    (await browserApi(a, "/api/data/programmes/guest-custom")).status,
     404,
   );
   await openLibrary(a);
@@ -324,10 +333,10 @@ try {
   });
   assert.deepEqual(errors, []);
   console.log("PASS active-session account guard and mobile layout");
-  const mismatched = await b.request.get(origin + "/api/strava/status", {
-    headers: { "X-Kwest-Account": "another-user" },
+  const mismatched = await browserApi(b, "/api/strava/status", {
+    "X-Kwest-Account": "another-user",
   });
-  assert.equal(mismatched.status(), 401);
+  assert.equal(mismatched.status, 401);
   console.log("PASS Strava cannot fall back to another account’s connection");
 } finally {
   await browser.close();

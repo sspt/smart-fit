@@ -1,10 +1,11 @@
 {
   "origin": "https://kwest.fit",
   "capturedAt": "2026-11-09T21:10:49.329Z",
-  "originalHtmlSha256": "6b27b211665bab5475ea5255761b8977910b68e78bfdadb2bd9b4888d5df7358",
+  "originalHtmlSha256": "b48b30ccfbca99876a0b4eecd2c9ea2c0ea21f13d9d1a7397cc74572ae45f013",
   "visualVersion": "4f4c2b7f2a19",
   "applicationScripts": [
     "/assets/bluetooth-573f5e5911e7.js"
   ],
-  "note": "Application JavaScript is unchanged from production. Worker code, credentials and deployment settings are untouched."
+  "note": "Application JavaScript is unchanged from production. Worker code, credentials and deployment settings are untouched.",
+  "verifiedDeployment": "ec699a91-307f-4977-9d5c-284fc9937ef2"
 }

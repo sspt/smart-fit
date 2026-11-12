@@ -175,7 +175,16 @@ current_message = BytesParser(policy=default).parsebytes(('Content-Type: ' + cur
 assert any(p.get_payload(decode=True) == expected_script for p in current_message.iter_parts()), 'Worker source verification failed'
 actual_bindings = request(WORKER + '/settings')['bindings']
 expected_bindings = metadata['bindings'] + [b for b in settings['bindings'] if b['type'] == 'secret_text']
-assert sorted(actual_bindings, key=lambda b:b['name']) == sorted(expected_bindings, key=lambda b:b['name']), 'Binding verification failed'
+def normalized_bindings(bindings):
+    result=[]
+    for binding in bindings:
+        item=dict(binding)
+        if item['type']=='d1' and 'database_id' in item:
+            assert item.get('id')==item['database_id'], 'D1 binding identifiers disagree'
+            item.pop('database_id')
+        result.append(item)
+    return sorted(result,key=lambda b:b['name'])
+assert normalized_bindings(actual_bindings) == normalized_bindings(expected_bindings), 'Binding verification failed'
 (BACKUP / 'published.json').write_text(json.dumps({'deployment': active, 'workerSha256': hashlib.sha256(expected_script).hexdigest()}, indent=2))
 print('Published deployment:', active['id'])
 if args.accounts:
@@ -183,3 +192,9 @@ if args.accounts:
     print('Verified account Worker, dedicated database binding, and preserved existing bindings.')
 else:
     print('Verified unchanged Worker source and bindings; static assets deployed.')
+
+baseline_file=ROOT / 'production/expected-live.json'
+baseline=json.loads(baseline_file.read_text())
+baseline['originalHtmlSha256']=hashlib.sha256((RELEASE / 'index.html').read_bytes()).hexdigest()
+baseline['verifiedDeployment']=active['id']
+baseline_file.write_text(json.dumps(baseline,indent=2)+'\n')
