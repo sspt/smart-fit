@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import { chromium } from "@playwright/test";
 import assert from "node:assert/strict";
 import { openLibrary } from "./ui-helpers.mjs";
@@ -10,6 +11,11 @@ const tag = crypto.randomUUID(),
   aliceEmail = `alice-${tag}@example.test`,
   bobEmail = `bob-${tag}@example.test`,
   password = "Test-" + crypto.randomUUID() + "!";
+if (process.env.LIVE_TEST_RECEIPT)
+  await fs.writeFile(
+    process.env.LIVE_TEST_RECEIPT,
+    JSON.stringify({ emails: [aliceEmail, bobEmail] }),
+  );
 const errors = [];
 async function pageFor(width = 412) {
   const p = await browser.newPage({

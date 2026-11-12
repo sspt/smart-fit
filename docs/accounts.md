@@ -13,15 +13,12 @@ Account switching is disabled during an active or recovered workout.
 
 ## Deploy configuration
 
-1. Select the database. A new `kwest-fit-users` database was requested, but
-   Cloudflare rejected it with error 7406: the account's database-count limit is
-   10. Either raise that limit, or explicitly choose an existing database.
-   `python scripts/provision-accounts-db.py` creates a dedicated database;
-   `python scripts/provision-accounts-db.py --existing DATABASE_NAME` uses the
-   owner-selected database. Both apply `worker/migrations/0001_accounts.sql` and
-   write the non-secret binding descriptor to `production/accounts-database.json`.
-   All tables/indexes use the `fit_*` namespace. Existing unrelated tables are
-   untouched; an occupied namespace without our schema marker is rejected.
+1. The dedicated `kwest-fit-users` database is provisioned; its non-secret binding
+   descriptor is `production/accounts-database.json`. The four retired kwest
+   databases were removed at the owner's request to free database capacity.
+   `python scripts/provision-accounts-db.py` applies the idempotent account schema.
+   All tables/indexes use the `fit_*` namespace. An occupied namespace without our
+   schema marker is rejected.
 2. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` securely in the environment
    (never in source or chat). The deployment script installs supplied values as
    Worker secrets. Existing production secrets are preserved when these are not
