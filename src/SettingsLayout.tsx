@@ -1,5 +1,8 @@
+import { AccountPanel } from "./Accounts";
+import { accountState } from "./accountClient";
 import type { ReactNode } from "react";
 type Props = {
+  busy?: boolean;
   units: ReactNode;
   connection?: ReactNode;
   backup: ReactNode;
@@ -16,10 +19,15 @@ export function SettingsLayout(p: Props) {
           <h2>Preferences</h2>
           {p.units}
         </section>
+        <AccountPanel disabled={p.busy} />
         {p.connection}
         <section className="settings-group">
           <h2>Your data</h2>
-          <p className="subtle">Stored on this device. Keep a backup.</p>
+          <p className="subtle">
+            {accountState().user
+              ? "Saved to your account and available offline. Keep a backup."
+              : "Stored on this device. Keep a backup."}
+          </p>
           <div className="actions">{p.backup}</div>
         </section>
         <details className="settings-tools">

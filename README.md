@@ -188,3 +188,13 @@ Equal speed bounds create a fixed-speed session. Reversed/nonfinite/out-of-range
 limits are rejected. These are generation limits; saved programmes remain
 editable, and existing equipment capability/range validation still applies before
 starting. Previously saved programmes are unchanged.
+
+## Accounts and database-backed sync
+
+Settings → Account adds email/password accounts and configurable Google/Strava
+sign-in. Programmes, history and preferences sync per user while preserving
+browser-only use and an explicit device-data import. Account changes are blocked
+during workouts. See [account setup, database choice, data safety and validation](docs/accounts.md).
+The account-enabled Worker is a reviewed source change; deployment now uses
+`npm run deploy` (the production frontend plus account Worker), not the older
+Vite shell. Deployment is gated on an explicitly provisioned database binding.

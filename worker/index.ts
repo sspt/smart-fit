@@ -1,3 +1,9 @@
+import {
+  accountsHandler,
+  accountUser,
+  digest,
+  type AccountEnv,
+} from "./accounts";
 import { stravaHandler, type StravaEnv } from "./strava";
 export { StravaSession } from "./strava";
 import { serveMedia } from "./media";
@@ -5,14 +11,49 @@ import { activation } from "./activation";
 export default {
   async fetch(
     r: Request,
-    env: StravaEnv & {
-      SCENERY?: any;
-      ASSETS: { fetch: (r: Request) => Promise<Response> };
-    },
+    env: StravaEnv &
+      AccountEnv & {
+        SCENERY?: any;
+        ASSETS: { fetch: (r: Request) => Promise<Response> };
+      },
     context?: { waitUntil: (task: Promise<unknown>) => void },
   ) {
     const path = new URL(r.url).pathname;
-    if (path.startsWith("/api/strava/")) return stravaHandler(r, env);
+    if (path === "/api/auth/status" && env.DB && context)
+      context.waitUntil(
+        env.DB.batch([
+          env.DB.prepare("DELETE FROM fit_sessions WHERE expires_at<?").bind(
+            Date.now(),
+          ),
+          env.DB.prepare(
+            "DELETE FROM fit_oauth_transactions WHERE expires_at<?",
+          ).bind(Date.now()),
+          env.DB.prepare("DELETE FROM fit_auth_limits WHERE expires_at<?").bind(
+            Date.now(),
+          ),
+        ]).catch(() => {}),
+      );
+    if (
+      path.startsWith("/api/auth/") ||
+      path === "/api/data" ||
+      path.startsWith("/api/data/")
+    )
+      return accountsHandler(r, env);
+    if (path.startsWith("/api/strava/")) {
+      const user = await accountUser(r, env);
+      if (
+        r.headers.has("X-Kwest-Account") &&
+        r.headers.get("X-Kwest-Account") !== user?.id
+      )
+        return Response.json(
+          { error: "Sign in again before syncing Strava." },
+          { status: 401, headers: { "Cache-Control": "no-store" } },
+        );
+      return stravaHandler(r, {
+        ...env,
+        ACCOUNT_SESSION_ID: user ? await digest("user:" + user.id) : undefined,
+      });
+    }
     if (path.startsWith("/media/")) {
       if (!env.SCENERY)
         return new Response("Media unavailable", { status: 503 });

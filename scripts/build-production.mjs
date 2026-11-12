@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -38,7 +38,8 @@ const built = await build({
           namespace: "production-react",
         }));
         b.onLoad({ filter: /.*/, namespace: "production-react" }, () => ({
-          contents: "export const useState=(...args)=>m.useState(...args);",
+          contents:
+            "export const useState=(...args)=>m.useState(...args); export const useEffect=(...args)=>m.useEffect(...args);",
         }));
       },
     },
@@ -137,7 +138,7 @@ const data = jsxChildren(controls[4]),
 if (actions.length !== 4 || data.length !== 4 || maintenance.length !== 3)
   throw Error("Unexpected Settings actions");
 const raw = (n) => n.getText(settingsAst);
-const replacement = `c.jsx(__feedback.SettingsLayout,{units:${raw(controls[0])},connection:${raw(controls[2])},backup:c.jsxs(c.Fragment,{children:[${raw(actions[0])},${raw(actions[1])}]}),refresh:${raw(maintenance[2])},install:${raw(actions[3])},erase:${raw(data[3])}})`;
+const replacement = `c.jsx(__feedback.SettingsLayout,{busy:!!v,units:${raw(controls[0])},connection:${raw(controls[2])},backup:c.jsxs(c.Fragment,{children:[${raw(actions[0])},${raw(actions[1])}]}),refresh:${raw(maintenance[2])},install:${raw(actions[3])},erase:${raw(data[3])}})`;
 code =
   code.slice(0, settingsPanel.getStart(settingsAst)) +
   replacement +
@@ -166,6 +167,10 @@ function cleanConnection(node) {
       .replace('"summary"', '"h2"')
       .replaceAll("Connections \\xB7 Strava", "Strava")
       .replace("Data, backups & installation", "Your data")
+      .replace(
+        "Upload indoor workouts to your Strava account. Your local history stays on this device.",
+        "Upload indoor workouts to your Strava account.",
+      )
       .replace(
         "Older workouts can be synced individually from your Journal. Offline uploads wait on this device and resume when the app is open and online. Demo sessions are excluded.",
         "Workouts sync when the app is open and online.",
@@ -222,13 +227,32 @@ code =
   code.slice(journal.end);
 once(
   "c.jsx(oh, { children: c.jsx(Xv, {}) })",
-  "__feedback.needsIPhoneLanding() ? c.jsx(__feedback.IPhoneLanding,{}) : c.jsx(oh, { children: c.jsx(Xv, {}) })",
+  "__feedback.needsIPhoneLanding() ? c.jsx(__feedback.IPhoneLanding,{}) : c.jsx(__feedback.AccountBootstrap,{children:c.jsx(oh, { children: c.jsx(Xv, {}) })})",
 );
 once(
   'c.jsx("div", {\n                  className: "programme-filters",',
   'c.jsx(__feedback.WeightLossBuilder,{initialKind:H,onCreate:Ie,disabled:!!v||Ce}), c.jsx("div", {\n                  className: "programme-filters",',
 );
 once('["All", "15", "30", "45"]', '["All", "15", "20", "30", "45"]');
+once(
+  "  }),\n  nr = async (a, i) =>",
+  "  }).then(__feedback.wrapAccountDatabase),\n  nr = async (a, i) =>",
+);
+once(
+  'new URL(location.href).searchParams.has("strava")',
+  '(new URL(location.href).searchParams.has("strava") || new URL(location.href).searchParams.has("account"))',
+);
+once("Delete local workout history?", "Delete workout history?");
+once(
+  'children: "Private by design. Stored on your device.",',
+  'children: __feedback.accountState().user ? "Private account storage. Available offline." : "Private by design. Stored on your device.",',
+);
+const historyCaps = code.split(".slice(0, 200)").length - 1;
+if (historyCaps !== 3)
+  throw Error("Production history retention contract changed");
+code = code
+  .split(".slice(0, 200)")
+  .join(".slice(0, __feedback.accountState().user ? undefined : 200)");
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";
@@ -244,7 +268,9 @@ const style =
   "\n" +
   (await fs.readFile("src/iphone-landing.css", "utf8")) +
   "\n" +
-  (await fs.readFile("src/weight-loss.css", "utf8"));
+  (await fs.readFile("src/weight-loss.css", "utf8")) +
+  "\n" +
+  (await fs.readFile("src/accounts.css", "utf8"));
 const cssPath =
   "/assets/feedback-" +
   createHash("sha256").update(style).digest("hex").slice(0, 12) +

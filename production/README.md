@@ -13,3 +13,9 @@ new source components and applies guarded edits to this frontend baseline.
 The older `npm run build` remains useful for development but is not the release
 path until the full frontend has been reconstructed. Deployment retains the live
 Worker modules and bindings with `scripts/deploy-visual-release.py`.
+
+The account release additionally compiles the reviewed `worker/` source using
+`npm run build:worker`. Use `npm run deploy` / `--accounts` only after selecting
+and provisioning the D1 binding. Static-only releases continue to retain live
+Worker code. The verified live Worker digest is recorded separately after an
+account-enabled deployment. See `docs/accounts.md` for setup and rollback notes.

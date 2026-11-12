@@ -1,0 +1,61 @@
+.account-loading {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #dce9df;
+  background: #0b1c16;
+  margin: 0;
+  max-width: none;
+}
+.account-panel .account-options {
+  margin-top: 14px;
+  border: 0;
+  background: none;
+  padding: 0;
+}
+.account-options > summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 10px 0;
+}
+.account-options form {
+  margin: 14px 0;
+}
+.account-options fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.account-panel input {
+  width: 100%;
+  min-width: 0;
+}
+.account-panel .account-options > button {
+  margin: 8px 0;
+}
+.account-conflicts {
+  border: 1px solid #967f51;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 12px;
+}
+.account-conflicts li {
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+}
+.account-panel .actions {
+  margin: 10px 0;
+}
+.account-panel button {
+  min-height: 44px;
+  white-space: normal;
+}
+
+.account-panel p {
+  overflow-wrap: anywhere;
+}

@@ -1,4 +1,5 @@
 """Deploy prepared brand assets while retaining production Worker modules and bindings."""
+import argparse
 import base64
 import hashlib
 import json
@@ -12,12 +13,20 @@ import urllib.request
 import urllib.error
 import uuid
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--accounts', action='store_true', help='Deploy the tested account Worker and its configured database binding')
+args = parser.parse_args()
 ROOT = Path(__file__).resolve().parent.parent
 RELEASE = ROOT / 'artifacts/visual-release'
 API = 'https://api.cloudflare.com/client/v4'
 ACCOUNT = 'becd45ae768351f6a81f1c51f7e7528b'
 WORKER = f'/accounts/{ACCOUNT}/workers/scripts/smart-fit'
 TOKEN = os.environ['CLOUDFLARE_API_TOKEN']
+if args.accounts:
+    if not (ROOT / 'production/accounts-database.json').exists():
+        raise RuntimeError('Provision and select the account database before deployment')
+    subprocess.check_call(['node', 'scripts/build-accounts-worker.mjs'], cwd=ROOT)
+
 BACKUP = ROOT / 'artifacts/visual-deploy'
 BACKUP.mkdir(parents=True, exist_ok=True)
 
@@ -77,13 +86,19 @@ manifest = json.loads(subprocess.check_output(['node', '-e', node, str(RELEASE)]
 assert '/index.html' in manifest and '/logo.svg' in manifest
 # The release is based on a versioned production snapshot. Refuse stale releases.
 subprocess.check_call(['node', 'scripts/verify-production-baseline.mjs'], cwd=ROOT)
+# Configure supplied Google credentials without printing or storing them in source.
+if args.accounts and all(os.environ.get(k) for k in ['GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET']):
+    for name in ['GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET']:
+        request(WORKER + '/secrets', 'PUT', {'name':name,'text':os.environ[name],'type':'secret_text'})
 settings = request(WORKER + '/settings')
 deployment = request(WORKER + '/deployments')['deployments'][0]
 version = request(WORKER + '/versions/' + deployment['versions'][0]['version_id'])
 source, content_type = request(WORKER, raw=True)
 baseline_worker = (ROOT / 'production/worker/index.js').read_bytes()
 check_message = BytesParser(policy=default).parsebytes(('Content-Type: ' + content_type + '\r\n\r\n').encode() + source)
-assert any(p.get_payload(decode=True) == baseline_worker for p in check_message.iter_parts()), 'Worker changed since baseline capture; reconcile before deploying'
+expected_hash_file = ROOT / 'production/expected-worker.sha256'
+expected_hash = expected_hash_file.read_text().strip() if expected_hash_file.exists() else hashlib.sha256(baseline_worker).hexdigest()
+assert any(hashlib.sha256(p.get_payload(decode=True)).hexdigest() == expected_hash for p in check_message.iter_parts()), 'Worker changed since baseline capture; reconcile before deploying'
 (BACKUP / 'worker.multipart').write_bytes(source)
 (BACKUP / 'worker-content-type.txt').write_text(content_type)
 (BACKUP / 'settings.json').write_text(json.dumps(settings, indent=2))
@@ -135,18 +150,36 @@ metadata = {
 for key in ['observability', 'tail_consumers', 'placement', 'limits']:
     if settings.get(key):
         metadata[key] = settings[key]
+if args.accounts:
+    db = json.loads((ROOT / 'production/accounts-database.json').read_text())
+    previous = next((b for b in metadata['bindings'] if b['name'] == 'DB'), None)
+    assert previous is None or previous.get('id') == db['id'], 'A different database is already bound'
+    if previous is None:
+        metadata['bindings'].append({'name':'DB','type':'d1','id':db['id']})
+expected_script = (ROOT / 'artifacts/accounts-worker/index.js').read_bytes() if args.accounts else script.get_payload(decode=True)
 items = [('metadata', json.dumps(metadata).encode(), 'application/json', None)]
 for part in parts:
     name = part.get_param('name', header='content-disposition') or part.get_filename()
+    if args.accounts and name.endswith('.map'):
+        continue
     module_type = 'application/javascript+module' if part is script else part.get_content_type()
-    items.append((name, part.get_payload(decode=True), module_type, part.get_filename() or name))
+    items.append((name, expected_script if part is script else part.get_payload(decode=True), module_type, part.get_filename() or name))
+if args.accounts:
+    items.append(('index.js.map', (ROOT / 'artifacts/accounts-worker/index.js.map').read_bytes(), 'application/source-map', 'index.js.map'))
 data, upload_type = multipart(items)
+subprocess.check_call(['node', 'scripts/verify-production-baseline.mjs'], cwd=ROOT)
 request(WORKER, 'PUT', data, content_type=upload_type)
 active = request(WORKER + '/deployments')['deployments'][0]
 current, current_type = request(WORKER, raw=True)
 current_message = BytesParser(policy=default).parsebytes(('Content-Type: ' + current_type + '\r\n\r\n').encode() + current)
-assert any(p.get_payload(decode=True) == script.get_payload(decode=True) for p in current_message.iter_parts()), 'Worker source verification failed'
-assert request(WORKER + '/settings')['bindings'] == settings['bindings'], 'Binding verification failed'
-(BACKUP / 'published.json').write_text(json.dumps({'deployment': active, 'workerSha256': hashlib.sha256(script.get_payload(decode=True)).hexdigest()}, indent=2))
+assert any(p.get_payload(decode=True) == expected_script for p in current_message.iter_parts()), 'Worker source verification failed'
+actual_bindings = request(WORKER + '/settings')['bindings']
+expected_bindings = metadata['bindings'] + [b for b in settings['bindings'] if b['type'] == 'secret_text']
+assert sorted(actual_bindings, key=lambda b:b['name']) == sorted(expected_bindings, key=lambda b:b['name']), 'Binding verification failed'
+(BACKUP / 'published.json').write_text(json.dumps({'deployment': active, 'workerSha256': hashlib.sha256(expected_script).hexdigest()}, indent=2))
 print('Published deployment:', active['id'])
-print('Verified unchanged Worker source and bindings; static visual assets deployed.')
+if args.accounts:
+    (ROOT / 'production/expected-worker.sha256').write_text(hashlib.sha256(expected_script).hexdigest() + '\n')
+    print('Verified account Worker, dedicated database binding, and preserved existing bindings.')
+else:
+    print('Verified unchanged Worker source and bindings; static assets deployed.')

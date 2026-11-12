@@ -1,4 +1,5 @@
 export type StravaEnv = {
+  ACCOUNT_SESSION_ID?: string;
   STRAVA_CLIENT_ID?: string;
   STRAVA_CLIENT_SECRET?: string;
   STRAVA_SESSIONS?: any;
@@ -51,7 +52,7 @@ export async function stravaHandler(
     return path.endsWith("/status")
       ? json({ configured: false, connected: false })
       : json({ error: "Strava is not configured yet." }, 503);
-  let id = cookieValue(r),
+  let id = env.ACCOUNT_SESSION_ID || cookieValue(r),
     fresh = false;
   if (!id || !/^[a-f0-9]{64}$/.test(id)) {
     if (path.endsWith("/connect")) {

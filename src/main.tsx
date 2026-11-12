@@ -1,3 +1,6 @@
+import { accountState } from "./accountClient";
+import { AccountBootstrap } from "./Accounts";
+import "./accounts.css";
 import { WeightLossBuilder } from "./WeightLossBuilder";
 import "./weight-loss.css";
 import { IPhoneLanding } from "./IPhoneLanding";
@@ -84,7 +87,9 @@ function App() {
     [immersiveSession, setImmersiveSession] = useState<string | null>(null);
   const ft = useFtms(),
     it = useIfit();
-  const [page, setPage] = useState("Train"),
+  const [page, setPage] = useState(
+      new URL(location.href).searchParams.has("account") ? "Settings" : "Train",
+    ),
     [programmes, setProgrammes] = useState<Programme[]>(templates),
     [history, setHistory] = useState<Session[]>([]),
     [session, setSession] = useState<Session | null>(null),
@@ -716,9 +721,14 @@ function App() {
   async function archive(status: string) {
     if (!session) return;
     const completed = { ...session, status };
-    await save("history", [completed, ...history].slice(0, 200));
+    await save(
+      "history",
+      [completed, ...history].slice(0, accountState().user ? undefined : 200),
+    );
     await save("active", null);
-    setHistory((h) => [completed, ...h].slice(0, 200));
+    setHistory((h) =>
+      [completed, ...h].slice(0, accountState().user ? undefined : 200),
+    );
     setRecap(completed);
     setSession(null);
     setRunning(false);
@@ -1434,6 +1444,7 @@ function App() {
         )}
         {page === "Settings" && (
           <SettingsLayout
+            busy={!!session}
             units={
               <label>
                 Display units
@@ -1500,7 +1511,7 @@ function App() {
                                 Array.isArray(s.samples) &&
                                 typeof s.started === "number",
                             )
-                            .slice(0, 200),
+                            .slice(0, accountState().user ? undefined : 200),
                         );
                         if (v.settings) {
                           setUnits(v.settings.units === "mi" ? "mi" : "km");
@@ -1558,7 +1569,7 @@ function App() {
                 className="danger"
                 disabled={!!session}
                 onClick={() => {
-                  if (confirm("Delete local workout history?")) setHistory([]);
+                  if (confirm("Delete workout history?")) setHistory([]);
                 }}
               >
                 Delete history
@@ -1633,9 +1644,11 @@ createRoot(document.getElementById("root")!).render(
   needsIPhoneLanding() ? (
     <IPhoneLanding />
   ) : (
-    <VideoCatalogProvider>
-      <App />
-    </VideoCatalogProvider>
+    <AccountBootstrap>
+      <VideoCatalogProvider>
+        <App />
+      </VideoCatalogProvider>
+    </AccountBootstrap>
   ),
 );
 if ("serviceWorker" in navigator)
