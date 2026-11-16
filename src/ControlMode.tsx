@@ -1,4 +1,4 @@
-export type MachineControlMode = "follow" | "automatic";
+export type MachineControlMode = "follow" | "automatic" | "manual";
 export function ControlMode({
   value,
   onChange,
@@ -23,6 +23,17 @@ export function ControlMode({
           title="Follow the machine. Hold automatic programme targets."
         >
           Follow machine
+        </button>
+        <button
+          aria-pressed={value === "manual"}
+          disabled={busy || !!automaticUnavailable}
+          onClick={() => onChange("manual")}
+          title={
+            automaticUnavailable ||
+            "Set targets yourself. Pause and resume still control the equipment."
+          }
+        >
+          Manual
         </button>
         <button
           aria-pressed={value === "automatic"}

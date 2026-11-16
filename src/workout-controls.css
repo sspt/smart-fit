@@ -1,0 +1,100 @@
+.workout-adjustments {
+  margin: 10px 0;
+  border: 1px solid rgba(193, 225, 205, 0.22);
+  border-radius: 12px;
+  background: rgba(10, 29, 20, 0.95);
+  color: #edf6ef;
+  overflow: hidden;
+}
+.workout-adjustments summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.adjustment-fields {
+  padding: 0 14px 14px;
+  display: grid;
+  gap: 12px;
+}
+.adjustment-fields form {
+  margin: 0;
+  min-width: 0;
+}
+.adjustment-fields label {
+  font-size: 0.8rem;
+  display: block;
+}
+.adjustment-input {
+  display: grid;
+  grid-template-columns: 44px minmax(58px, 1fr) 44px auto;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: stretch;
+}
+.adjustment-input button,
+.adjustment-input input {
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.adjustment-input button[type="submit"] {
+  padding-inline: 12px;
+}
+.adjustment-fields small,
+.adjustment-help {
+  font-size: 0.72rem;
+  color: #c0d4c6;
+  line-height: 1.4;
+}
+.adjustment-fields p {
+  margin: 5px 0 0;
+}
+.adjustment-help {
+  margin: 0;
+}
+.immersion-adjustments {
+  grid-column: 1/-1;
+  justify-self: end;
+  width: min(340px, 100%);
+  max-height: max(64px, calc(100svh - 260px));
+  overflow: auto;
+  pointer-events: auto;
+}
+.immersion-adjustments .workout-adjustments {
+  margin: 0;
+}
+.immersion-adjustments .adjustment-fields {
+  gap: 8px;
+}
+.immersion-readings {
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)) !important;
+}
+.metric-grid:empty {
+  display: none;
+}
+.readings-panel:has(.metric-grid:empty) > hr {
+  display: none;
+}
+@media (max-width: 600px) {
+  .immersion-readings {
+    grid-template-columns: repeat(auto-fit, minmax(82px, 1fr)) !important;
+  }
+}
+@media (max-height: 480px) {
+  .immersion-adjustments {
+    max-height: calc(100svh - 210px);
+  }
+  .immersion-adjustments .adjustment-help {
+    display: none;
+  }
+}
+.control-mode {
+  flex-wrap: wrap;
+}
+.readings-panel .metric-grid {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}

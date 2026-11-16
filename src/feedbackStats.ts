@@ -44,7 +44,13 @@ export function weeklyStats(history: Session[], now = new Date()) {
   };
 }
 export function intervalCue(s: Session | null, running: boolean, units = "km") {
-  if (!s || !running || s.controlMode === "follow") return "";
+  if (
+    !s ||
+    !running ||
+    s.controlMode === "follow" ||
+    s.controlMode === "manual"
+  )
+    return "";
   const block = s.programme.blocks[s.phase ?? 0];
   if (!block) return "";
   const remaining = block.distance

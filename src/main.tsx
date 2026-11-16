@@ -1,3 +1,12 @@
+import { WorkoutAdjustments } from "./WorkoutAdjustments";
+import {
+  manualFields,
+  applyManualTarget,
+  knownWorkoutDistance,
+  type TargetKey,
+} from "./manualWorkoutControl";
+import { hasMetricValue } from "./WorkoutReadings";
+import "./workout-controls.css";
 import { accountState } from "./accountClient";
 import { AccountBootstrap } from "./Accounts";
 import "./accounts.css";
@@ -107,6 +116,8 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
+  const manualLock = useRef(false);
+  const machineMotion = useRef<boolean | null>(null);
   const state = useRef({ session, running, hold, connected: false });
   const lastTick = useRef(performance.now()),
     lastSample = useRef(0),
@@ -529,7 +540,13 @@ function App() {
     setPage("Live");
   }
   async function targets(b: any) {
-    if (demo) return;
+    if (
+      demo ||
+      state.current.hold ||
+      !state.current.running ||
+      !state.current.connected
+    )
+      return;
     lastCommand.current = Date.now();
     expected.current = {
       speed: b.speed,
@@ -549,7 +566,7 @@ function App() {
   }
   const seg = session ? currentSegment(session) : null;
   useEffect(() => {
-    if (!session || !running || busy) return;
+    if (!session || !running || busy || manualLock.current) return;
     if (!seg) {
       void action(() => finish(true));
       return;
@@ -606,6 +623,7 @@ function App() {
     previous.current = observed;
   }, [observed.speed, observed.incline, observed.resistance, observed.power]);
   const machineRunning = it.connected ? it.metrics.running : ft.machineRunning;
+  machineMotion.current = machineRunning ?? null;
   useEffect(() => {
     if (
       machineRunning === false &&
@@ -662,7 +680,11 @@ function App() {
       setImmersiveSession(session.id);
     }
     setRunning(true);
-    setHold(!session?.automatic || session?.controlMode === "follow");
+    setHold(
+      !session?.automatic ||
+        session?.controlMode === "follow" ||
+        session?.controlMode === "manual",
+    );
     event("Resumed explicitly");
   }
   const automaticUnavailable = !session
@@ -675,16 +697,18 @@ function App() {
           ? "Equipment control is not available. Check the Bluetooth connection."
           : "";
   const controlMode: MachineControlMode =
-    session?.automatic && !hold && session.controlMode !== "follow"
-      ? "automatic"
-      : "follow";
+    session?.controlMode === "manual"
+      ? "manual"
+      : session?.automatic && !hold && session.controlMode !== "follow"
+        ? "automatic"
+        : "follow";
   function changeControlMode(mode: MachineControlMode) {
-    if (!session || (mode === "automatic" && (busy || automaticUnavailable)))
+    if (!session || (mode !== "follow" && (busy || automaticUnavailable)))
       return;
     if (mode === controlMode && session.controlMode === mode) return;
     epoch.current++;
     sent.current = "";
-    setHold(mode === "follow");
+    setHold(mode !== "automatic");
     setSession((s) =>
       s
         ? {
@@ -697,9 +721,87 @@ function App() {
     event(
       mode === "follow"
         ? "Following machine: programme targets held"
-        : "Automatic programme targets selected",
+        : mode === "manual"
+          ? "Manual equipment controls selected"
+          : "Automatic programme targets selected",
     );
   }
+  const adjustmentFields =
+    canControl && session && session.programme.kind === kind
+      ? manualFields(
+          kind,
+          it.connected,
+          ft.targetFeatures,
+          device.supportedRanges,
+          {
+            speed: observed.speed ?? metrics.speedKmh,
+            incline: observed.incline ?? metrics.inclinePct,
+            power: observed.power ?? metrics.powerW,
+            resistance: observed.resistance ?? metrics.resistanceLevel,
+          },
+          it.controllableFields,
+          it.resistanceLevels,
+        )
+      : [];
+  async function adjustWorkout(key: TargetKey, value: number) {
+    if (manualLock.current || busy)
+      throw Error("Wait for the current equipment request.");
+    let token = epoch.current;
+    setBusy(true);
+    setError("");
+    try {
+      return await applyManualTarget({
+        key,
+        value,
+        fields: adjustmentFields,
+        lock: manualLock,
+        ready: () =>
+          !!state.current.session &&
+          state.current.running &&
+          state.current.connected &&
+          canControl &&
+          Date.now() - fresh.current <= 8000 &&
+          machineMotion.current !== false,
+        hold: () => {
+          token = ++epoch.current;
+          state.current.hold = true;
+          setHold(true);
+          sent.current = "";
+          setSession((s) => (s ? { ...s, controlMode: "manual" } : s));
+        },
+        acquire: takeLock,
+        valid: () =>
+          token === epoch.current &&
+          state.current.running &&
+          state.current.connected &&
+          machineMotion.current !== false,
+        send: async (key, value) => {
+          setSession((s) => (s ? { ...s, automatic: true } : s));
+          lastCommand.current = Date.now();
+          expected.current[key] = value;
+          if (key === "speed") await device.setTargetSpeed(value);
+          else if (key === "incline") await device.setTargetIncline(value);
+          else if (key === "power") await ft.setTargetPower(value);
+          else await device.setTargetResistance(value);
+        },
+        ack: (key, value) => event("Manual " + key + " request: " + value),
+      });
+    } catch (error: any) {
+      setError(error.message);
+      setHold(true);
+      setRunning(false);
+      throw error;
+    } finally {
+      setBusy(false);
+    }
+  }
+  const adjustmentControls = (
+    <WorkoutAdjustments
+      fields={adjustmentFields}
+      disabled={!running || !connected || busy || machineRunning === false}
+      onApply={adjustWorkout}
+    />
+  );
   async function finish(automaticCompletion = false) {
     epoch.current++;
     setRunning(false);
@@ -1200,7 +1302,9 @@ function App() {
                 {running
                   ? controlMode === "follow"
                     ? "Following machine"
-                    : "Automatic"
+                    : controlMode === "manual"
+                      ? "Manual"
+                      : "Automatic"
                   : "Paused"}
               </span>
             </div>
@@ -1213,6 +1317,7 @@ function App() {
               />
               {sessionActions}
             </div>
+            {adjustmentControls}
             <div className="view-tabs" role="group" aria-label="Session view">
               {["Scenery", "Session"].map((tab) => (
                 <button
@@ -1228,6 +1333,7 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
+                manualControls={adjustmentControls}
                 nextCue={intervalCue(session, running, units)}
                 autoImmerse={immersiveSession === session.id}
                 controlMode={controlMode}
@@ -1239,7 +1345,11 @@ function App() {
                 resistance={
                   connected ? (metrics.resistanceLevel ?? null) : null
                 }
-                distance={session.distance ?? 0}
+                distance={knownWorkoutDistance(
+                  session.distance,
+                  metrics.speedKmh,
+                  metrics.totalDistanceM,
+                )}
                 calories={connected ? (metrics.caloriesKcal ?? null) : null}
                 running={running}
                 kind={session.programme.kind}
@@ -1272,7 +1382,9 @@ function App() {
                 <p>
                   {controlMode === "follow"
                     ? "Use the machine’s controls. Programme targets are held."
-                    : "Programme targets are applied automatically. Physical changes take priority."}
+                    : controlMode === "manual"
+                      ? "Manual targets selected. Automatic programme changes are held."
+                      : "Programme targets are applied automatically. Physical changes take priority."}
                 </p>
               </details>
               <div className="panel readings-panel">
@@ -1303,17 +1415,21 @@ function App() {
                 <p>
                   {controlMode === "automatic"
                     ? "Programme target"
-                    : "Following machine · use physical controls"}
+                    : controlMode === "manual"
+                      ? "Manual targets · use Adjust equipment"
+                      : "Following machine · use physical controls"}
                 </p>
-                <h3>
-                  {seg
-                    ? session.programme.kind === "Treadmill"
-                      ? `${seg.block.speed} km/h · ${seg.block.incline}%`
-                      : session.programme.kind === "Bike"
-                        ? `${seg.block.power} W`
-                        : `Resistance ${seg.block.resistance}`
-                    : "Completed"}
-                </h3>
+                {controlMode === "automatic" && (
+                  <h3>
+                    {seg
+                      ? session.programme.kind === "Treadmill"
+                        ? `${seg.block.speed} km/h · ${seg.block.incline}%`
+                        : session.programme.kind === "Bike"
+                          ? `${seg.block.power} W`
+                          : `Resistance ${seg.block.resistance}`
+                      : "Completed"}
+                  </h3>
+                )}
                 <details className="quiet-options" open={!connected}>
                   <summary>Tracking & recovery</summary>
                   <p>
@@ -1630,6 +1746,7 @@ function Metric({
   value: any;
   unit: string;
 }) {
+  if (!hasMetricValue(value)) return null;
   return (
     <div className="metric">
       <small>{label}</small>

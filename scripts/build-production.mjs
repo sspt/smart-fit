@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -48,7 +48,7 @@ const built = await build({
 code = built.outputFiles[0].text + "\n" + code;
 once(
   "function Xv() {",
-  "function Xv() {\n const [__recap,__setRecap] = m.useState(null);",
+  "function Xv() {\n const [__recap,__setRecap] = m.useState(null); const __manualLock=m.useRef(false),__manualMotion=m.useRef(null);",
 );
 once(
   "x((Le) => [te, ...Le].slice(0, 200)),",
@@ -247,6 +247,227 @@ once(
   'children: "Private by design. Stored on your device.",',
   'children: __feedback.accountState().user ? "Private account storage. Available offline." : "Private by design. Stored on your device.",',
 );
+// Add the shared manual-control engine to the current production variable contract.
+const sourceApp = ts.createSourceFile(
+  "main.tsx",
+  await fs.readFile("src/main.tsx", "utf8"),
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.TSX,
+);
+let adjustmentInit, adjustmentFunction;
+function locateSource(n) {
+  if (
+    ts.isVariableDeclaration(n) &&
+    n.name.getText(sourceApp) === "adjustmentFields"
+  )
+    adjustmentInit = n.initializer.getText(sourceApp);
+  if (ts.isFunctionDeclaration(n) && n.name?.text === "adjustWorkout")
+    adjustmentFunction = n.getText(sourceApp);
+  ts.forEachChild(n, locateSource);
+}
+locateSource(sourceApp);
+if (!adjustmentInit || !adjustmentFunction)
+  throw Error("Manual source integration missing");
+const manualSource = ts.createSourceFile(
+  "manual.ts",
+  "const adjustmentFields=" + adjustmentInit + ";\n" + adjustmentFunction,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.TS,
+);
+const names = {
+  adjustmentFields: "__adjustmentFields",
+  adjustWorkout: "__adjustWorkout",
+  manualLock: "__manualLock",
+  machineMotion: "__manualMotion",
+  epoch: "ct",
+  state: "pt",
+  busy: "Ce",
+  setBusy: "Ft",
+  setError: "tt",
+  canControl: "Mt",
+  fresh: "xn",
+  setHold: "Ge",
+  sent: "Ut",
+  setSession: "Se",
+  takeLock: "M",
+  lastCommand: "ln",
+  expected: "En",
+  device: "jt",
+  ft: "K",
+  it: "J",
+  event: "gn",
+  setRunning: "qe",
+  session: "v",
+  kind: "H",
+  observed: "we",
+  metrics: "Xe",
+};
+const shared = {
+  manualFields: "manualFields",
+  applyManualTarget: "applyManualTarget",
+};
+const transformed = ts.transform(manualSource, [
+  (context) => (root) =>
+    ts.visitNode(root, function visit(node) {
+      if (
+        ts.isIdentifier(node) &&
+        !(
+          ts.isPropertyAccessExpression(node.parent) &&
+          node.parent.name === node
+        ) &&
+        !(ts.isPropertyAssignment(node.parent) && node.parent.name === node)
+      ) {
+        if (shared[node.text])
+          return ts.factory.createPropertyAccessExpression(
+            ts.factory.createIdentifier("__feedback"),
+            shared[node.text],
+          );
+        if (names[node.text])
+          return ts.factory.createIdentifier(names[node.text]);
+      }
+      return ts.visitEachChild(node, visit, context);
+    }),
+]);
+const manualJs = ts.transpileModule(
+  ts.createPrinter().printFile(transformed.transformed[0]),
+  {
+    compilerOptions: {
+      target: ts.ScriptTarget.ES2022,
+      module: ts.ModuleKind.ESNext,
+    },
+  },
+).outputText;
+transformed.dispose();
+once(
+  "  async function Ke(y = !1) {",
+  manualJs +
+    "\n const __adjustmentControls=c.jsx(__feedback.WorkoutAdjustments,{fields:__adjustmentFields,disabled:!xe||!Ne||Ce||Ue===false,onApply:__adjustWorkout});\n  async function Ke(y = !1) {",
+);
+once(
+  "    if (X) return;\n    ((ln.current",
+  "    if (X || pt.current.hold || !pt.current.running || !pt.current.connected) return;\n    ((ln.current",
+);
+once(
+  "if (!v || !xe || Ce) return;",
+  "if (!v || !xe || Ce || __manualLock.current) return;",
+);
+once(
+  "const Ue = J.connected ? J.metrics.running : K.machineRunning;",
+  "const Ue = J.connected ? J.metrics.running : K.machineRunning; __manualMotion.current=Ue ?? null;",
+);
+once(
+  'Ge(!(v != null && v.automatic) || v?.controlMode === "follow")',
+  'Ge(!(v != null && v.automatic) || v?.controlMode === "follow" || v?.controlMode === "manual")',
+);
+once(
+  "Ee =\n      v != null",
+  'Ee = v?.controlMode === "manual" ? "manual" :\n      v != null',
+);
+once('(y === "automatic" && (Ce || Qe))', '(y !== "follow" && (Ce || Qe))');
+once('Ge(y === "follow")', 'Ge(y !== "automatic")');
+once(
+  '"Automatic programme targets selected",',
+  'y === "manual" ? "Manual equipment controls selected" : "Automatic programme targets selected",',
+);
+once(
+  'c.jsx("div", {\n                  className: "view-tabs",',
+  '__adjustmentControls, c.jsx("div", {\n                  className: "view-tabs",',
+);
+once(
+  "initialRouteId: v.sceneryId,",
+  "initialRouteId: v.sceneryId, manualControls:__adjustmentControls,",
+);
+once(
+  "initialRouteId: O,",
+  "initialRouteId: O, manualControls:__manualControls,",
+);
+once(
+  'button:not(:disabled),[tabindex="0"]',
+  'button:not(:disabled),input:not(:disabled),summary,[tabindex="0"]',
+);
+// Place controls inside the existing fullscreen top grid; Stop remains in the bottom overlay.
+const overlayAst = ts.createSourceFile(
+  "overlay.js",
+  code,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.JS,
+);
+let topChildren;
+function findTop(n) {
+  if (
+    ts.isCallExpression(n) &&
+    n.arguments[0]?.text === "div" &&
+    n.arguments[1]?.properties?.some(
+      (p) =>
+        p.name?.getText(overlayAst) === "className" &&
+        p.initializer?.text === "immersion-top",
+    )
+  )
+    topChildren = n.arguments[1].properties.find(
+      (p) => p.name?.getText(overlayAst) === "children",
+    ).initializer;
+  ts.forEachChild(n, findTop);
+}
+findTop(overlayAst);
+if (!topChildren || !ts.isArrayLiteralExpression(topChildren))
+  throw Error("Immersive control grid changed");
+code =
+  code.slice(0, topChildren.end - 1) +
+  'c.jsx("div",{className:"immersion-adjustments",children:__manualControls}),' +
+  code.slice(topChildren.end - 1);
+const modeCount = code.split("c.jsx(xf,").length - 1;
+if (modeCount !== 2) throw Error("Control-mode contract changed");
+code = code.split("c.jsx(xf,").join("c.jsx(__feedback.ControlMode,");
+once(
+  "c.jsx(__workoutPatch.WorkoutReadings, {",
+  "c.jsx(__feedback.WorkoutReadings, {",
+);
+once(
+  "function Ri({ label: a, value: i, unit: s }) {",
+  "function Ri({ label: a, value: i, unit: s }) { if(!__feedback.hasMetricValue(i))return null;",
+);
+once(
+  "distance: v.distance ?? 0,",
+  "distance: __feedback.knownWorkoutDistance(v.distance,Xe.speedKmh,Xe.totalDistanceM),",
+);
+once(
+  '? "Following machine"\n                          : "Automatic"',
+  '? "Following machine"\n                          : Ee === "manual" ? "Manual" : "Automatic"',
+);
+const readingsAst = ts.createSourceFile(
+  "readings.js",
+  code,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.JS,
+);
+let targetHeading;
+function findHeading(n) {
+  if (
+    ts.isCallExpression(n) &&
+    n.arguments[0]?.text === "h3" &&
+    n.getText(readingsAst).includes("q.block.speed")
+  )
+    targetHeading = n;
+  ts.forEachChild(n, findHeading);
+}
+findHeading(readingsAst);
+if (!targetHeading) throw Error("Session target heading changed");
+code =
+  code.slice(0, targetHeading.getStart(readingsAst)) +
+  'Ee === "automatic" && ' +
+  code.slice(targetHeading.getStart(readingsAst));
+once(
+  '"Following machine \\xB7 use physical controls"',
+  'Ee === "manual" ? "Manual targets · use Adjust equipment" : "Following machine \\xB7 use physical controls"',
+);
+once(
+  '"Programme targets are applied automatically. Physical changes take priority."',
+  'Ee === "manual" ? "Manual targets selected. Automatic programme changes are held." : "Programme targets are applied automatically. Physical changes take priority."',
+);
 const historyCaps = code.split(".slice(0, 200)").length - 1;
 if (historyCaps !== 3)
   throw Error("Production history retention contract changed");
@@ -270,7 +491,9 @@ const style =
   "\n" +
   (await fs.readFile("src/weight-loss.css", "utf8")) +
   "\n" +
-  (await fs.readFile("src/accounts.css", "utf8"));
+  (await fs.readFile("src/accounts.css", "utf8")) +
+  "\n" +
+  (await fs.readFile("src/workout-controls.css", "utf8"));
 const cssPath =
   "/assets/feedback-" +
   createHash("sha256").update(style).digest("hex").slice(0, 12) +

@@ -31,7 +31,7 @@ describe("immersive equipment readings", () => {
       expect(html).not.toContain("VIDEO SPEED");
     });
   }
-  it("preserves zero and shows missing measurements as unavailable", () => {
+  it("preserves zero and omits missing measurements", () => {
     const html = renderToStaticMarkup(
       <WorkoutReadings
         kind="Treadmill"
@@ -44,7 +44,10 @@ describe("immersive equipment readings", () => {
     );
     expect(html).toContain("0.0<span>%");
     expect(html).toContain("0.00<span>km");
-    expect(html).toContain("—<span>kcal");
+    expect(html).not.toContain("kcal");
+    expect(html).not.toContain("DEVICE SPEED");
+    expect(html).not.toContain("ENERGY");
+    expect(html).not.toContain("—");
   });
 });
 

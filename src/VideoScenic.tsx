@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { IntervalCue } from "./WorkoutFeedback";
 import { WorkoutReadings } from "./WorkoutReadings";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
@@ -27,7 +28,8 @@ export function VideoScenic({
   onStop,
   busy,
   initialRouteId,
- nextCue,
+  manualControls,
+  nextCue,
   autoImmerse = false,
 }: {
   controlMode: MachineControlMode;
@@ -46,7 +48,8 @@ export function VideoScenic({
   onStop: () => void;
   busy: boolean;
   initialRouteId?: string;
- nextCue?: string;
+  manualControls?: ReactNode;
+  nextCue?: string;
   autoImmerse?: boolean;
 }) {
   const videoRoutes = useVideoRoutes();
@@ -221,7 +224,7 @@ export function VideoScenic({
       if (event.key === "Tab") {
         const buttons = Array.from(
           container.current?.querySelectorAll<HTMLElement>(
-            'button:not(:disabled),[tabindex="0"]',
+            'button:not(:disabled),input:not(:disabled),summary,[tabindex="0"]',
           ) ?? [],
         ).filter((el) => el.getClientRects().length);
         const first = buttons[0],
@@ -424,9 +427,10 @@ export function VideoScenic({
                   <AppIcon name="close" size={22} />
                   <span>Exit</span>
                 </button>
+                <div className="immersion-adjustments">{manualControls}</div>
               </div>
               <div className="immersion-bottom">
-<IntervalCue text={nextCue ?? ""} />
+                <IntervalCue text={nextCue ?? ""} />
                 <WorkoutReadings
                   kind={kind}
                   speed={speed}

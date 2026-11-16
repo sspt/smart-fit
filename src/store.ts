@@ -32,7 +32,7 @@ export type Sample = {
 };
 export type Session = {
   sceneryId?: string;
-  controlMode?: "follow" | "automatic";
+  controlMode?: "follow" | "automatic" | "manual";
   id: string;
   programme: Programme;
   started: number;

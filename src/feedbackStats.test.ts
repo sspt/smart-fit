@@ -37,6 +37,7 @@ describe("workout feedback", () => {
     expect(intervalCue(s, true)).toContain("Next: Steady");
     expect(intervalCue(s, false)).toBe("");
     expect(intervalCue({ ...s, controlMode: "follow" }, true)).toBe("");
+    expect(intervalCue({ ...s, controlMode: "manual" }, true)).toBe("");
     expect(intervalCue({ ...s, phase: 1 }, true)).toBe("Finish in 9s");
   });
   it("counts local Monday week, excludes demos and future records", () => {

@@ -198,3 +198,7 @@ during workouts. See [account setup, database choice, data safety and validation
 The account-enabled Worker is a reviewed source change; deployment now uses
 `npm run deploy` (the production frontend plus account Worker), not the older
 Vite shell. Deployment is gated on an explicitly provisioned database binding.
+
+During a connected workout, open **Adjust equipment** to set speed/incline on a treadmill, power on an FTMS bike, or resistance on a rower. Only supported targets appear, using the equipment's advertised limits and increments. The +/− buttons edit the target; **Apply** sends it. Applying selects **Manual** mode and holds programme target changes until **Automatic** is selected again. Pause, resume and Stop continue to operate the equipment in Manual mode. Paused or disconnected sessions cannot apply targets. Unsupported iFIT bikes remain tracking only.
+
+Live and immersive readings omit unavailable measurements, while retaining real zero values. Run `node scripts/workout-controls-browser-test.mjs` after `npm run build:production` to exercise the production interface with isolated simulated hardware; this never changes the release assets or communicates with real equipment.
