@@ -2,7 +2,27 @@ import type { Session, Segment } from "./store";
 export function currentSegment(s: Session) {
   const index = s.phase ?? 0,
     cycle = s.cycle ?? 0;
-  if (cycle >= s.programme.repeat) return null;
+  if (cycle >= s.programme.repeat) {
+    const duration = s.extensionSeconds ?? 0;
+    const elapsed = s.phaseElapsed ?? 0;
+    const last = s.programme.blocks.at(-1);
+    if (!last || duration <= elapsed) return null;
+    const block = {
+      ...targetAt(last, 1),
+      name: "Extra time",
+      duration,
+      distance: undefined,
+      ramp: false,
+    };
+    return {
+      block,
+      index: s.programme.blocks.length,
+      cycle: s.programme.repeat,
+      progress: elapsed / duration,
+      remaining: duration - elapsed,
+      extension: true,
+    };
+  }
   const b = s.programme.blocks[index];
   if (!b) return null;
   const progress = b.distance
@@ -13,6 +33,7 @@ export function currentSegment(s: Session) {
     index,
     cycle,
     progress: Math.min(1, progress),
+    extension: false,
     remaining: b.distance
       ? Math.max(0, b.distance - (s.phaseDistance ?? 0))
       : Math.max(0, b.duration - (s.phaseElapsed ?? 0)),
@@ -27,9 +48,10 @@ export function advance(s: Session, seconds: number, metres: number): Session {
     phaseElapsed = (s.phaseElapsed ?? 0) + seconds,
     phaseDistance = (s.phaseDistance ?? 0) + Math.max(0, metres);
   if (
-    current.block.distance
+    !current.extension &&
+    (current.block.distance
       ? phaseDistance >= current.block.distance
-      : phaseElapsed >= current.block.duration
+      : phaseElapsed >= current.block.duration)
   ) {
     phase++;
     phaseElapsed = 0;
@@ -61,4 +83,22 @@ export function targetAt(b: Segment, progress: number): Segment {
       b.resistance + ((b.endResistance ?? b.resistance) - b.resistance) * t,
     ),
   };
+}
+
+export function workoutEnding(s: Session | null) {
+  if (!s) return null;
+  const seg = currentSegment(s);
+  if (!seg) return null;
+  if (
+    !seg.extension &&
+    ((s.extensionSeconds ?? 0) > 0 ||
+      seg.cycle !== s.programme.repeat - 1 ||
+      seg.index !== s.programme.blocks.length - 1)
+  )
+    return null;
+  return seg.remaining <= (seg.block.distance ? 200 : 60) ? seg : null;
+}
+export function extendWorkout(s: Session): Session {
+  if (!workoutEnding(s)) return s;
+  return { ...s, extensionSeconds: (s.extensionSeconds ?? 0) + 600 };
 }

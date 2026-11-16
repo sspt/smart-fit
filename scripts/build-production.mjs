@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {WorkoutContinuation} from './src/WorkoutContinuation'; export {currentSegment,advance,extendWorkout} from './src/workout'; export {disconnectWorkoutDevices} from './src/workoutCompletion'; export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -48,7 +48,7 @@ const built = await build({
 code = built.outputFiles[0].text + "\n" + code;
 once(
   "function Xv() {",
-  "function Xv() {\n const [__recap,__setRecap] = m.useState(null); const __manualLock=m.useRef(false),__manualMotion=m.useRef(null);",
+  "function Xv() {\n const [__recap,__setRecap] = m.useState(null); const __manualLock=m.useRef(false),__manualMotion=m.useRef(null),__finishLock=m.useRef(false),__archiveLock=m.useRef(false);",
 );
 once(
   "x((Le) => [te, ...Le].slice(0, 200)),",
@@ -467,6 +467,96 @@ once(
 once(
   '"Programme targets are applied automatically. Physical changes take priority."',
   'Ee === "manual" ? "Manual targets selected. Automatic programme changes are held." : "Programme targets are applied automatically. Physical changes take priority."',
+);
+
+// Completed workouts always enter the existing durable Strava outbox when connected.
+once(
+  "$.current.automatic && (await ve(S));",
+  "if (!$.current.status.connected && navigator.onLine) await V(); await ve(S);",
+);
+once(
+  'p(S), await rr("stravaConnection", S)',
+  '$.current.status=S, p(S), await rr("stravaConnection", S)',
+);
+once(
+  "Strava connected. You can sync workouts from your Journal.",
+  "Strava connected. Completed workouts sync automatically.",
+);
+const completionAst = ts.createSourceFile(
+  "completion.js",
+  code,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.JS,
+);
+const completionEdits = [];
+const completionFunctions = {
+  Gf: "function Gf(s){return __feedback.currentSegment(s)}",
+  Qv: "function Qv(s,seconds,metres){return __feedback.advance(s,seconds,metres)}",
+};
+function patchCompletion(node) {
+  if (ts.isFunctionDeclaration(node) && completionFunctions[node.name?.text]) {
+    completionEdits.push([
+      node.getStart(completionAst),
+      node.end,
+      completionFunctions[node.name.text],
+    ]);
+  }
+  if (
+    ts.isFunctionDeclaration(node) &&
+    ["Ke", "Je"].includes(node.name?.text)
+  ) {
+    const lock = node.name.text === "Ke" ? "__finishLock" : "__archiveLock";
+    completionEdits.push([
+      node.body.getStart(completionAst) + 1,
+      node.body.getStart(completionAst) + 1,
+      `if(${lock}.current)return;${lock}.current=true;try{`,
+    ]);
+    completionEdits.push([
+      node.body.end - 1,
+      node.body.end - 1,
+      `}finally{${lock}.current=false}`,
+    ]);
+  }
+  // Replace the redundant opt-in checkbox with a plain explanation.
+  if (
+    ts.isCallExpression(node) &&
+    node.arguments[0]?.text === "label" &&
+    node
+      .getText(completionAst)
+      .includes("Automatically sync new completed workouts")
+  ) {
+    completionEdits.push([
+      node.getStart(completionAst),
+      node.end,
+      'c.jsx("p",{children:"Completed workouts sync automatically when Strava is connected. Older workouts can be synced from your Journal."})',
+    ]);
+  }
+  ts.forEachChild(node, patchCompletion);
+}
+patchCompletion(completionAst);
+if (completionEdits.length !== 7)
+  throw Error("Workout completion contract changed: " + completionEdits.length);
+for (const [start, end, value] of completionEdits.sort((a, b) => b[0] - a[0]))
+  code = code.slice(0, start) + value + code.slice(end);
+once(
+  'Pe("History"));',
+  'Pe("History")); nn.current=true; await __feedback.disconnectWorkoutDevices([K,J],tt);',
+);
+once(
+  "  async function Ke(y = !1) {",
+  `
+ function __continueWorkout(){if(__finishLock.current||Ce)return;Se(s=>s?__feedback.extendWorkout(s):s);gn("Added 10 minutes of extra time")}
+ const __continuationControls=c.jsx(__feedback.WorkoutContinuation,{session:v,busy:Ce,onContinue:__continueWorkout});
+ async function Ke(y = !1) {`,
+);
+once(
+  '__adjustmentControls, c.jsx("div", {',
+  '__continuationControls,__adjustmentControls, c.jsx("div", {',
+);
+once(
+  "manualControls:__adjustmentControls,",
+  "manualControls:c.jsxs(c.Fragment,{children:[__continuationControls,__adjustmentControls]}),",
 );
 const historyCaps = code.split(".slice(0, 200)").length - 1;
 if (historyCaps !== 3)

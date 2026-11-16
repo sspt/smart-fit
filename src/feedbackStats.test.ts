@@ -61,6 +61,9 @@ describe("workout feedback", () => {
     expect(previousAttempt(s, [old])).toBe(old);
     expect(previousAttempt(s, [{ ...old, demo: true }])).toBeUndefined();
     expect(
+      previousAttempt(s, [{ ...old, extensionSeconds: 600 }]),
+    ).toBeUndefined();
+    expect(
       previousAttempt(s, [
         { ...old, programme: { ...old.programme, repeat: 2 } },
       ]),

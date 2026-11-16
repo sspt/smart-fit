@@ -1,3 +1,5 @@
+import { WorkoutContinuation } from "./WorkoutContinuation";
+import { disconnectWorkoutDevices } from "./workoutCompletion";
 import { WorkoutAdjustments } from "./WorkoutAdjustments";
 import {
   manualFields,
@@ -64,7 +66,7 @@ import {
   type Kind,
 } from "./store";
 import { buildPassiveReport } from "./passiveProbe";
-import { currentSegment, advance, targetAt } from "./workout";
+import { currentSegment, advance, targetAt, extendWorkout } from "./workout";
 import "./style.css";
 import "./discovery.css";
 import "./cinematic.css";
@@ -117,6 +119,8 @@ function App() {
     window.scrollTo(0, 0);
   }, [page]);
   const manualLock = useRef(false);
+  const finishLock = useRef(false),
+    archiveLock = useRef(false);
   const machineMotion = useRef<boolean | null>(null);
   const state = useRef({ session, running, hold, connected: false });
   const lastTick = useRef(performance.now()),
@@ -802,41 +806,66 @@ function App() {
       onApply={adjustWorkout}
     />
   );
+  function continueWorkout() {
+    if (finishLock.current || busy) return;
+    setSession((s) => (s ? extendWorkout(s) : s));
+    event("Added 10 minutes of extra time");
+  }
+  const continuationControls = (
+    <WorkoutContinuation
+      session={session}
+      busy={busy}
+      onContinue={continueWorkout}
+    />
+  );
   async function finish(automaticCompletion = false) {
-    epoch.current++;
-    setRunning(false);
-    setHold(true);
-    if (!session) return;
-    if (
-      !demo &&
-      session.automatic &&
-      (!automaticCompletion || session.controlMode !== "follow")
-    ) {
-      if (!connected)
-        throw Error(
-          "Cannot confirm machine stop while disconnected. Use physical stop, then Finish tracking.",
-        );
-      await device.emergencyStop();
+    if (finishLock.current) return;
+    finishLock.current = true;
+    try {
+      epoch.current++;
+      setRunning(false);
+      setHold(true);
+      if (!session) return;
+      if (
+        !demo &&
+        session.automatic &&
+        (!automaticCompletion || session.controlMode !== "follow")
+      ) {
+        if (!connected)
+          throw Error(
+            "Cannot confirm machine stop while disconnected. Use physical stop, then Finish tracking.",
+          );
+        await device.emergencyStop();
+      }
+      await archive("completed");
+    } finally {
+      finishLock.current = false;
     }
-    await archive("completed");
   }
   async function archive(status: string) {
-    if (!session) return;
-    const completed = { ...session, status };
-    await save(
-      "history",
-      [completed, ...history].slice(0, accountState().user ? undefined : 200),
-    );
-    await save("active", null);
-    setHistory((h) =>
-      [completed, ...h].slice(0, accountState().user ? undefined : 200),
-    );
-    setRecap(completed);
-    setSession(null);
-    setRunning(false);
-    lockRelease.current?.();
-    lockRelease.current = null;
-    setPage("History");
+    if (!session || archiveLock.current) return;
+    archiveLock.current = true;
+    try {
+      const completed = { ...(state.current.session ?? session), status };
+      await save(
+        "history",
+        [completed, ...history].slice(0, accountState().user ? undefined : 200),
+      );
+      await save("active", null);
+      setHistory((h) =>
+        [completed, ...h].slice(0, accountState().user ? undefined : 200),
+      );
+      setRecap(completed);
+      setSession(null);
+      setRunning(false);
+      lockRelease.current?.();
+      lockRelease.current = null;
+      setPage("History");
+      autoAttempted.current = true;
+      await disconnectWorkoutDevices([ft, it], setError);
+    } finally {
+      archiveLock.current = false;
+    }
   }
   const total = (p: Programme) =>
     p.blocks.reduce((n, b) => n + b.duration, 0) * p.repeat;
@@ -1317,6 +1346,7 @@ function App() {
               />
               {sessionActions}
             </div>
+            {continuationControls}
             {adjustmentControls}
             <div className="view-tabs" role="group" aria-label="Session view">
               {["Scenery", "Session"].map((tab) => (
@@ -1333,7 +1363,12 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
-                manualControls={adjustmentControls}
+                manualControls={
+                  <>
+                    {continuationControls}
+                    {adjustmentControls}
+                  </>
+                }
                 nextCue={intervalCue(session, running, units)}
                 autoImmerse={immersiveSession === session.id}
                 controlMode={controlMode}

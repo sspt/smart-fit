@@ -98,3 +98,34 @@
 .readings-panel .metric-grid {
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
+.workout-continuation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border: 1px solid rgba(193, 225, 205, 0.3);
+  border-radius: 12px;
+  background: #142c20;
+  color: #edf6ef;
+}
+.workout-continuation p {
+  margin: 3px 0 0;
+  font-size: 0.8rem;
+}
+.workout-continuation button {
+  min-height: 44px;
+}
+.immersion-adjustments .workout-continuation {
+  margin: 0 0 8px;
+}
+.workout-extension-added {
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 8px;
+  background: #142c20;
+  color: #edf6ef;
+  font-size: 0.85rem;
+}

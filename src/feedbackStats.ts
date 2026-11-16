@@ -1,3 +1,4 @@
+import { currentSegment } from "./workout";
 import type { Session } from "./store";
 export const finite = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v);
@@ -24,6 +25,7 @@ export function previousAttempt(s: Session, history: Session[]) {
         x.started < s.started &&
         x.status === "completed" &&
         x.demo === s.demo &&
+        (x.extensionSeconds ?? 0) === (s.extensionSeconds ?? 0) &&
         JSON.stringify(x.programme) === JSON.stringify(s.programme),
     )
     .sort((a, b) => b.started - a.started)[0];
@@ -51,8 +53,9 @@ export function intervalCue(s: Session | null, running: boolean, units = "km") {
     s.controlMode === "manual"
   )
     return "";
-  const block = s.programme.blocks[s.phase ?? 0];
-  if (!block) return "";
+  const segment = currentSegment(s);
+  if (!segment || segment.extension) return "";
+  const block = segment.block;
   const remaining = block.distance
     ? block.distance - (s.phaseDistance ?? 0)
     : block.duration - (s.phaseElapsed ?? 0);
@@ -67,7 +70,10 @@ export function intervalCue(s: Session | null, running: boolean, units = "km") {
   const when = block.distance
     ? `${Math.ceil(remaining)} m`
     : `${Math.ceil(remaining)}s`;
-  if (!next) return `Finish in ${when}`;
+  if (!next)
+    return (s.extensionSeconds ?? 0) > 0
+      ? "Extra time next"
+      : `Finish in ${when}`;
   const target =
     s.programme.kind === "Treadmill"
       ? `${(next.speed * (units === "mi" ? 0.621371 : 1)).toFixed(1)} ${units}/h · ${next.incline}% incline`

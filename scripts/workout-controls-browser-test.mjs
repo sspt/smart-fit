@@ -1,51 +1,8 @@
 // Exercise the production UI with isolated simulated hardware. The deployed assets are never modified.
-import fs from "node:fs/promises";
-import ts from "typescript";
-import { spawn } from "node:child_process";
+import { serveWorkoutFixture } from "./workout-fixture.mjs";
 import { chromium } from "@playwright/test";
 import assert from "node:assert/strict";
-const root = "artifacts/workout-controls-test";
-await fs.rm(root, { recursive: true, force: true });
-await fs.cp("artifacts/visual-release", root, { recursive: true });
-const html = await fs.readFile(root + "/index.html", "utf8"),
-  path = html.match(/src="(\/assets\/[^\"]+\.js)"/)[1];
-let code = await fs.readFile(root + path, "utf8");
-const ast = ts.createSourceFile("app.js", code, 99, true, ts.ScriptKind.JS);
-const replacements = [];
-for (const name of ["Gv", "Gg"]) {
-  const fn = ast.statements.find(
-    (n) => ts.isFunctionDeclaration(n) && n.name?.text === name,
-  );
-  assert(fn, `Hardware hook ${name} exists`);
-  replacements.push({
-    start: fn.getStart(ast),
-    end: fn.end,
-    text: `function ${name}(){
-    const [tick,setTick]=m.useState(0);
-    m.useEffect(()=>{const id=setInterval(()=>setTick(v=>v+1),100);return()=>clearInterval(id)},[]);
-    const f=window.__fixture;
-    const send=async(key,value)=>{window.__commands.push([key,value]);if(f.fail===key)throw Error('Machine rejected target');if(key==='start')f.running=true;if(key==='pause'||key==='stop')f.running=false;};
-    return {available:true,supported:true,connected:${name === "Gv" ? "f.connected" : "false"},controllable:true,connecting:false,deviceName:'Fixture equipment',error:'',metrics:{...f.metrics},machineRunning:f.running,targetFeatures:f.features,supportedRanges:f.ranges,summary:null,controllableFields:{},resistanceLevels:[],getDevice:()=>null,setTargetSpeed:v=>send('speed',v),setTargetIncline:v=>send('incline',v),setTargetPower:v=>send('power',v),setTargetResistance:v=>send('resistance',v),startDevice:()=>send('start'),resumeDevice:()=>send('start'),pauseDevice:()=>send('pause'),emergencyStop:()=>send('stop'),resetToIdle:async()=>{},disconnect:()=>{},connect:async()=>{}};
-  }`,
-  });
-}
-for (const r of replacements.sort((a, b) => b.start - a.start))
-  code = code.slice(0, r.start) + r.text + code.slice(r.end);
-await fs.writeFile(root + path, code);
-const server = spawn(
-  "python",
-  ["-m", "http.server", "5175", "--bind", "127.0.0.1", "--directory", root],
-  { stdio: "ignore" },
-);
-const origin = "http://127.0.0.1:5175";
-for (let i = 0; i < 50; i++) {
-  try {
-    await fetch(origin);
-    break;
-  } catch {
-    await new Promise((r) => setTimeout(r, 100));
-  }
-}
+const { origin, close } = await serveWorkoutFixture();
 const browser = await chromium.launch({
   executablePath: "/usr/bin/chromium",
   args: ["--no-sandbox"],
@@ -299,5 +256,5 @@ try {
   }
 } finally {
   await browser.close();
-  server.kill();
+  await close();
 }
