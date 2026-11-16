@@ -1,11 +1,11 @@
 {
   "origin": "https://kwest.fit",
-  "capturedAt": "2026-11-16T17:34:42.130Z",
-  "originalHtmlSha256": "27cee7b4e82405f730cc3eb4736e71fec1df2bb3a86bdfa3be15db175e623b5e",
-  "visualVersion": "b88c1196461c",
+  "capturedAt": "2026-11-16T17:42:10.745Z",
+  "originalHtmlSha256": "5d0f7f0915c5016c46e98c8f8e778d5dd992c6effba38d852413301df747cbe1",
+  "visualVersion": "0ff4332ca146",
   "applicationScripts": [
-    "/assets/feedback-b88c1196461c.js"
+    "/assets/feedback-0ff4332ca146.js"
   ],
-  "note": "Verified seamless Strava sync, equipment disconnect and workout continuation. Worker source and bindings preserved.",
-  "verifiedDeployment": "0b931005-23ad-4a68-90ca-6e7def5b115a"
+  "note": "Verified bike resistance levels, separate manual capabilities, and manual journey starts. Worker source and bindings preserved.",
+  "verifiedDeployment": "e7b1f064-d35d-45d4-8f6e-8f8edc81eeae"
 }
