@@ -1,11 +1,11 @@
 {
   "origin": "https://kwest.fit",
-  "capturedAt": "2026-11-09T21:10:49.329Z",
-  "originalHtmlSha256": "b48b30ccfbca99876a0b4eecd2c9ea2c0ea21f13d9d1a7397cc74572ae45f013",
-  "visualVersion": "4f4c2b7f2a19",
+  "capturedAt": "2026-11-16T17:23:26.607Z",
+  "originalHtmlSha256": "9c51fbac263d1b5f17172d6ea054f5312e105d70b06edc17f9aed4acaf5189ba",
+  "visualVersion": "af7c471a70eb",
   "applicationScripts": [
-    "/assets/bluetooth-573f5e5911e7.js"
+    "/assets/feedback-af7c471a70eb.js"
   ],
-  "note": "Application JavaScript is unchanged from production. Worker code, credentials and deployment settings are untouched.",
-  "verifiedDeployment": "ec699a91-307f-4977-9d5c-284fc9937ef2"
+  "note": "Verified manual workout controls and missing-reading cleanup. Worker source and bindings preserved.",
+  "verifiedDeployment": "0a1af711-dbcb-42c4-a784-30253e6d66aa"
 }
