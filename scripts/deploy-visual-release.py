@@ -38,7 +38,12 @@ def request(path, method='GET', data=None, token=TOKEN, content_type=None, raw=F
         content_type = 'application/json'
     if content_type:
         headers['Content-Type'] = content_type
-    req = urllib.request.Request(API + path, data=data, headers=headers, method=method)
+    # Fresh reads are required for the deployment race check and final receipt.
+    url = API + path
+    if method == 'GET':
+        url += ('&' if '?' in path else '?') + '_deployment_check=' + uuid.uuid4().hex
+        headers['Cache-Control'] = 'no-cache'
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=60) as response:
             body = response.read()
