@@ -23,7 +23,10 @@ import { EquipmentConnection } from "./EquipmentConnection";
 import { WorkoutRecap, WeeklyProgress } from "./WorkoutFeedback";
 import { intervalCue } from "./feedbackStats";
 import "./workout-feedback.css";
-import { equipmentControlAvailable } from "./equipmentControl";
+import {
+  equipmentControlAvailable,
+  manualControlAvailable,
+} from "./equipmentControl";
 import {
   grantedRememberedDevice,
   parseRememberedDevice,
@@ -167,6 +170,13 @@ function App() {
     device.controllable,
     it.connected,
     ft.targetFeatures,
+  );
+  const canAdjust = manualControlAvailable(
+    kind,
+    device.controllable,
+    it.connected,
+    ft.targetFeatures,
+    it.controllableFields,
   );
   useEffect(() => {
     if (demo || (!ft.connected && !it.connected)) return;
@@ -514,8 +524,9 @@ function App() {
       demo,
       samples: [],
       events: ["00:00 Workout started"],
-      automatic: demo || canControl,
-      controlMode: demo || canControl ? "automatic" : "follow",
+      automatic: demo || canControl || canAdjust,
+      controlMode:
+        demo || canControl ? "automatic" : canAdjust ? "manual" : "follow",
       phase: 0,
       cycle: 0,
       phaseElapsed: 0,
@@ -525,7 +536,7 @@ function App() {
     setLiveTab(sceneryId ? "Scenery" : "Session");
     setPage("Live");
     setHold(!demo && !canControl);
-    if (!demo && canControl) {
+    if (!demo && (canControl || canAdjust)) {
       if (it.connected) {
         await it.resetToIdle();
         if (startToken !== epoch.current) return;
@@ -658,7 +669,7 @@ function App() {
       !demo &&
       session?.automatic &&
       session.controlMode !== "follow" &&
-      !canControl
+      !(session.controlMode === "manual" ? canAdjust : canControl)
     )
       throw Error(
         "Equipment control is not available. Reconnect the equipment first.",
@@ -698,8 +709,16 @@ function App() {
       : kind !== session.programme.kind
         ? "Connect the equipment type used by this session."
         : !demo && !canControl
-          ? "Equipment control is not available. Check the Bluetooth connection."
+          ? kind === "Bike" && canAdjust
+            ? "This bike uses resistance levels. Adjust them in Manual mode."
+            : "Equipment control is not available. Check the Bluetooth connection."
           : "";
+  const manualUnavailable =
+    !session || !connected || kind !== session.programme.kind
+      ? automaticUnavailable
+      : !canAdjust
+        ? "Manual control is not available for this equipment."
+        : "";
   const controlMode: MachineControlMode =
     session?.controlMode === "manual"
       ? "manual"
@@ -707,7 +726,12 @@ function App() {
         ? "automatic"
         : "follow";
   function changeControlMode(mode: MachineControlMode) {
-    if (!session || (mode !== "follow" && (busy || automaticUnavailable)))
+    if (
+      !session ||
+      (mode !== "follow" &&
+        (busy ||
+          (mode === "manual" ? manualUnavailable : automaticUnavailable)))
+    )
       return;
     if (mode === controlMode && session.controlMode === mode) return;
     epoch.current++;
@@ -718,7 +742,7 @@ function App() {
         ? {
             ...s,
             controlMode: mode,
-            automatic: s.automatic || mode === "automatic",
+            automatic: s.automatic || mode !== "follow",
           }
         : s,
     );
@@ -731,7 +755,7 @@ function App() {
     );
   }
   const adjustmentFields =
-    canControl && session && session.programme.kind === kind
+    canAdjust && session && session.programme.kind === kind
       ? manualFields(
           kind,
           it.connected,
@@ -763,7 +787,7 @@ function App() {
           !!state.current.session &&
           state.current.running &&
           state.current.connected &&
-          canControl &&
+          canAdjust &&
           Date.now() - fresh.current <= 8000 &&
           machineMotion.current !== false,
         hold: () => {
@@ -1135,6 +1159,7 @@ function App() {
             devicePanel={equipmentPanel}
             deviceName={it.deviceName || ft.deviceName || kind}
             automatic={demo || canControl}
+            manual={canAdjust}
             busy={busy || !ready}
             onCancel={() => setPage("Train")}
             onStart={() => {
@@ -1343,6 +1368,7 @@ function App() {
                 onChange={changeControlMode}
                 busy={busy}
                 automaticUnavailable={automaticUnavailable}
+                manualUnavailable={manualUnavailable}
               />
               {sessionActions}
             </div>
@@ -1374,6 +1400,7 @@ function App() {
                 controlMode={controlMode}
                 onControlMode={changeControlMode}
                 automaticUnavailable={automaticUnavailable}
+                manualUnavailable={manualUnavailable}
                 speed={connected ? (metrics.speedKmh ?? null) : null}
                 incline={connected ? (metrics.inclinePct ?? null) : null}
                 power={connected ? (metrics.powerW ?? null) : null}
@@ -1440,6 +1467,13 @@ function App() {
                     value={metrics.powerW ?? "—"}
                     unit="W"
                   />
+                  {session.programme.kind !== "Treadmill" && (
+                    <Metric
+                      label="Resistance"
+                      value={metrics.resistanceLevel ?? "—"}
+                      unit="level"
+                    />
+                  )}
                   <Metric
                     label="Heart rate"
                     value={metrics.heartRateBpm || metrics.pulseBpm || "—"}

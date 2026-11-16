@@ -29,6 +29,7 @@ export function GuidedSetup({
   devicePanel,
   deviceName,
   automatic,
+  manual = false,
   busy,
   onStart,
   onCancel,
@@ -45,6 +46,7 @@ export function GuidedSetup({
   devicePanel: ReactNode;
   deviceName: string;
   automatic: boolean;
+  manual?: boolean;
   busy: boolean;
   onStart: () => void;
   onCancel: () => void;
@@ -350,7 +352,9 @@ export function GuidedSetup({
               <dd>
                 {automatic
                   ? "Automatic targets · physical controls take priority"
-                  : "Tracking only · use the machine’s controls"}
+                  : manual
+                    ? "Manual resistance · adjust levels during your workout"
+                    : "Tracking only · use the machine’s controls"}
               </dd>
             </div>
           </dl>

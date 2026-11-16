@@ -18,6 +18,16 @@ export function WorkoutReadings(p: WorkoutReadingsProps) {
       : p.kind === "Bike"
         ? { label: "POWER", value: p.power, unit: "W", decimals: 0 }
         : { label: "RESISTANCE", value: p.resistance, unit: "", decimals: 0 },
+    ...(p.kind === "Bike"
+      ? [
+          {
+            label: "RESISTANCE",
+            value: p.resistance,
+            unit: "level",
+            decimals: 0,
+          },
+        ]
+      : []),
     {
       label: "DISTANCE",
       value: validReading(p.distance) ? p.distance / 1000 : null,

@@ -4,11 +4,13 @@ export function ControlMode({
   onChange,
   busy,
   automaticUnavailable,
+  manualUnavailable = automaticUnavailable,
 }: {
   value: MachineControlMode;
   onChange: (mode: MachineControlMode) => void;
   busy: boolean;
   automaticUnavailable: string;
+  manualUnavailable?: string;
 }) {
   return (
     <div className="control-mode-wrap">
@@ -26,10 +28,10 @@ export function ControlMode({
         </button>
         <button
           aria-pressed={value === "manual"}
-          disabled={busy || !!automaticUnavailable}
+          disabled={busy || !!manualUnavailable}
           onClick={() => onChange("manual")}
           title={
-            automaticUnavailable ||
+            manualUnavailable ||
             "Set targets yourself. Pause and resume still control the equipment."
           }
         >

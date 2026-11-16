@@ -25,7 +25,6 @@ export function manualFields(
   ifitFields?: any,
   levels?: number[],
 ): ManualField[] {
-  if (ifit && kind === "Bike") return [];
   const keys: TargetKey[] =
     kind === "Treadmill"
       ? [
@@ -35,7 +34,18 @@ export function manualFields(
             : []),
         ]
       : kind === "Bike"
-        ? ["power"]
+        ? [
+            ...((
+              ifit
+                ? ifitFields?.resistance === true
+                : features?.resistance === true
+            )
+              ? ["resistance" as const]
+              : []),
+            ...(!ifit && (!features || features.power === true)
+              ? ["power" as const]
+              : []),
+          ]
         : ["resistance"];
   return keys
     .filter((key) =>

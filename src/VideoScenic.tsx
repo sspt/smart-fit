@@ -15,6 +15,7 @@ export function VideoScenic({
   controlMode,
   onControlMode,
   automaticUnavailable,
+  manualUnavailable,
   speed,
   incline,
   power,
@@ -35,6 +36,7 @@ export function VideoScenic({
   controlMode: MachineControlMode;
   onControlMode: (mode: MachineControlMode) => void;
   automaticUnavailable: string;
+  manualUnavailable?: string;
   speed: number | null;
   incline?: number | null;
   power?: number | null;
@@ -418,6 +420,7 @@ export function VideoScenic({
                   onChange={onControlMode}
                   busy={busy}
                   automaticUnavailable={automaticUnavailable}
+                  manualUnavailable={manualUnavailable}
                 />
                 <button
                   className="immersion-exit"

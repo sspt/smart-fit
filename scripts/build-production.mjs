@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {WorkoutContinuation} from './src/WorkoutContinuation'; export {currentSegment,advance,extendWorkout} from './src/workout'; export {disconnectWorkoutDevices} from './src/workoutCompletion'; export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {manualControlAvailable} from './src/equipmentControl'; export {WorkoutContinuation} from './src/WorkoutContinuation'; export {currentSegment,advance,extendWorkout} from './src/workout'; export {disconnectWorkoutDevices} from './src/workoutCompletion'; export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -287,6 +287,7 @@ const names = {
   setBusy: "Ft",
   setError: "tt",
   canControl: "Mt",
+  canAdjust: "__canAdjust",
   fresh: "xn",
   setHold: "Ge",
   sent: "Ut",
@@ -469,6 +470,63 @@ once(
   'Ee === "manual" ? "Manual targets selected. Automatic programme changes are held." : "Programme targets are applied automatically. Physical changes take priority."',
 );
 
+// Resistance-only bikes support manual levels independently of ERG programme power.
+once(
+  "  (m.useEffect(() => {\n    if (X || (!K.connected && !J.connected)) return;",
+  "  const __canAdjust=__feedback.manualControlAvailable(H,jt.controllable,J.connected,K.targetFeatures,J.controllableFields);\n  (m.useEffect(() => {\n    if (X || (!K.connected && !J.connected)) return;",
+);
+once(
+  "  const Qe = v",
+  '  const __manualUnavailable=!v||!Ne||H!==v.programme.kind ? "Connect the equipment used by this workout." : !__canAdjust ? "Manual control is not available for this equipment." : "";\n  const Qe = v',
+);
+once(
+  '"Equipment control is not available. Check the Bluetooth connection."',
+  'H === "Bike" && __canAdjust ? "This bike uses resistance levels. Adjust them in Manual mode." : "Equipment control is not available. Check the Bluetooth connection."',
+);
+once(
+  '(y !== "follow" && (Ce || Qe))',
+  '(y !== "follow" && (Ce || (y === "manual" ? __manualUnavailable : Qe)))',
+);
+once(
+  'automatic: L.automatic || y === "automatic",',
+  'automatic: L.automatic || y !== "follow",',
+);
+once(
+  'v.controlMode !== "follow" && !Mt)',
+  'v.controlMode !== "follow" && !(v.controlMode === "manual" ? __canAdjust : Mt))',
+);
+once(
+  'automatic: X || Mt,\n        controlMode: X || Mt ? "automatic" : "follow",',
+  'automatic: X || Mt || __canAdjust,\n        controlMode: X || Mt ? "automatic" : __canAdjust ? "manual" : "follow",',
+);
+once("      !X && Mt)\n", "      !X && (Mt || __canAdjust))\n");
+once("  automatic: D,", "  automatic: D, manual:__setupManual=false,");
+once(
+  "automatic: X || Mt,\n              busy:",
+  "automatic: X || Mt, manual:__canAdjust,\n              busy:",
+);
+once(
+  '"Tracking only \\xB7 use the machine\\u2019s controls"',
+  '__setupManual ? "Manual resistance · adjust levels during your workout" : "Tracking only \\xB7 use the machine\\u2019s controls"',
+);
+// Pass the separate manual availability through both workout views.
+const autoProps = code.split("automaticUnavailable: Qe,").length - 1;
+if (autoProps !== 2) throw Error("Workout availability contract changed");
+code = code
+  .split("automaticUnavailable: Qe,")
+  .join("automaticUnavailable: Qe, manualUnavailable:__manualUnavailable,");
+once(
+  "\n  automaticUnavailable: E,",
+  "\n  automaticUnavailable: E, manualUnavailable:__scenicManualUnavailable,",
+);
+once(
+  "                        automaticUnavailable: E,",
+  "                        automaticUnavailable: E, manualUnavailable:__scenicManualUnavailable,",
+);
+once(
+  'c.jsx(Ri, {\n                              label: "Heart rate",',
+  '(v.programme.kind !== "Treadmill" && c.jsx(Ri,{label:"Resistance",value:Xe.resistanceLevel,unit:"level"})),c.jsx(Ri, {\n                              label: "Heart rate",',
+);
 // Completed workouts always enter the existing durable Strava outbox when connected.
 once(
   "$.current.automatic && (await ve(S));",
