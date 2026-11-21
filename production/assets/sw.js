@@ -1,4 +1,4 @@
-const CACHE = "smart-fit-cfe4d832da02-visual-2210fb11fb5a-visual-eec56c39bb22-equipment-3dda26b9d817-visual-13030669f897-programmes-57dcdc91015e-visual-3979cc63d064-settings-b43450d0ea98-visual-8276ae9c07fc-bluetooth-573f5e5911e7-visual-4f4c2b7f2a19";
+const CACHE = "kwest-feedback-edf732e3b45c";
 self.addEventListener("install", (event) =>
   event.waitUntil(
     (async () => {

@@ -1,3 +1,9 @@
+import {
+  CONCEPT2_ADDITIONAL_STATUS,
+  CONCEPT2_GENERAL_STATUS,
+  CONCEPT2_ROWING_SERVICE,
+  parseConcept2Status,
+} from "./concept2";
 import { fitnessPickerOptions } from "./bluetoothPicker";
 // Web Bluetooth gateway for cardio machines — FTMS (Fitness Machine Service,
 // GATT UUID 0x1826). Android/Chrome only; every entry point feature-detects
@@ -1581,6 +1587,7 @@ export function useFtms() {
   const characteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(
     null,
   );
+  const concept2CleanupRef = useRef<(() => void) | null>(null);
   const handleValueRef = useRef<((event: Event) => void) | null>(null);
   const controlCharRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
   const controlHandleRef = useRef<((event: Event) => void) | null>(null);
@@ -2395,6 +2402,8 @@ export function useFtms() {
   // notifications (distanceEstimateM integrating 2x per tick, powerSum/
   // speedSum summing 2x against a single count increment, etc.).
   const teardownCharacteristicListeners = useCallback(() => {
+    concept2CleanupRef.current?.();
+    concept2CleanupRef.current = null;
     const characteristic = characteristicRef.current;
     const handleValue = handleValueRef.current;
     try {
@@ -2513,30 +2522,101 @@ export function useFtms() {
       15000,
       draftText("Timed out connecting to the device."),
     );
-    const service = await server.getPrimaryService(FTMS_SERVICE);
-    // Probe for whichever "Data" characteristic this device actually
-    // exposes rather than trusting charUuidRef's assumption — see
-    // detectCardioType's comment for why (wrong assumption used to fail the
-    // connection outright instead of just picking the wrong parser).
-    const allChars = await service.getCharacteristics();
-    const detected = detectCardioType(allChars, cardioTypeRef.current);
-    if (!detected)
-      throw new DOMException(
-        "No recognized FTMS Data characteristic on this device.",
-        "NotFoundError",
-      );
-    detectedCardioTypeRef.current = detected.type;
-    const charUuid = detected.charUuid;
-    charUuidRef.current = charUuid;
-    const characteristic = detected.characteristic;
-
-    // A fresh device/connection — previous metrics no longer apply. Reset the
-    // merge state (see mergeMetrics's comment) and re-apply this device's own
-    // quirks, since a reconnect may well be to a different physical machine.
     metricsRef.current = EMPTY_METRICS;
     lastFieldSeenAtRef.current = {};
     speedScaleCalibratedRef.current = false;
     inclineScaleCalibratedRef.current = false;
+
+    setTargetFeatures(null);
+    setMachineFeatures(null);
+    setTargetSettingFeatures(null);
+
+    let service: BluetoothRemoteGATTService;
+    let detected: ReturnType<typeof detectCardioType>;
+    try {
+      service = await server.getPrimaryService(FTMS_SERVICE);
+      detected = detectCardioType(
+        await service.getCharacteristics(),
+        cardioTypeRef.current,
+      );
+      if (!detected)
+        throw new DOMException(
+          "No recognized FTMS Data characteristic.",
+          "NotFoundError",
+        );
+    } catch (error) {
+      if (!(error instanceof DOMException) || error.name !== "NotFoundError")
+        throw error;
+      const pm5 = await server
+        .getPrimaryService(CONCEPT2_ROWING_SERVICE)
+        .catch((pm5Error: unknown) => {
+          if (
+            pm5Error instanceof DOMException &&
+            (pm5Error.name === "NotFoundError" ||
+              pm5Error.name === "SecurityError")
+          )
+            throw error;
+          throw pm5Error;
+        });
+      const streams = [];
+      for (const uuid of [
+        CONCEPT2_GENERAL_STATUS,
+        CONCEPT2_ADDITIONAL_STATUS,
+      ]) {
+        streams.push({
+          uuid,
+          char: await pm5.getCharacteristic(uuid).catch((cause) => {
+            throw new Error("Concept2 PM5 workout data is unavailable.", {
+              cause,
+            });
+          }),
+        });
+      }
+      const subscriptions: Array<{
+        char: BluetoothRemoteGATTCharacteristic;
+        listener: (event: Event) => void;
+      }> = [];
+      const cleanup = () => {
+        for (const { char, listener } of subscriptions) {
+          char.removeEventListener("characteristicvaluechanged", listener);
+          void char.stopNotifications().catch(() => {});
+        }
+      };
+      concept2CleanupRef.current = cleanup;
+      try {
+        for (const { uuid, char } of streams) {
+          const listener = () => {
+            if (!char.value || deviceRef.current !== device) return;
+            const reading = parseConcept2Status(uuid, char.value);
+            if (!reading) return;
+            const merged = mergeMetrics(
+              { ...EMPTY_METRICS, ...reading },
+              Date.now(),
+            );
+            metricsRef.current = merged;
+            setMetrics(merged);
+            if (uuid === CONCEPT2_ADDITIONAL_STATUS) updateAccumulator(merged);
+          };
+          subscriptions.push({ char, listener });
+          char.addEventListener("characteristicvaluechanged", listener);
+          await char.startNotifications();
+        }
+      } catch (cause) {
+        cleanup();
+        concept2CleanupRef.current = null;
+        throw new Error("Could not subscribe to Concept2 PM5 workout data.", {
+          cause,
+        });
+      }
+      detectedCardioTypeRef.current = "Rower";
+      setControllable(false);
+      logBleEvent("Connected to Concept2 PM5 for workout tracking.");
+      return;
+    }
+    detectedCardioTypeRef.current = detected.type;
+    const charUuid = detected.charUuid;
+    charUuidRef.current = charUuid;
+    const characteristic = detected.characteristic;
 
     // Per-device overrides, keyed on the advertised name — see
     // deviceRegistry.ts for why these live as data rather than as globals
@@ -2551,6 +2631,41 @@ export function useFtms() {
     inclineWriteScaleRef.current =
       quirks.inclineWriteScale ?? DEFAULT_INCLINE_WRITE_SCALE;
     logBleEvent(describeMatch("FTMS", device.name));
+
+    // Fitness Machine Features (bytes 0-3, LE uint32) — previously only
+    // the Target Setting Features word (bytes 4-7) was read. Bit 2 here is
+    // Total Distance Supported: knowing upfront that a device doesn't
+    // support it lets updateAccumulator skip straight to the
+    // speed-integrated estimate instead of running its "wait and see if
+    // the raw field ever proves itself" dance on a field the device
+    // already told us not to trust.
+    try {
+      const featureChar = await service.getCharacteristic(
+        CHAR_FITNESS_MACHINE_FEATURE,
+      );
+      const value = await featureChar.readValue();
+      if (value.byteLength >= 4) {
+        const dataBits = value.getUint32(0, true);
+        if (accRef.current && quirks.distanceTrustworthy !== false)
+          accRef.current.distanceSupportedByDevice = !!(dataBits & 0x4);
+        // Full 17-bit decode — see MachineFeatures's own comment. Recorded
+        // for the probe/registry even though nothing here acts on most of
+        // these bits yet.
+        setMachineFeatures(decodeMachineFeatures(dataBits));
+      }
+      if (value.byteLength >= 8) {
+        const targetBits = value.getUint32(4, true);
+        setTargetFeatures({
+          speed: !!(targetBits & 0x1),
+          incline: !!(targetBits & 0x2),
+          resistance: !!(targetBits & 0x4),
+          power: !!(targetBits & 0x8),
+        });
+        setTargetSettingFeatures(decodeTargetSettingFeatures(targetBits));
+      }
+    } catch {
+      /* feature read failed — leave targetFeatures/machineFeatures null, controls fall back to always-shown */
+    }
 
     // The first 3 notifications are always logged in full, including the raw
     // flags byte — enough to confirm which optional fields this device
@@ -2616,6 +2731,8 @@ export function useFtms() {
         value.byteLength >= 2 ? value.getUint16(0, true) : null,
       );
     };
+    characteristicRef.current = characteristic;
+    handleValueRef.current = handleValue;
     characteristic.addEventListener("characteristicvaluechanged", handleValue);
     // Devices whose Data characteristic doesn't support notify at all (rare,
     // but a read-only characteristic previously made startNotifications()
@@ -2648,9 +2765,6 @@ export function useFtms() {
         "NotFoundError",
       );
     }
-    characteristicRef.current = characteristic;
-    handleValueRef.current = handleValue;
-
     // Control Point + feature negotiation is best-effort — many devices
     // (rowers especially) don't expose a Control Point at all, which is
     // normal, not an error. A fresh GATT connection means control must be
@@ -2661,17 +2775,24 @@ export function useFtms() {
     controlCharRef.current = null;
     controlHandleRef.current = null;
     setControllable(false);
-    setTargetFeatures(null);
-    setMachineFeatures(null);
-    setTargetSettingFeatures(null);
     setSupportedRanges(EMPTY_SUPPORTED_RANGES);
     try {
       const controlChar = await service.getCharacteristic(CHAR_CONTROL_POINT);
+      if (!controlChar.properties.write || !controlChar.properties.indicate)
+        throw new Error("FTMS Control Point requires writes and indications.");
       controlChar.addEventListener(
         "characteristicvaluechanged",
         handleControlIndication,
       );
-      await controlChar.startNotifications();
+      try {
+        await controlChar.startNotifications();
+      } catch (error) {
+        controlChar.removeEventListener(
+          "characteristicvaluechanged",
+          handleControlIndication,
+        );
+        throw error;
+      }
       controlCharRef.current = controlChar;
       controlHandleRef.current = handleControlIndication;
       setControllable(true);
@@ -2706,40 +2827,6 @@ export function useFtms() {
     }
 
     if (controlCharRef.current) {
-      // Fitness Machine Features (bytes 0-3, LE uint32) — previously only
-      // the Target Setting Features word (bytes 4-7) was read. Bit 2 here is
-      // Total Distance Supported: knowing upfront that a device doesn't
-      // support it lets updateAccumulator skip straight to the
-      // speed-integrated estimate instead of running its "wait and see if
-      // the raw field ever proves itself" dance on a field the device
-      // already told us not to trust.
-      try {
-        const featureChar = await service.getCharacteristic(
-          CHAR_FITNESS_MACHINE_FEATURE,
-        );
-        const value = await featureChar.readValue();
-        if (value.byteLength >= 4 && accRef.current) {
-          const dataBits = value.getUint32(0, true);
-          accRef.current.distanceSupportedByDevice = !!(dataBits & 0x4);
-          // Full 17-bit decode — see MachineFeatures's own comment. Recorded
-          // for the probe/registry even though nothing here acts on most of
-          // these bits yet.
-          setMachineFeatures(decodeMachineFeatures(dataBits));
-        }
-        if (value.byteLength >= 8) {
-          const targetBits = value.getUint32(4, true);
-          setTargetFeatures({
-            speed: !!(targetBits & 0x1),
-            incline: !!(targetBits & 0x2),
-            resistance: !!(targetBits & 0x4),
-            power: !!(targetBits & 0x8),
-          });
-          setTargetSettingFeatures(decodeTargetSettingFeatures(targetBits));
-        }
-      } catch {
-        /* feature read failed — leave targetFeatures/machineFeatures null, controls fall back to always-shown */
-      }
-
       // All four optional per spec — most devices (rowers, bikes without
       // incline) simply don't have some of these; a missing characteristic
       // just means the UI falls back to its own default range for that target.
@@ -2954,7 +3041,15 @@ export function useFtms() {
           );
       };
       statusChar.addEventListener("characteristicvaluechanged", handleStatus);
-      await statusChar.startNotifications();
+      try {
+        await statusChar.startNotifications();
+      } catch (error) {
+        statusChar.removeEventListener(
+          "characteristicvaluechanged",
+          handleStatus,
+        );
+        throw error;
+      }
       machineStatusCharRef.current = statusChar;
       machineStatusHandleRef.current = handleStatus;
       setMachineStatusSupported(true);
@@ -2976,6 +3071,8 @@ export function useFtms() {
 
   const cleanupState = useCallback(() => {
     endPassiveSession();
+    concept2CleanupRef.current?.();
+    concept2CleanupRef.current = null;
     machineRunningRef.current = null;
     deviceRef.current = null;
     charUuidRef.current = null;
@@ -3185,30 +3282,33 @@ export function useFtms() {
         disconnectedHandlerRef.current = onGattDisconnected;
 
         await attach();
-        logBleEvent(
-          `Connected to "${name}" via FTMS (controllable: ${controlCharRef.current != null}).`,
-        );
+        if (!concept2CleanupRef.current)
+          logBleEvent(
+            `Connected to "${name}" via FTMS (controllable: ${controlCharRef.current != null}).`,
+          );
         setDeviceName(name);
         setConnected(true);
         // Passive conformance recording for the whole workout, so a later
         // "Report a connection issue" ships findings instead of raw log.
-        beginPassiveSession(
-          "FTMS",
-          name,
-          cardioType,
-          detectedCardioTypeRef.current,
-        );
-        recordPassiveObservation({
-          kind: "discovery",
-          at: Date.now(),
-          serviceUuids: [],
-          dataCharacteristicUuid: characteristicRef.current?.uuid ?? null,
-          dataCharacteristicProperties: [],
-          detectedCardioType: detectedCardioTypeRef.current,
-          requestedCardioType: cardioType,
-          hasControlPoint: controlCharRef.current != null,
-          hasMachineStatus: machineStatusCharRef.current != null,
-        });
+        if (!concept2CleanupRef.current) {
+          beginPassiveSession(
+            "FTMS",
+            name,
+            cardioType,
+            detectedCardioTypeRef.current,
+          );
+          recordPassiveObservation({
+            kind: "discovery",
+            at: Date.now(),
+            serviceUuids: [],
+            dataCharacteristicUuid: characteristicRef.current?.uuid ?? null,
+            dataCharacteristicProperties: [],
+            detectedCardioType: detectedCardioTypeRef.current,
+            requestedCardioType: cardioType,
+            hasControlPoint: controlCharRef.current != null,
+            hasMachineStatus: machineStatusCharRef.current != null,
+          });
+        }
         const detected = detectedCardioTypeRef.current;
         if (detected && detected !== cardioType) {
           logBleEvent(
@@ -3250,6 +3350,7 @@ export function useFtms() {
         try {
           device.gatt?.disconnect();
         } catch {}
+        teardownCharacteristicListeners();
         cleanupState();
         if (notFtms) {
           // gatt.disconnect() doesn't return a promise — it tears the session
@@ -3280,7 +3381,14 @@ export function useFtms() {
         setConnecting(false);
       }
     },
-    [supported, attach, attemptReconnect, cleanupState, rejectPendingControl],
+    [
+      supported,
+      attach,
+      attemptReconnect,
+      cleanupState,
+      rejectPendingControl,
+      teardownCharacteristicListeners,
+    ],
   );
 
   // Disconnect on unmount (e.g. the whole app tearing down) — flag intentional
