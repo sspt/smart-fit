@@ -50,3 +50,15 @@ it("rejects invalid envelopes and duplicate files", () => {
   expect(() => parseVideoInfo({})).toThrow();
   expect(() => parseVideoInfo({ videos: [entry, entry] })).toThrow();
 });
+
+it("resolves both files relative to the catalogue folder", () => {
+  const { file, ...metadata } = entry;
+  const [route] = parseVideoInfo({
+    videos: [{ ...metadata, path: "fango-galeria/", durationSeconds: 442 }],
+  });
+  expect(route.src).toBe("https://media.kwest.fit/fango-galeria/video.mp4");
+  expect(route.percursoSrc).toBe(
+    "https://media.kwest.fit/fango-galeria/percurso.json",
+  );
+  expect(route.seconds).toBe(442);
+});

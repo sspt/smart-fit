@@ -5,6 +5,7 @@ import riverPoster from "./assets/river.jpg";
 export type VideoRoute = {
   skipSeconds?: number;
   hlsSrc?: string;
+  percursoSrc?: string;
   format?: "loop" | "route";
   id: string;
   name: string;

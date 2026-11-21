@@ -7,18 +7,27 @@ export function parseVideoInfo(data: unknown): VideoRoute[] {
     throw Error("Invalid info.json: expected a videos array.");
   const seen = new Set<string>();
   return videos.flatMap((v: any) => {
+    const folder = v?.path;
+    if (
+      folder !== undefined &&
+      (typeof folder !== "string" ||
+        !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\/?$/.test(folder))
+    )
+      throw Error("Invalid video folder.");
+    const base = folder ? "https://media.kwest.fit/" : videoInfoBase;
+    const file = folder ? folder.replace(/\/?$/, "/video.mp4") : v?.file;
     if (
       !v ||
-      typeof v.file !== "string" ||
-      !v.file ||
+      typeof file !== "string" ||
+      !file ||
       typeof v.name !== "string" ||
       !v.name.trim() ||
       v.name.length > 120
     )
       throw Error("Invalid video entry.");
-    const url = new URL(v.file, videoInfoBase);
+    const url = new URL(file, base);
     if (
-      url.origin !== new URL(videoInfoBase).origin ||
+      url.origin !== new URL(base).origin ||
       url.username ||
       url.password ||
       url.search ||
@@ -58,11 +67,15 @@ export function parseVideoInfo(data: unknown): VideoRoute[] {
       kind,
       reference,
       skipSeconds: skip,
-      seconds: 0,
+      seconds:
+        Number.isFinite(v.durationSeconds) && v.durationSeconds > 0
+          ? v.durationSeconds
+          : 0,
+      ...(folder ? { percursoSrc: new URL("percurso.json", url).href } : {}),
       format: "route" as const,
       src: url.href,
       poster: "",
-      author: "Video library",
+      author: typeof v.author === "string" ? v.author : "Video library",
       source: url.href,
     }));
   });

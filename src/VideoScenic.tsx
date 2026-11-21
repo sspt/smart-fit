@@ -1,3 +1,4 @@
+import { useRouteSpeed } from "./useRouteSpeed";
 import type { ReactNode } from "react";
 import { IntervalCue } from "./WorkoutFeedback";
 import { WorkoutReadings } from "./WorkoutReadings";
@@ -62,7 +63,7 @@ export function VideoScenic({
     [ready, setReady] = useState(false),
     [following, setFollowing] = useState(autoImmerse),
     [expanded, setExpanded] = useState(autoImmerse),
-    [reference, setReference] = useState(routes[0].reference),
+    [fallbackReference, setReference] = useState(routes[0].reference),
     [rate, setRate] = useState(1),
     [error, setError] = useState(""),
     [status, setStatus] = useState("Ready to open scenery"),
@@ -83,6 +84,9 @@ export function VideoScenic({
       : "Saved scene unavailable. Reconnect the video server or choose another scene."
     : error;
   const src = route === "local" ? file?.url : found?.src;
+  const profileUrl =
+    enabled && route !== "local" ? found?.percursoSrc : undefined;
+  const { reference, profileActive, setVideoTime } = useRouteSpeed(profileUrl, fallbackReference);
   const adaptive = useAdaptiveVideo(
     video,
     enabled ? src : undefined,
@@ -166,7 +170,7 @@ export function VideoScenic({
       return;
     }
     try {
-      el.playbackRate = wanted;
+      if (el.playbackRate !== wanted) el.playbackRate = wanted;
       setRate(el.playbackRate);
       setStatus(
         wanted !== speed! / reference
@@ -344,7 +348,18 @@ export function VideoScenic({
             controls={!expanded}
             controlsList="nofullscreen noremoteplayback"
             disablePictureInPicture
-            onLoadedMetadata={() => {
+            onTimeUpdate={
+              profileActive
+                ? (e) => setVideoTime(e.currentTarget.currentTime)
+                : undefined
+            }
+            onSeeked={
+              profileActive
+                ? (e) => setVideoTime(e.currentTarget.currentTime)
+                : undefined
+            }
+            onLoadedMetadata={(e) => {
+              setVideoTime(e.currentTarget.currentTime);
               setReady(true);
               setError("");
             }}
@@ -543,14 +558,16 @@ export function VideoScenic({
                 </select>
               </label>
               <label>
-                Video reference speed (km/h)
+                {profileActive
+                  ? "Fallback reference speed (km/h)"
+                  : "Video reference speed (km/h)"}
                 <input
                   type="number"
                   inputMode="decimal"
                   min="0.1"
                   max="100"
                   step="0.1"
-                  value={reference}
+                  value={fallbackReference}
                   onChange={(e) => {
                     const n = Number(e.target.value);
                     setReference(n);

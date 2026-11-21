@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {manualControlAvailable} from './src/equipmentControl'; export {WorkoutContinuation} from './src/WorkoutContinuation'; export {currentSegment,advance,extendWorkout} from './src/workout'; export {disconnectWorkoutDevices} from './src/workoutCompletion'; export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
+    contents: `export {useRouteSpeed} from "./src/useRouteSpeed"; export {manualControlAvailable} from './src/equipmentControl'; export {WorkoutContinuation} from './src/WorkoutContinuation'; export {currentSegment,advance,extendWorkout} from './src/workout'; export {disconnectWorkoutDevices} from './src/workoutCompletion'; export {WorkoutAdjustments} from './src/WorkoutAdjustments'; export {ControlMode} from './src/ControlMode'; export {WorkoutReadings,hasMetricValue} from './src/WorkoutReadings'; export {manualFields,applyManualTarget,knownWorkoutDistance} from './src/manualWorkoutControl'; export {AccountBootstrap} from './src/Accounts'; export {wrapAccountDatabase,accountState} from './src/accountClient'; export {WeightLossBuilder} from './src/WeightLossBuilder'; export {IPhoneLanding} from './src/IPhoneLanding'; export {needsIPhoneLanding} from './src/browserSupport'; export {SettingsLayout} from './src/SettingsLayout'; export {EquipmentConnection} from './src/EquipmentConnection'; export {WorkoutRecap,WeeklyProgress,IntervalCue} from './src/WorkoutFeedback'; export {intervalCue} from './src/feedbackStats';`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -616,6 +616,18 @@ once(
   "manualControls:__adjustmentControls,",
   "manualControls:c.jsxs(c.Fragment,{children:[__continuationControls,__adjustmentControls]}),",
 );
+// Integrate the folder catalogue and the shared playback hook into the preserved player.
+once("return i.flatMap((u) => {", `return i.flatMap((u) => {
+  if (u?.path !== undefined) {
+    if (typeof u.path !== "string" || !/^(?:[a-zA-Z0-9_-]+\\/)*[a-zA-Z0-9_-]+\\/?$/.test(u.path)) throw Error("Invalid video folder.");
+    u = {...u, file: u.path.replace(/\\/?$/, "/video.mp4")};
+  }`);
+once('src: d.href,\n      poster: p,', 'src: d.href,\n      ...(u.path ? {percursoSrc:new URL("percurso.json", d).href} : {}), poster: p,');
+once('skipSeconds: E,\n      seconds: 0,', 'skipSeconds: E, seconds: Number.isFinite(u.durationSeconds) ? u.durationSeconds : 0,');
+once('[K, J] = m.useState(Be[0].reference)', '[fallbackReference, J] = m.useState(Be[0].reference)');
+once('    Ft = Sh(', '    {reference:K, profileActive, setVideoTime} = __feedback.useRouteSpeed(S && V !== "local" ? xe?.percursoSrc : undefined, fallbackReference), Ft = Sh(');
+once('onLoadedMetadata: () => {\n                  (ne(!0), ae(""));', 'onTimeUpdate:profileActive ? e=>setVideoTime(e.currentTarget.currentTime) : undefined, onSeeked:profileActive ? e=>setVideoTime(e.currentTarget.currentTime) : undefined, onLoadedMetadata: e => {setVideoTime(e.currentTarget.currentTime); (ne(!0), ae(""));');
+once('value: K,\n                          onChange:', 'value: fallbackReference,\n                          onChange:');
 const historyCaps = code.split(".slice(0, 200)").length - 1;
 if (historyCaps !== 3)
   throw Error("Production history retention contract changed");
