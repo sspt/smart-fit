@@ -1,3 +1,4 @@
+import { programmeId } from "./programmeDraft";
 import type { Programme, Segment } from "./store";
 export type WeightLossOptions = {
   minutes: 15 | 20 | 30 | 45;
@@ -36,7 +37,7 @@ export const weightLossLimits = {
 };
 export function weightLossProgramme(
   options: WeightLossOptions,
-  id: string = crypto.randomUUID(),
+  id: string = programmeId(),
 ): Programme {
   const { kind, minutes, level } = options,
     limits = weightLossLimits[kind],

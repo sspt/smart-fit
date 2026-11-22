@@ -1,3 +1,4 @@
+import { copyProgramme } from "./programmeDraft";
 import type { Programme, Segment } from "./store";
 
 const segment = (
@@ -190,7 +191,7 @@ export function installDefaults(saved: Programme[]): Programme[] {
   );
   const existing = new Set(kept.map((p) => p?.id));
   return [
-    ...structuredClone(defaultProgrammes.filter((p) => !existing.has(p.id))),
+    ...defaultProgrammes.filter((p) => !existing.has(p.id)).map(copyProgramme),
     ...kept,
   ];
 }

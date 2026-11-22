@@ -93,3 +93,11 @@ main:has(.editor-backdrop) {
 .editor-top .save-button {
   flex-shrink: 0;
 }
+
+/* Keep the localized label visible on compact screens. */
+.programme-library .section-head > button span {
+  font-size: 12px;
+}
+.programme-library .section-head > button span::after {
+  content: none;
+}

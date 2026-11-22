@@ -1,3 +1,4 @@
+import { copyProgramme, programmeId } from "./programmeDraft";
 import { startMobileFullscreen } from "./mobileFullscreen";
 import "./infinite-scroll.css";
 import { useMemo } from "react";
@@ -1209,7 +1210,7 @@ function App() {
                 <button
                   onClick={() =>
                     setDraft({
-                      id: crypto.randomUUID(),
+                      id: programmeId(),
                       name: t("My programme"),
                       kind: activityFilter === "All" ? kind : activityFilter,
                       repeat: 1,
@@ -1298,7 +1299,7 @@ function App() {
                           ))}
                         </div>
                         <div className="card-actions">
-                          <button onClick={() => setDraft(structuredClone(p))}>
+                          <button onClick={() => setDraft(copyProgramme(p))}>
                             Edit programme
                           </button>
                           <button

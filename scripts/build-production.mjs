@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {startMobileFullscreen} from "./src/mobileFullscreen"; export {usePageSize,InfiniteScroll} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {copyProgramme,programmeId} from "./src/programmeDraft"; export {startMobileFullscreen} from "./src/mobileFullscreen"; export {usePageSize,InfiniteScroll} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -336,6 +336,31 @@ for (const draft of ["M", "h"]) {
     `name: ${draft}.name + " · " + __routeRelease.t("copy"),`,
   );
 }
+once(
+  "m.useState(() => structuredClone(a))",
+  "m.useState(() => __routeRelease.copyProgramme(a))",
+);
+once(
+  'm.useRef("field-" + crypto.randomUUID())',
+  'm.useRef("field-" + __routeRelease.programmeId())',
+);
+once(
+  'id: crypto.randomUUID(),\n                          name:__routeRelease.t("My programme"),',
+  'id:__routeRelease.programmeId(), name:__routeRelease.t("My programme"),',
+);
+once(
+  "id: crypto.randomUUID(),\n                      name: h.name +",
+  "id:__routeRelease.programmeId(), name: h.name +",
+);
+once("ft(structuredClone(k))", "ft(__routeRelease.copyProgramme(k))");
+once(
+  "function xn(u, g = crypto.randomUUID())",
+  "function xn(u, g = __routeRelease.programmeId())",
+);
+once(
+  "structuredClone(vf.filter((d) => !o.has(d.id)))",
+  "vf.filter((d) => !o.has(d.id)).map(__routeRelease.copyProgramme)",
+);
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );

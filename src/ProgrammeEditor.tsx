@@ -1,3 +1,4 @@
+import { copyProgramme, programmeId } from "./programmeDraft";
 import { t } from "./i18n";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -31,7 +32,7 @@ export function ProgrammeEditor({
   onClose: () => void;
   onDelete: () => void;
 }) {
-  const [draft, setDraft] = useState(() => structuredClone(value)),
+  const [draft, setDraft] = useState(() => copyProgramme(value)),
     [open, setOpen] = useState(0),
     [error, setError] = useState("");
   const dialog = useRef<HTMLElement>(null),
@@ -448,7 +449,7 @@ export function ProgrammeEditor({
               onClick={() => {
                 setDraft({
                   ...draft,
-                  id: crypto.randomUUID(),
+                  id: programmeId(),
                   name: draft.name + " · " + t("copy"),
                 });
                 setError("");
@@ -505,7 +506,7 @@ function NumberControl({
   onChange: (n: number) => void;
   compact?: boolean;
 }) {
-  const id = useRef("field-" + crypto.randomUUID());
+  const id = useRef("field-" + programmeId());
   const change = (n: number) =>
     onChange(Math.round(Math.min(max, Math.max(min, n)) * 100) / 100);
   return (
