@@ -349,10 +349,15 @@ await fs.writeFile(
     ...new Set([...assets, path, cssPath, "/iphone-forest.jpg"]),
   ]),
 );
+// A CSS-only release also changes the cached app shell.
+const shellVersion = createHash("sha256")
+  .update(html)
+  .digest("hex")
+  .slice(0, 12);
 let sw = await fs.readFile(root + "/sw.js", "utf8");
 sw = sw.replace(
   /(const\s+(?:CACHE|CACHE_NAME|VERSION)\s*=\s*["'])([^"']+)(["'])/,
-  (_, a, b, z) => a + "kwest-feedback-" + hash + z,
+  (_, a, b, z) => a + "kwest-feedback-" + shellVersion + z,
 );
 await fs.writeFile(root + "/sw.js", sw);
 console.log("Built production release:", hash);

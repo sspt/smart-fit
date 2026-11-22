@@ -63,6 +63,7 @@ main:has(> :is(.explore-screen, .programme-library) > .list-scroll) {
   position: relative;
   top: auto;
   flex: none;
+  backdrop-filter: none;
 }
 .list-scroll {
   flex: 1;
