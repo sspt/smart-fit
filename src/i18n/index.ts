@@ -48,6 +48,15 @@ export function setDocumentLanguage() {
 
 const messages: Record<string, readonly string[]> = {
   ...uiMessages,
+  "Load more": [
+    "Cargar más",
+    "Carregar mais",
+    "Afficher plus",
+    "Carica altro",
+    "Wczytaj więcej",
+    "Mehr laden",
+    "Meer laden",
+  ],
   Home: [
     "Inicio",
     "Início",

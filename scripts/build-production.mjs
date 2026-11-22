@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {usePageSize} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {usePageSize,InfiniteScroll} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -224,7 +224,45 @@ once(
   "[x, C] = Y(u)",
   '[x, C] = Y(["Treadmill", "Bike", "Rower"].includes(u) ? u : "Treadmill")',
 );
-once('new Set(i.map((d) => d.id))', 'new Set(i.map((d) => d?.id))');
+once("new Set(i.map((d) => d.id))", "new Set(i.map((d) => d?.id))");
+const paginationStart = code.indexOf("function ms({ page:");
+const paginationEnd = code.indexOf("function Cf(", paginationStart);
+if (
+  paginationStart < 0 ||
+  paginationEnd <= paginationStart ||
+  !code
+    .slice(paginationStart, paginationEnd)
+    .includes('className: "pagination"')
+)
+  throw Error("Production list controls changed");
+code =
+  code.slice(0, paginationStart) +
+  "function ms(props){return c.jsx(__routeRelease.InfiniteScroll,props)}\n" +
+  code.slice(paginationEnd);
+for (const [page, size] of [
+  ["Ae", "We"],
+  ["y", "h"],
+  ["Y", "Ae"],
+  ["M", "Ae"],
+]) {
+  once(
+    `.slice(${page} * ${size}, (${page} + 1) * ${size})`,
+    `.slice(0, (${page} + 1) * ${size})`,
+  );
+}
+once("M.slice($, $ + 1)", "M.slice(0, $ + 1)");
+for (const name of ["screen-heading", "section-head", "setup-topline"]) {
+  const anchor =
+    name === "section-head" ? ',\n                  id: "programmes"' : "";
+  once(
+    `className: "${name}"${anchor}`,
+    `className: "${name} list-heading"${anchor}`,
+  );
+}
+once(
+  'c.jsx("p", {\n                  className: "eyebrow",\n                  children: "SCENES FROM YOUR JOURNEY",\n                }),\n                c.jsx("h1", { children: "Your journey." }),',
+  'c.jsxs("div", {className:"list-heading", children:[c.jsx("p",{className:"eyebrow",children:"SCENES FROM YOUR JOURNEY"}),c.jsx("h1",{children:"Your journey."})]}),',
+);
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );
@@ -242,7 +280,16 @@ const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
 await fs.writeFile(root + path, code);
 html = html.replace(old, path);
 const css = html.match(/href="(\/assets\/[^"\s]+\.css)"/)[1];
-const cssPath = css;
+const style =
+  (await fs.readFile(root + css, "utf8")) +
+  "\n" +
+  (await fs.readFile("src/infinite-scroll.css", "utf8"));
+const cssPath =
+  "/assets/feedback-" +
+  createHash("sha256").update(style).digest("hex").slice(0, 12) +
+  ".css";
+await fs.writeFile(root + cssPath, style);
+html = html.replace(css, cssPath);
 await fs.writeFile(root + "/index.html", html);
 
 const assets = JSON.parse(

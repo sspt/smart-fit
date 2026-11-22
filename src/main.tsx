@@ -1,3 +1,4 @@
+import "./infinite-scroll.css";
 import { useMemo } from "react";
 import { availableProgrammes } from "./programmeValidation";
 import { setDocumentLanguage, t } from "./i18n";
@@ -38,7 +39,7 @@ import {
 import { useImmersiveBackground } from "./useImmersiveBackground";
 import { videoRoutes as starterRoutes } from "./videoRoutes";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
-import { Pagination, usePageSize } from "./Pagination";
+import { InfiniteScroll, usePageSize } from "./Pagination";
 import { GuidedSetup } from "./GuidedSetup";
 import { refreshApp } from "./refreshApp";
 import { CinematicEntrance } from "./CinematicEntrance";
@@ -1202,7 +1203,7 @@ function App() {
         )}
         {page === "Programmes" && (
           <section className="programme-library">
-            <section className="section-head" id="programmes">
+            <section className="section-head list-heading" id="programmes">
               <div>
                 <p className="eyebrow">MAKE TIME FOR YOURSELF</p>
                 <h2>Your programmes</h2>
@@ -1263,7 +1264,7 @@ function App() {
             </details>
             <div className="cards">
               {filteredProgrammes
-                .slice(libraryPage * pageSize, (libraryPage + 1) * pageSize)
+                .slice(0, (libraryPage + 1) * pageSize)
                 .map((p) => (
                   <article key={p.id} className="card">
                     <div className="programme-duration-tile">
@@ -1328,7 +1329,7 @@ function App() {
                 </button>
               </div>
             )}
-            <Pagination
+            <InfiniteScroll
               page={libraryPage}
               size={pageSize}
               count={filteredProgrammes.length}
@@ -1545,8 +1546,10 @@ function App() {
         )}
         {page === "History" && (
           <section>
-            <p className="eyebrow">SCENES FROM YOUR JOURNEY</p>
-            <h1>Your journey.</h1>
+            <div className="list-heading">
+              <p className="eyebrow">SCENES FROM YOUR JOURNEY</p>
+              <h1>Your journey.</h1>
+            </div>
             <WorkoutRecap
               session={recap}
               history={history}
@@ -1585,50 +1588,45 @@ function App() {
                 </button>
               </div>
             ) : (
-              visibleHistory
-                .slice(historyPage * pageSize, (historyPage + 1) * pageSize)
-                .map((s) => (
-                  <article className="panel history" key={s.id}>
-                    <div>
-                      <small>
-                        {new Date(s.started).toLocaleString()} ·{" "}
-                        {s.programme.kind}
-                      </small>
-                      <h3>{s.programme.name}</h3>
-                      <p>
-                        {clock(s.elapsed)} · {s.status} · {s.samples.length}{" "}
-                        samples
-                      </p>
-                      <div className="spark">
-                        {s.samples
-                          .filter(
-                            (_, i) =>
-                              i %
-                                Math.max(
-                                  1,
-                                  Math.floor(s.samples.length / 80),
-                                ) ===
-                              0,
-                          )
-                          .map((x, i) => (
-                            <i
-                              key={i}
-                              style={{
-                                height: Math.min(
-                                  50,
-                                  4 + (x.speed ?? 0) * 4 + (x.power ?? 0) / 10,
-                                ),
-                              }}
-                            />
-                          ))}
-                      </div>
+              visibleHistory.slice(0, (historyPage + 1) * pageSize).map((s) => (
+                <article className="panel history" key={s.id}>
+                  <div>
+                    <small>
+                      {new Date(s.started).toLocaleString()} ·{" "}
+                      {s.programme.kind}
+                    </small>
+                    <h3>{s.programme.name}</h3>
+                    <p>
+                      {clock(s.elapsed)} · {s.status} · {s.samples.length}{" "}
+                      samples
+                    </p>
+                    <div className="spark">
+                      {s.samples
+                        .filter(
+                          (_, i) =>
+                            i %
+                              Math.max(1, Math.floor(s.samples.length / 80)) ===
+                            0,
+                        )
+                        .map((x, i) => (
+                          <i
+                            key={i}
+                            style={{
+                              height: Math.min(
+                                50,
+                                4 + (x.speed ?? 0) * 4 + (x.power ?? 0) / 10,
+                              ),
+                            }}
+                          />
+                        ))}
                     </div>
-                    <button onClick={() => csv(s)}>Export CSV</button>
-                  </article>
-                ))
+                  </div>
+                  <button onClick={() => csv(s)}>Export CSV</button>
+                </article>
+              ))
             )}
             {visibleHistory.length > 0 && (
-              <Pagination
+              <InfiniteScroll
                 page={historyPage}
                 size={pageSize}
                 count={visibleHistory.length}

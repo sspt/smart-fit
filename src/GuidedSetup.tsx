@@ -1,6 +1,6 @@
 import { t } from "./i18n";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Pagination, usePageSize } from "./Pagination";
+import { InfiniteScroll, usePageSize } from "./Pagination";
 import { AppIcon } from "./AppIcon";
 import { useMediaServer, useVideoRoutes } from "./VideoCatalog";
 import { sceneDuration } from "./catalog";
@@ -93,7 +93,7 @@ export function GuidedSetup({
       className={`guided-setup setup-step-${step}`}
       aria-label="Set up your journey"
     >
-      <div className="setup-topline">
+      <div className="setup-topline list-heading">
         <p className="eyebrow">YOUR NEXT ESCAPE</p>
         <button
           onClick={step > 0 ? () => onStep(step - 1) : onCancel}
@@ -149,33 +149,31 @@ export function GuidedSetup({
           role="group"
           aria-label="Choose a programme"
         >
-          {choices
-            .slice(programmePage * pageSize, (programmePage + 1) * pageSize)
-            .map((p) => (
-              <button
-                key={p.id}
-                className="setup-programme"
-                aria-pressed={p.id === programmeId}
-                disabled={busy}
-                onClick={() => {
-                  onProgramme(p.id);
-                  onStep(scene ? 3 : 2);
-                }}
-              >
-                <span className="setup-duration">{duration(p)}</span>
-                <span>
-                  <strong>{p.name}</strong>
-                  <small>
-                    {p.blocks.length} segments · {p.kind}
-                  </small>
-                </span>
-                <span className="selection-dot">
-                  {p.id === programmeId && <AppIcon name="check" size={16} />}
-                </span>
-              </button>
-            ))}
+          {choices.slice(0, (programmePage + 1) * pageSize).map((p) => (
+            <button
+              key={p.id}
+              className="setup-programme"
+              aria-pressed={p.id === programmeId}
+              disabled={busy}
+              onClick={() => {
+                onProgramme(p.id);
+                onStep(scene ? 3 : 2);
+              }}
+            >
+              <span className="setup-duration">{duration(p)}</span>
+              <span>
+                <strong>{p.name}</strong>
+                <small>
+                  {p.blocks.length} segments · {p.kind}
+                </small>
+              </span>
+              <span className="selection-dot">
+                {p.id === programmeId && <AppIcon name="check" size={16} />}
+              </span>
+            </button>
+          ))}
           {choices.length > pageSize && (
-            <Pagination
+            <InfiniteScroll
               page={programmePage}
               size={pageSize}
               count={choices.length}
@@ -209,7 +207,7 @@ export function GuidedSetup({
               }}
             />
           </label>
-          {scenes.slice(scenePage, scenePage + 1).map((r) => (
+          {scenes.slice(0, scenePage + 1).map((r) => (
             <button
               key={r.id}
               className="setup-scene"
@@ -236,7 +234,7 @@ export function GuidedSetup({
             </button>
           ))}
           {scenes.length > 1 && (
-            <Pagination
+            <InfiniteScroll
               page={scenePage}
               size={1}
               count={scenes.length}

@@ -1,7 +1,7 @@
 import { t } from "./i18n";
 import { routeDetails } from "./routePresentation";
 import { useEffect, useRef, useState } from "react";
-import { Pagination, usePageSize } from "./Pagination";
+import { InfiniteScroll, usePageSize } from "./Pagination";
 import { AppIcon } from "./AppIcon";
 import type { VideoRoute } from "./videoRoutes";
 import { useVideoRoutes } from "./VideoCatalog";
@@ -100,7 +100,7 @@ export function Explore({
   useEffect(() => setPage(0), [filter, pageSize, videoRoutes.length]);
   return (
     <section className="explore-screen">
-      <div className="screen-heading">
+      <div className="screen-heading list-heading">
         <div>
           <p className="eyebrow">{t("THE SCENERY COLLECTION")}</p>
           <p>{t("A woodland path. An autumn ride. A river with no hurry.")}</p>
@@ -109,12 +109,12 @@ export function Explore({
       </div>
       <ActivityChips value={category} onChange={onFilter} includeAll={false} />
       <div className="routes-grid">
-        {scenes.slice(page * pageSize, (page + 1) * pageSize).map((route) => (
+        {scenes.slice(0, (page + 1) * pageSize).map((route) => (
           <RouteCard key={route.id} route={route} onPreview={onPreview} />
         ))}
       </div>
       {scenes.length > pageSize && (
-        <Pagination
+        <InfiniteScroll
           page={page}
           size={pageSize}
           count={scenes.length}
