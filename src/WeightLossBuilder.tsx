@@ -9,10 +9,12 @@ export function WeightLossBuilder({
   initialKind,
   onCreate,
   disabled = false,
+  initiallyOpen = false,
 }: {
   initialKind: Kind;
   onCreate: (p: Programme) => void;
   disabled?: boolean;
+  initiallyOpen?: boolean;
 }) {
   const [kind, setKind] = useState<Kind>(
       Object.hasOwn(weightLossLimits, initialKind) ? initialKind : "Treadmill",
@@ -28,7 +30,7 @@ export function WeightLossBuilder({
     [error, setError] = useState("");
   const limits = weightLossLimits[kind];
   return (
-    <details className="weight-loss-builder">
+    <details className="weight-loss-builder" open={initiallyOpen || undefined}>
       <summary>
         Weight-loss programmes <span>Tailor a session</span>
       </summary>

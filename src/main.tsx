@@ -18,7 +18,7 @@ import "./workout-controls.css";
 import { accountState } from "./accountClient";
 import { AccountBootstrap } from "./Accounts";
 import "./accounts.css";
-import { WeightLossBuilder } from "./WeightLossBuilder";
+import { ProgrammeChoice } from "./ProgrammeChoice";
 import "./weight-loss.css";
 import { IPhoneLanding } from "./IPhoneLanding";
 import { needsIPhoneLanding } from "./browserSupport";
@@ -97,6 +97,7 @@ function App() {
     [search, setSearch] = useState(""),
     [previewRoute, setPreviewRoute] = useState<VideoRoute | null>(null);
   const pageSize = usePageSize();
+  const [creating, setCreating] = useState(false);
   const [libraryPage, setLibraryPage] = useState(0),
     [historyPage, setHistoryPage] = useState(0),
     [liveTab, setLiveTab] = useState("Scenery");
@@ -1207,17 +1208,7 @@ function App() {
           <section className="programme-library">
             <div className="list-heading library-toolbar">
               <section className="section-head" id="programmes">
-                <button
-                  onClick={() =>
-                    setDraft({
-                      id: programmeId(),
-                      name: t("My programme"),
-                      kind: activityFilter === "All" ? kind : activityFilter,
-                      repeat: 1,
-                      blocks: [block(t("Steady"))],
-                    })
-                  }
-                >
+                <button onClick={() => setCreating(true)}>
                   <AppIcon name="plus" size={18} />
                   <span>Create programme</span>
                 </button>
@@ -1258,11 +1249,6 @@ function App() {
               </details>
             </div>
             <div className="list-scroll" tabIndex={0}>
-              <WeightLossBuilder
-                initialKind={kind}
-                onCreate={setDraft}
-                disabled={!!session || busy}
-              />
               <div className="cards">
                 {filteredProgrammes
                   .slice(0, (libraryPage + 1) * pageSize)
@@ -1767,6 +1753,27 @@ function App() {
                 Delete history
               </button>
             }
+          />
+        )}
+        {creating && (
+          <ProgrammeChoice
+            kind={kind}
+            disabled={!!session || busy}
+            onClose={() => setCreating(false)}
+            onManual={() => {
+              setCreating(false);
+              setDraft({
+                id: programmeId(),
+                name: t("My programme"),
+                kind: activityFilter === "All" ? kind : activityFilter,
+                repeat: 1,
+                blocks: [block(t("Steady"))],
+              });
+            }}
+            onAutomatic={(programme) => {
+              setCreating(false);
+              setDraft(programme);
+            }}
           />
         )}
         {draft && (

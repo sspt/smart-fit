@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {copyProgramme,programmeId} from "./src/programmeDraft"; export {startMobileFullscreen} from "./src/mobileFullscreen"; export {usePageSize,InfiniteScroll} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {ProgrammeChoice} from "./src/ProgrammeChoice"; export {copyProgramme,programmeId} from "./src/programmeDraft"; export {startMobileFullscreen} from "./src/mobileFullscreen"; export {usePageSize,InfiniteScroll} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -34,6 +34,8 @@ const built = await build({
       name: "production-react",
       setup(b) {
         const adapters = {
+          "react/jsx-runtime":
+            "export const jsx=(...a)=>c.jsx(...a),jsxs=(...a)=>c.jsxs(...a),Fragment=c.Fragment;",
           react:
             "export const useState=(...a)=>m.useState(...a), useEffect=(...a)=>m.useEffect(...a), useRef=(...a)=>m.useRef(...a), useCallback=(...a)=>m.useCallback(...a);",
           "./bleLog": "export const logBleEvent=(...args)=>re(...args);",
@@ -41,7 +43,7 @@ const built = await build({
             "export const beginPassiveSession=(...args)=>Lf(...args),endPassiveSession=()=>Af(),recordFtmsMetrics=(...args)=>cg(...args),recordPassiveObservation=(...args)=>Ca(...args);",
         };
         b.onResolve(
-          { filter: /^(react|\.\/(bleLog|passiveProbe))$/ },
+          { filter: /^(react|react\/jsx-runtime|\.\/(bleLog|passiveProbe))$/ },
           ({ path }) => ({ path, namespace: "production-runtime" }),
         );
         b.onLoad(
@@ -289,7 +291,6 @@ once(builder, "");
 once(
   '                c.jsx("div", {\n                  className: "cards",',
   "                ]}),\n" +
-    builder +
     '                c.jsx("div", {\n                  className: "cards",',
 );
 once('className: "setup-topline"', 'className: "setup-topline list-heading"');
@@ -303,7 +304,10 @@ for (const [first, last] of [
     '        c.jsx("div", {\n          className: "routes-grid",',
     'label: __routeRelease.t("Scenery pages"),\n          }),',
   ],
-  [builder, 'label: "Programme pages",\n                }),'],
+  [
+    '                c.jsx("div", {\n                  className: "cards",',
+    'label: "Programme pages",\n                }),',
+  ],
 ]) {
   once(
     first,
@@ -360,6 +364,22 @@ once(
 once(
   "structuredClone(vf.filter((d) => !o.has(d.id)))",
   "vf.filter((d) => !o.has(d.id)).map(__routeRelease.copyProgramme)",
+);
+once(
+  'q((W) => (W === "All" ? "All" : k.kind))',
+  'q((W) => (W === "All" ? "All" : k.kind))',
+);
+once(
+  "[he, ze] = m.useState(Wd),",
+  "[he, ze] = m.useState(Wd), [creating,setCreating]=m.useState(false),",
+);
+once(
+  'onClick: () =>\n                        ft({\n                          id:__routeRelease.programmeId(), name:__routeRelease.t("My programme"),\n                          kind: A === "All" ? we : A,\n                          repeat: 1,\n                          blocks:[yf(__routeRelease.t("Steady"))],\n                        }),',
+  "onClick:()=>setCreating(true),",
+);
+once(
+  "          gt &&\n            c.jsx(Eh, {",
+  '          creating && c.jsx(__routeRelease.ProgrammeChoice,{kind:we,disabled:!!L||ot,onClose:()=>setCreating(false),onManual:()=>{setCreating(false);ft({id:__routeRelease.programmeId(),name:__routeRelease.t("My programme"),kind:A==="All"?we:A,repeat:1,blocks:[yf(__routeRelease.t("Steady"))]})},onAutomatic:p=>{setCreating(false);ft(p)}}), gt &&\n            c.jsx(Eh, {',
 );
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),

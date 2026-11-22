@@ -47,7 +47,8 @@ header {
 }
 
 /* Give each filtered screen a scrollport below its toolbar. */
-main[data-page="Explore"], main[data-page="Programmes"] {
+main[data-page="Explore"],
+main[data-page="Programmes"] {
   position: fixed;
   inset: 76px 0 0;
   display: flex;
@@ -72,7 +73,8 @@ main[data-page="Explore"], main[data-page="Programmes"] {
   overscroll-behavior-y: contain;
 }
 @media (max-width: 700px) {
-  main[data-page="Explore"], main[data-page="Programmes"] {
+  main[data-page="Explore"],
+  main[data-page="Programmes"] {
     top: calc(66px + env(safe-area-inset-top));
   }
 }
@@ -100,4 +102,27 @@ body.editing main {
 }
 .programme-library .section-head > button span::after {
   content: none;
+}
+.programme-choice {
+  width: min(100%, 640px);
+  max-height: min(90dvh, 850px);
+  overflow: auto;
+  background: #1c211d;
+  color: #f1f4ed;
+  border-radius: 18px;
+  padding: 18px;
+}
+.programme-choice-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.programme-choice-content {
+  display: grid;
+  gap: 12px;
+}
+.programme-choice-content > button {
+  min-height: 52px;
+  text-align: left;
 }

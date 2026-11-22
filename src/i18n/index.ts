@@ -48,6 +48,24 @@ export function setDocumentLanguage() {
 
 const messages: Record<string, readonly string[]> = {
   ...uiMessages,
+  "Automatic weight-loss programme": [
+    "Programa automático para perder peso",
+    "Programa automático de perda de peso",
+    "Programme automatique de perte de poids",
+    "Programma automatico per dimagrire",
+    "Automatyczny program odchudzania",
+    "Automatisches Abnehmprogramm",
+    "Automatisch afslankprogramma",
+  ],
+  "Manually customised programme": [
+    "Programa personalizado manualmente",
+    "Programa personalizado manualmente",
+    "Programme personnalisé manuellement",
+    "Programma personalizzato manualmente",
+    "Program dostosowany ręcznie",
+    "Manuell angepasstes Programm",
+    "Handmatig aangepast programma",
+  ],
   "Load more": [
     "Cargar más",
     "Carregar mais",
