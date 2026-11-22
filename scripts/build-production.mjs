@@ -381,6 +381,54 @@ once(
   "          gt &&\n            c.jsx(Eh, {",
   '          creating && c.jsx(__routeRelease.ProgrammeChoice,{kind:we,disabled:!!L||ot,onClose:()=>setCreating(false),onManual:()=>{setCreating(false);ft({id:__routeRelease.programmeId(),name:__routeRelease.t("My programme"),kind:A==="All"?we:A,repeat:1,blocks:[yf(__routeRelease.t("Steady"))]})},onAutomatic:p=>{setCreating(false);ft(p)}}), gt &&\n            c.jsx(Eh, {',
 );
+// Keep the legacy editor and account screen aligned with the source UI.
+once(
+  '    ce = m.useRef(JSON.stringify(a)),\n    Te = () => {\n      (JSON.stringify(h) !== ce.current &&',
+  `    ce = m.useRef(JSON.stringify(a)),
+    dirty = JSON.stringify(h) !== ce.current,
+    Te = () => {
+      (dirty &&`,
+);
+once(
+  '        d();\n    };\n  m.useEffect(() => {\n    var M;\n    const $ = document.activeElement;',
+  `        d();
+    };
+  m.useEffect(() => {
+    if (!dirty) return;
+    const warnOnLeave = (event) => {
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", warnOnLeave);
+    return () => window.removeEventListener("beforeunload", warnOnLeave);
+  }, [dirty]);
+  m.useEffect(() => {
+    var M;
+    const $ = document.activeElement;`,
+);
+once(
+  '                            c.jsx("button", {\n                              onClick: () => {\n                                confirm(\n                                  "Use the physical stop first.',
+  `                            c.jsx("p", {
+                              children: "Ending the workout recording leaves the equipment running if it is in motion.",
+                            }),
+                            c.jsx("button", {
+                              onClick: () => {
+                                confirm(
+                                  "Use the physical stop first.`,
+);
+once(
+  '                        : "I already have an account",\n                    ),\n                  ),\n                ),\n              ),',
+  `                        : "I already have an account",
+                    ),
+                  ),
+                ),
+                x === "login" && m.createElement("details", {className: "account-options"},
+                  m.createElement("summary", null, "Forgot your password?"),
+                  m.createElement("p", {className: "subtle"},
+                    "If you linked Google or Strava to this account, sign in with that provider. Email password reset is currently unavailable."),
+                ),
+              ),`,
+);
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );
