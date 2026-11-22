@@ -74,18 +74,26 @@ export default {
         context.waitUntil(edge.put(r, response.clone()).catch(() => {}));
       return response;
     }
-    // Only the small public catalogue passes through the Worker. Videos remain direct from the NAS.
-    if (path === "/api/video-info") {
+    // Serve public route metadata on the app origin. Videos stream from the NAS.
+    const routeProfile = path.match(
+      /^\/api\/video-profile\/((?:[a-zA-Z0-9_-]+\/)+)percurso\.json$/,
+    );
+    if (path === "/api/video-info" || routeProfile) {
       if (r.method !== "GET")
         return new Response("Method not allowed", { status: 405 });
+      const metadataLimit = routeProfile ? 2 * 1024 * 1024 : 262144;
       try {
-        const upstream = await fetch("https://media.kwest.fit/info.json", {
-          signal: AbortSignal.timeout(8000),
-          redirect: "manual",
-        });
+        const upstream = await fetch(
+          "https://media.kwest.fit/" +
+            (routeProfile ? routeProfile[1] + "percurso.json" : "info.json"),
+          {
+            signal: AbortSignal.timeout(8000),
+            redirect: "manual",
+          },
+        );
         if (!upstream.ok)
           throw Error("Catalogue upstream status " + upstream.status);
-        if (Number(upstream.headers.get("Content-Length")) > 262144)
+        if (Number(upstream.headers.get("Content-Length")) > metadataLimit)
           throw Error("Catalogue too large");
         const reader = upstream.body?.getReader();
         if (!reader) throw Error("Empty catalogue");
@@ -95,7 +103,7 @@ export default {
           const { done, value } = await reader.read();
           if (done) break;
           size += value.length;
-          if (size > 262144) {
+          if (size > metadataLimit) {
             await reader.cancel();
             throw Error("Catalogue too large");
           }

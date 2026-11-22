@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { readSpeedSamples, routeSpeedAt, type SpeedSample } from "./routeSpeed";
-export function useRouteSpeed(profileUrl: string | undefined, fallbackReference: number) {
+export function useRouteSpeed(
+  profileUrl: string | undefined,
+  fallbackReference: number,
+) {
   const [profile, setProfile] = useState<{
     url: string;
     samples: SpeedSample[];
@@ -9,7 +12,8 @@ export function useRouteSpeed(profileUrl: string | undefined, fallbackReference:
   useEffect(() => {
     if (!profileUrl) return;
     const controller = new AbortController();
-    fetch(profileUrl, { signal: controller.signal })
+    const profilePath = new URL(profileUrl).pathname;
+    fetch("/api/video-profile" + profilePath, { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) throw Error("Route profile unavailable");
         const samples = readSpeedSamples(await response.json());

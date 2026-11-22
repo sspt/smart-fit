@@ -1,11 +1,11 @@
 {
   "origin": "https://kwest.fit",
   "capturedAt": "2026-11-16T17:42:10.745Z",
-  "originalHtmlSha256": "edf732e3b45c62373dda27ba01816469815e4f1d1c633378b64e0ca8d206624e",
+  "originalHtmlSha256": "6cddecf60bd8c2347b6b4d99cc66729f3a5ed204fc4c76cb2d9980fc47676588",
   "visualVersion": "8afaabb9e1ab",
   "applicationScripts": [
     "/assets/feedback-8afaabb9e1ab.js"
   ],
   "note": "Reconciled with the production frontend before route speed and Bluetooth integration.",
-  "verifiedDeployment": "9a7e04b7-c676-43e6-846a-0592fe809769"
+  "verifiedDeployment": "cab63c8b-09e2-4b4e-8d7c-226d083005cb"
 }

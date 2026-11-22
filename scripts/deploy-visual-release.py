@@ -5,6 +5,7 @@ import hashlib
 import json
 import mimetypes
 import os
+import re
 from pathlib import Path
 import subprocess
 from email.parser import BytesParser
@@ -200,6 +201,11 @@ else:
 
 baseline_file=ROOT / 'production/expected-live.json'
 baseline=json.loads(baseline_file.read_text())
-baseline['originalHtmlSha256']=hashlib.sha256((RELEASE / 'index.html').read_bytes()).hexdigest()
+published_html=(RELEASE / 'index.html').read_bytes()
+baseline['originalHtmlSha256']=hashlib.sha256(published_html).hexdigest()
+baseline['applicationScripts']=re.findall(r'src="(/assets/[^"]+\.js)"', published_html.decode())
+release_match=re.search(r'feedback-([a-f0-9]+)\.js', published_html.decode())
+if release_match:
+    baseline['visualVersion']=release_match.group(1)
 baseline['verifiedDeployment']=active['id']
 baseline_file.write_text(json.dumps(baseline,indent=2)+'\n')
