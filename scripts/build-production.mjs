@@ -311,6 +311,31 @@ for (const [first, last] of [
   );
   once(last, last + "\n]}),");
 }
+once(
+  'className: "icon-button",\n              onClick: Te,\n              "aria-label": "Close programme editor",\n              children: c.jsx(Ye, { name: "close" }),',
+  'className:"editor-close-button",onClick:Te,"aria-label":"Close programme editor",children:[c.jsx(Ye,{name:"close"}),__routeRelease.t("Close")],',
+);
+once(
+  "children: [c.jsx(Ye, { name: M }), M]",
+  "children: [c.jsx(Ye, { name: M }), __routeRelease.t(M)]",
+);
+once('name: "My programme",', 'name:__routeRelease.t("My programme"),');
+once("blocks: [yf()],", 'blocks:[yf(__routeRelease.t("Steady"))],');
+once('yf("New segment")', 'yf(__routeRelease.t("New segment"))');
+once(
+  "label: Oe,\n                                      unit: Me,",
+  "label:__routeRelease.t(Oe), unit: Me,",
+);
+once(
+  'label: "End " + Oe.toLowerCase(),',
+  'label:__routeRelease.t(Oe)+" · "+__routeRelease.t("End"),',
+);
+for (const draft of ["M", "h"]) {
+  once(
+    `name: ${draft}.name + " copy",`,
+    `name: ${draft}.name + " · " + __routeRelease.t("copy"),`,
+  );
+}
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );

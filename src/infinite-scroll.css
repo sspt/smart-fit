@@ -76,3 +76,20 @@ main:has(> :is(.explore-screen, .programme-library) > .list-scroll) {
     top: calc(66px + env(safe-area-inset-top));
   }
 }
+
+/* The fixed list creates a stacking context below the app header. */
+main:has(.editor-backdrop) {
+  z-index: 40;
+}
+.editor-top .editor-close-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.editor-top .editor-close-button svg {
+  width: 16px;
+}
+.editor-top .save-button {
+  flex-shrink: 0;
+}

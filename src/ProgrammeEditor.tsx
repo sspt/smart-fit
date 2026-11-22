@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { useEffect, useRef, useState } from "react";
 import {
   block,
@@ -94,7 +95,7 @@ export function ProgrammeEditor({
     setOpen(to);
   }
   function add() {
-    setDraft((d) => ({ ...d, blocks: [...d.blocks, block("New segment")] }));
+    setDraft((d) => ({ ...d, blocks: [...d.blocks, block(t("New segment"))] }));
     setOpen(draft.blocks.length);
     requestAnimationFrame(() =>
       scroll.current?.scrollTo({
@@ -130,11 +131,12 @@ export function ProgrammeEditor({
       >
         <div className="editor-top">
           <button
-            className="icon-button"
+            className="editor-close-button"
             onClick={close}
             aria-label="Close programme editor"
           >
             <AppIcon name="close" />
+            {t("Close")}
           </button>
           <div>
             <small>{existing ? "EDIT PROGRAMME" : "NEW PROGRAMME"}</small>
@@ -177,7 +179,7 @@ export function ProgrammeEditor({
                     onClick={() => setDraft({ ...draft, kind })}
                   >
                     <AppIcon name={kind} />
-                    {kind}
+                    {t(kind)}
                   </button>
                 ))}
               </div>
@@ -312,14 +314,14 @@ export function ProgrammeEditor({
                       )}
                       <div className="target-heading">
                         <span>{b.ramp ? "Starting targets" : "Targets"}</span>
-                        <small>{draft.kind}</small>
+                        <small>{t(draft.kind)}</small>
                       </div>
                       <div className="target-grid">
                         {targets[draft.kind].map(
                           ([key, label, unit, min, max, step]) => (
                             <NumberControl
                               key={key}
-                              label={label}
+                              label={t(label)}
                               unit={unit}
                               value={b[key]}
                               min={min}
@@ -370,7 +372,7 @@ export function ProgrammeEditor({
                                 return (
                                   <NumberControl
                                     key={key}
-                                    label={"End " + label.toLowerCase()}
+                                    label={t(label) + " · " + t("End")}
                                     unit={unit}
                                     value={b[endKey] ?? b[key]}
                                     min={min}
@@ -407,7 +409,7 @@ export function ProgrammeEditor({
                             const blocks = [...draft.blocks];
                             blocks.splice(i + 1, 0, {
                               ...b,
-                              name: b.name + " copy",
+                              name: b.name + " · " + t("copy"),
                             });
                             setDraft({ ...draft, blocks });
                             setOpen(i + 1);
@@ -447,7 +449,7 @@ export function ProgrammeEditor({
                 setDraft({
                   ...draft,
                   id: crypto.randomUUID(),
-                  name: draft.name + " copy",
+                  name: draft.name + " · " + t("copy"),
                 });
                 setError("");
               }}

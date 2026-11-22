@@ -1210,10 +1210,10 @@ function App() {
                   onClick={() =>
                     setDraft({
                       id: crypto.randomUUID(),
-                      name: "My programme",
+                      name: t("My programme"),
                       kind: activityFilter === "All" ? kind : activityFilter,
                       repeat: 1,
-                      blocks: [block()],
+                      blocks: [block(t("Steady"))],
                     })
                   }
                 >

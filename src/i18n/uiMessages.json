@@ -460,7 +460,7 @@
   ],
   "Build or reduce effort across this segment": [
     "Desarrollar o reducir el esfuerzo en este segmento",
-    "Crie ou reduza o esforço neste segmento",
+    "Aumenta ou reduz o esforço ao longo do segmento.",
     "Augmenter ou réduire les efforts sur ce segment",
     "Aumentare o ridurre l'impegno in questo segmento",
     "Zwiększ lub zmniejsz wysiłek w tym segmencie",
@@ -469,7 +469,7 @@
   ],
   "Build your session": [
     "Construye tu sesión",
-    "Construa a sua sessão",
+    "Configura o treino",
     "Construisez votre session",
     "Costruisci la tua sessione",
     "Zbuduj swoją sesję",
@@ -739,7 +739,7 @@
   ],
   "Close": [
     "Cerrar",
-    "Fechar",
+    "Sair",
     "Fermer",
     "Chiudi",
     "Zamknij",
@@ -1539,13 +1539,13 @@
     "Klaar"
   ],
   "Down": [
-    "abajo",
-    "Para baixo",
-    "Vers le bas",
-    "Giù",
+    "Bajar",
+    "Descer",
+    "Descendre",
+    "Sposta giù",
     "W dół",
-    "Runter",
-    "Naar beneden"
+    "Nach unten",
+    "Omlaag"
   ],
   "Download FIT": [
     "Descargar FIT",
@@ -1665,8 +1665,8 @@
     "E-mail"
   ],
   "End": [
-    "Fin",
-    "Fim",
+    "Final",
+    "Final",
     "Fin",
     "Fine",
     "Koniec",
@@ -2008,7 +2008,7 @@
   ],
   "Finishing targets": [
     "Objetivos finales",
-    "Finalizando metas",
+    "Objetivos finais",
     "Finir les objectifs",
     "Obiettivi finali",
     "Cele wykańczające",
@@ -2161,7 +2161,7 @@
   ],
   "Gradually ramp targets": [
     "Aumentar gradualmente los objetivos",
-    "Aumente gradualmente as metas",
+    "Ajustar os objetivos gradualmente",
     "Augmenter progressivement les cibles",
     "Aumentare gradualmente gli obiettivi",
     "Stopniowo zwiększaj cele",
@@ -2266,6 +2266,15 @@
     "W ruchu",
     "In Bewegung",
     "In beweging"
+  ],
+  "Incline": [
+    "Inclinación",
+    "Inclinação",
+    "Inclinaison",
+    "Inclinazione",
+    "Nachylenie",
+    "Steigung",
+    "Helling"
   ],
   "Increase": [
     "aumentar",
@@ -2654,6 +2663,15 @@
     "Mein NAS",
     "Mijn NAS"
   ],
+  "My programme": [
+    "Mi programa",
+    "O meu programa",
+    "Mon programme",
+    "Il mio programma",
+    "Mój program",
+    "Mein Programm",
+    "Mijn programma"
+  ],
   "NAS scenes · Starter clips remain available as a fallback.": [
     "Escenas NAS · Los clips iniciales siguen estando disponibles como alternativa.",
     "Cenas NAS · Os clips iniciais continuam disponíveis como alternativa.",
@@ -2725,6 +2743,15 @@
     "Nowe hasło",
     "Neues Passwort",
     "Nieuw wachtwoord"
+  ],
+  "New segment": [
+    "Nuevo segmento",
+    "Novo segmento",
+    "Nouveau segment",
+    "Nuovo segmento",
+    "Nowy odcinek",
+    "Neuer Abschnitt",
+    "Nieuw segment"
   ],
   "Next {v0}": [
     "Siguiente {v0}",
@@ -3799,7 +3826,7 @@
   ],
   "Segment ends after": [
     "El segmento termina después",
-    "O segmento termina depois",
+    "Terminar o segmento após",
     "Le segment se termine après",
     "Il segmento termina dopo",
     "Segment kończy się po",
@@ -4159,12 +4186,21 @@
   ],
   "Starting targets": [
     "Objetivos iniciales",
-    "Alvos iniciais",
+    "Objetivos iniciais",
     "Objectifs de départ",
     "Obiettivi iniziali",
     "Cele początkowe",
     "Startziele",
     "Startdoelen"
+  ],
+  "Steady": [
+    "Ritmo constante",
+    "Ritmo constante",
+    "Rythme constant",
+    "Ritmo costante",
+    "Stałe tempo",
+    "Gleichmäßiges Tempo",
+    "Gelijkmatig tempo"
   ],
   "Steady endurance": [
     "Resistencia constante",
@@ -4456,7 +4492,7 @@
   ],
   "Tap a segment to change its targets.": [
     "Toque un segmento para cambiar sus objetivos.",
-    "Toque num segmento para alterar os seus alvos.",
+    "Toca num segmento para alterar os objetivos.",
     "Appuyez sur un segment pour modifier ses cibles.",
     "Tocca un segmento per modificarne i target.",
     "Kliknij segment, aby zmienić jego cele.",
@@ -4483,7 +4519,7 @@
   ],
   "Targets": [
     "Objetivos",
-    "Alvos",
+    "Objetivos",
     "Cibles",
     "Obiettivi",
     "Cele",
@@ -4671,8 +4707,8 @@
     "Deze training maakt niet langer deel uit van de lokale geschiedenis."
   ],
   "Time": [
-    "tiempo",
-    "Hora",
+    "Tiempo",
+    "Tempo",
     "Temps",
     "Tempo",
     "Czas",
@@ -4824,13 +4860,13 @@
     "Naamloos segment"
   ],
   "Up": [
-    "arriba",
-    "Acima",
-    "Vers le haut",
-    "Su",
+    "Subir",
+    "Subir",
+    "Monter",
+    "Sposta su",
     "W górę",
-    "Auf",
-    "Op"
+    "Nach oben",
+    "Omhoog"
   ],
   "Upload indoor workouts to your Strava account.": [
     "Sube entrenamientos en interiores a tu cuenta Strava.",
@@ -5453,6 +5489,15 @@
     "verbunden",
     "verbonden"
   ],
+  "copy": [
+    "copia",
+    "cópia",
+    "copie",
+    "copia",
+    "kopia",
+    "Kopie",
+    "kopie"
+  ],
   "iFIT bike control is not implemented. Tracking only.": [
     "El control de bicicleta iFIT no está implementado. Sólo seguimiento.",
     "O controlo da bicicleta iFIT não está implementado. Apenas rastreio.",
@@ -5562,17 +5607,17 @@
     "in segment blijven"
   ],
   "round": [
-    "redondo",
-    "redondo",
-    "rond",
-    "rotondo",
-    "okrągły",
-    "rund",
-    "rond"
+    "vuelta",
+    "volta",
+    "tour",
+    "giro",
+    "runda",
+    "Runde",
+    "ronde"
   ],
   "rounds": [
-    "rondas",
-    "rodadas",
+    "vueltas",
+    "voltas",
     "tours",
     "giri",
     "rundy",
