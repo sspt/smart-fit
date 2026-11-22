@@ -347,6 +347,15 @@ export function AccountPanel({ disabled = false }: { disabled?: boolean }) {
                 </button>
               </fieldset>
             </form>
+            {mode === "login" && (
+              <details className="account-options">
+                <summary>Forgot your password?</summary>
+                <p className="subtle">
+                  If you linked Google or Strava to this account, sign in with
+                  that provider. Email password reset is currently unavailable.
+                </p>
+              </details>
+            )}
           </details>
         </>
       )}

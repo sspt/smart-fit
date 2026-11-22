@@ -38,9 +38,19 @@ export function ProgrammeEditor({
   const dialog = useRef<HTMLElement>(null),
     scroll = useRef<HTMLDivElement>(null),
     initial = useRef(JSON.stringify(value));
+  const dirty = JSON.stringify(draft) !== initial.current;
+  useEffect(() => {
+    if (!dirty) return;
+    const warnOnLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", warnOnLeave);
+    return () => window.removeEventListener("beforeunload", warnOnLeave);
+  }, [dirty]);
   const close = () => {
     if (
-      JSON.stringify(draft) !== initial.current &&
+      dirty &&
       !confirm("Discard unsaved programme changes?")
     )
       return;

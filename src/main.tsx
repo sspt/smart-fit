@@ -1507,6 +1507,7 @@ function App() {
                       : "Connection lost · physical state unknown"}
                     . Physical controls always take precedence.
                   </p>
+                  <p>Ending the workout recording leaves the equipment running if it is in motion.</p>
                   <button
                     onClick={() => {
                       if (

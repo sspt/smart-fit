@@ -55,7 +55,7 @@
   ],
   "30 min · Ride intervals": [
     "30 min · Intervalos de recorrido",
-    "30 min · Intervalos de passeio",
+    "30 min · Treino de ciclismo por intervalos",
     "30 min · Intervalles de trajet",
     "30 min · Intervalli di corsa",
     "30 min · Przerwy w jeździe",
@@ -73,7 +73,7 @@
   ],
   "45 min · Endurance ride": [
     "45 min · Paseo de resistencia",
-    "45 min · Passeio de resistência",
+    "45 min · Treino de resistência em bicicleta",
     "45 min · Randonnée d'endurance",
     "45 min · Giro di resistenza",
     "45 min · Jazda wytrzymałościowa",
@@ -1601,6 +1601,15 @@
     "PROGRAMM BEARBEITEN",
     "PROGRAMMA BEWERKEN"
   ],
+  "Ending the workout recording leaves the equipment running if it is in motion.": [
+    "Si el equipo está en movimiento, seguirá funcionando al finalizar el registro del entrenamiento.",
+    "Se o equipamento estiver em movimento, continuará a funcionar ao terminar o registo do treino.",
+    "Si l’appareil est en mouvement, il continue de fonctionner à la fin de l’enregistrement.",
+    "Se l’attrezzo è in movimento, continuerà a funzionare al termine della registrazione.",
+    "Jeśli sprzęt jest w ruchu, zakończenie zapisu treningu go nie zatrzyma.",
+    "Wenn das Gerät in Bewegung ist, läuft es nach dem Beenden der Trainingsaufzeichnung weiter.",
+    "Als het apparaat in beweging is, blijft het draaien nadat je de trainingsregistratie stopt."
+  ],
   "ENERGY": [
     "ENERGÍA",
     "ENERGIA",
@@ -1853,6 +1862,15 @@
     "Training exportieren",
     "Training exporteren"
   ],
+  "Forgot your password?": [
+    "¿Has olvidado tu contraseña?",
+    "Esqueceu-se da palavra-passe?",
+    "Mot de passe oublié ?",
+    "Hai dimenticato la password?",
+    "Nie pamiętasz hasła?",
+    "Passwort vergessen?",
+    "Wachtwoord vergeten?"
+  ],
   "FTMS Control Point requires writes and indications.": [
     "El punto de control FTMS requiere escrituras e indicaciones.",
     "O ponto de controlo FTMS requer gravações e indicações.",
@@ -1981,7 +1999,7 @@
   ],
   "Finish tracking only": [
     "Finalizar solo el seguimiento",
-    "Concluir apenas o rastreio",
+    "Terminar registo do treino",
     "Terminer le suivi uniquement",
     "Completa solo il monitoraggio",
     "Zakończ tylko śledzenie",
@@ -2203,6 +2221,15 @@
     "Mam już konto",
     "Ich habe bereits ein Konto",
     "Ik heb al een account"
+  ],
+  "If you linked Google or Strava to this account, sign in with that provider. Email password reset is currently unavailable.": [
+    "Si vinculaste Google o Strava a esta cuenta, inicia sesión con ese proveedor. El restablecimiento por correo electrónico no está disponible.",
+    "Se associou o Google ou o Strava a esta conta, inicie sessão com esse serviço. A reposição da palavra-passe por e-mail está indisponível.",
+    "Si vous avez associé Google ou Strava à ce compte, connectez-vous via ce service. La réinitialisation par e-mail est indisponible.",
+    "Se hai collegato Google o Strava a questo account, accedi con quel servizio. Il ripristino via email non è disponibile.",
+    "Jeśli konto jest połączone z Google lub Stravą, zaloguj się za pomocą tej usługi. Resetowanie hasła e-mailem jest niedostępne.",
+    "Wenn du Google oder Strava mit diesem Konto verknüpft hast, melde dich darüber an. Die Passwortzurücksetzung per E-Mail ist nicht verfügbar.",
+    "Als je Google of Strava aan dit account hebt gekoppeld, meld je dan aan via die dienst. Je wachtwoord opnieuw instellen via e-mail is niet beschikbaar."
   ],
   "INCLINE": [
     "INCLINAR",
