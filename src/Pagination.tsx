@@ -57,7 +57,7 @@ export function InfiniteScroll({
           onChange(page + 1);
         }
       },
-      { rootMargin: "0px 0px 240px" },
+      { root: element.closest(".list-scroll"), rootMargin: "0px 0px 240px" },
     );
     observer.observe(element);
     return () => observer.disconnect();

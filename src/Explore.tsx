@@ -107,20 +107,22 @@ export function Explore({
           includeAll={false}
         />
       </div>
-      <div className="routes-grid">
-        {scenes.slice(0, (page + 1) * pageSize).map((route) => (
-          <RouteCard key={route.id} route={route} onPreview={onPreview} />
-        ))}
+      <div className="list-scroll" tabIndex={0}>
+        <div className="routes-grid">
+          {scenes.slice(0, (page + 1) * pageSize).map((route) => (
+            <RouteCard key={route.id} route={route} onPreview={onPreview} />
+          ))}
+        </div>
+        {scenes.length > pageSize && (
+          <InfiniteScroll
+            page={page}
+            size={pageSize}
+            count={scenes.length}
+            onChange={setPage}
+            label={t("Scenery pages")}
+          />
+        )}
       </div>
-      {scenes.length > pageSize && (
-        <InfiniteScroll
-          page={page}
-          size={pageSize}
-          count={scenes.length}
-          onChange={setPage}
-          label={t("Scenery pages")}
-        />
-      )}
     </section>
   );
 }

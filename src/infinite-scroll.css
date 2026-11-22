@@ -45,3 +45,33 @@ header {
 .list-heading input::placeholder {
   color: #c0c8be;
 }
+
+/* Give each filtered screen a scrollport below its toolbar. */
+main:has(> :is(.explore-screen, .programme-library) > .list-scroll) {
+  position: fixed;
+  inset: 76px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+:is(.explore-screen, .programme-library):has(> .list-scroll) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+:is(.discover-toolbar, .library-toolbar) {
+  position: relative;
+  top: auto;
+  flex: none;
+}
+.list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+@media (max-width: 700px) {
+  main:has(> :is(.explore-screen, .programme-library) > .list-scroll) {
+    top: calc(66px + env(safe-area-inset-top));
+  }
+}

@@ -1256,85 +1256,87 @@ function App() {
                 </div>
               </details>
             </div>
-            <WeightLossBuilder
-              initialKind={kind}
-              onCreate={setDraft}
-              disabled={!!session || busy}
-            />
-            <div className="cards">
-              {filteredProgrammes
-                .slice(0, (libraryPage + 1) * pageSize)
-                .map((p) => (
-                  <article key={p.id} className="card">
-                    <div className="programme-duration-tile">
-                      <AppIcon name="clock" size={28} />
-                      <strong>{programmeSummary(p)}</strong>
-                    </div>
-                    <div className="card-body">
-                      <small>
-                        {p.kind} · {p.blocks.length} segments ·{" "}
-                        {programmeSummary(p)}
-                      </small>
-                      <h3>{p.name}</h3>
-                      <div className="mini-bars">
-                        {p.blocks.map((b, j) => (
-                          <i
-                            key={j}
-                            style={
-                              {
-                                "--bar-height": Math.min(
-                                  48,
-                                  12 +
-                                    (p.kind === "Treadmill"
-                                      ? b.speed * 4
-                                      : p.kind === "Bike"
-                                        ? b.power / 5
-                                        : b.resistance * 5),
-                                ),
-                              } as React.CSSProperties
-                            }
-                          />
-                        ))}
+            <div className="list-scroll" tabIndex={0}>
+              <WeightLossBuilder
+                initialKind={kind}
+                onCreate={setDraft}
+                disabled={!!session || busy}
+              />
+              <div className="cards">
+                {filteredProgrammes
+                  .slice(0, (libraryPage + 1) * pageSize)
+                  .map((p) => (
+                    <article key={p.id} className="card">
+                      <div className="programme-duration-tile">
+                        <AppIcon name="clock" size={28} />
+                        <strong>{programmeSummary(p)}</strong>
                       </div>
-                      <div className="card-actions">
-                        <button onClick={() => setDraft(structuredClone(p))}>
-                          Edit programme
-                        </button>
-                        <button
-                          className="round"
-                          aria-label={"Start " + p.name}
-                          disabled={busy || !!session}
-                          onClick={() => void action(() => start(p))}
-                        >
-                          ›
-                        </button>
+                      <div className="card-body">
+                        <small>
+                          {p.kind} · {p.blocks.length} segments ·{" "}
+                          {programmeSummary(p)}
+                        </small>
+                        <h3>{p.name}</h3>
+                        <div className="mini-bars">
+                          {p.blocks.map((b, j) => (
+                            <i
+                              key={j}
+                              style={
+                                {
+                                  "--bar-height": Math.min(
+                                    48,
+                                    12 +
+                                      (p.kind === "Treadmill"
+                                        ? b.speed * 4
+                                        : p.kind === "Bike"
+                                          ? b.power / 5
+                                          : b.resistance * 5),
+                                  ),
+                                } as React.CSSProperties
+                              }
+                            />
+                          ))}
+                        </div>
+                        <div className="card-actions">
+                          <button onClick={() => setDraft(structuredClone(p))}>
+                            Edit programme
+                          </button>
+                          <button
+                            className="round"
+                            aria-label={"Start " + p.name}
+                            disabled={busy || !!session}
+                            onClick={() => void action(() => start(p))}
+                          >
+                            ›
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
-            </div>
-            {filteredProgrammes.length === 0 && (
-              <div className="empty filter-empty">
-                <h3>No matching programmes</h3>
-                <p>Try a different activity, duration or search.</p>
-                <button
-                  onClick={() => {
-                    setActivityFilter("All");
-                    setDurationFilter("All");
-                    setSearch("");
-                  }}
-                >
-                  Clear filters
-                </button>
+                    </article>
+                  ))}
               </div>
-            )}
-            <InfiniteScroll
-              page={libraryPage}
-              size={pageSize}
-              count={filteredProgrammes.length}
-              onChange={setLibraryPage}
-              label="Programme pages"
-            />
+              {filteredProgrammes.length === 0 && (
+                <div className="empty filter-empty">
+                  <h3>No matching programmes</h3>
+                  <p>Try a different activity, duration or search.</p>
+                  <button
+                    onClick={() => {
+                      setActivityFilter("All");
+                      setDurationFilter("All");
+                      setSearch("");
+                    }}
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
+              <InfiniteScroll
+                page={libraryPage}
+                size={pageSize}
+                count={filteredProgrammes.length}
+                onChange={setLibraryPage}
+                label="Programme pages"
+              />
+            </div>
           </section>
         )}
         {page === "Explore" && (

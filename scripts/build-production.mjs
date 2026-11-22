@@ -298,6 +298,19 @@ once(
   'c.jsx("p", {\n                  className: "eyebrow",\n                  children: "SCENES FROM YOUR JOURNEY",\n                }),\n                c.jsx("h1", { children: "Your journey." }),',
   "",
 );
+for (const [first, last] of [
+  [
+    '        c.jsx("div", {\n          className: "routes-grid",',
+    'label: __routeRelease.t("Scenery pages"),\n          }),',
+  ],
+  [builder, 'label: "Programme pages",\n                }),'],
+]) {
+  once(
+    first,
+    'c.jsxs("div",{className:"list-scroll",tabIndex:0,children:[\n' + first,
+  );
+  once(last, last + "\n]}),");
+}
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );
