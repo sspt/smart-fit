@@ -1,3 +1,4 @@
+import { startMobileFullscreen } from "./mobileFullscreen";
 import "./infinite-scroll.css";
 import { useMemo } from "react";
 import { availableProgrammes } from "./programmeValidation";
@@ -1830,6 +1831,7 @@ function Metric({
   );
 }
 setDocumentLanguage();
+startMobileFullscreen();
 createRoot(document.getElementById("root")!).render(
   needsIPhoneLanding() ? (
     <IPhoneLanding />

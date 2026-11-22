@@ -18,7 +18,8 @@ header {
 }
 
 .list-heading {
-  background: #161817;
+  background: transparent;
+  backdrop-filter: blur(12px);
   color: #f2f4ef;
 }
 .list-heading .section-head {
