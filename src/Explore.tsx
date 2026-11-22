@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+import { routeDetails } from "./routePresentation";
 import { useEffect, useRef, useState } from "react";
 import { Pagination, usePageSize } from "./Pagination";
 import { AppIcon } from "./AppIcon";
@@ -19,7 +21,7 @@ export function ActivityChips({
     <div
       className="activity-chips"
       role="group"
-      aria-label="Filter by equipment"
+      aria-label={t("Filter by equipment")}
     >
       {(["All", "Treadmill", "Bike", "Rower"] as const)
         .filter((kind) => includeAll || kind !== "All")
@@ -31,7 +33,7 @@ export function ActivityChips({
             onClick={() => onChange(kind)}
           >
             {kind !== "All" && <AppIcon name={kind} size={19} />}
-            <span>{kind === "All" ? "All" : kind}</span>
+            <span>{t(kind)}</span>
           </button>
         ))}
     </div>
@@ -49,12 +51,14 @@ export function RouteCard({
       <button
         onClick={() => onPreview(route)}
         className="route-photo"
-        aria-label={"Preview " + route.name}
-        style={{ backgroundImage: `url(${route.poster})` }}
+        aria-label={t("Preview") + " " + route.name}
+        style={{
+          backgroundImage: `url(${route.poster || (!matchMedia("(prefers-reduced-motion: reduce)").matches && route.gif) || ""})`,
+        }}
       >
         <span className="route-kind">
           <AppIcon name={route.kind} size={17} />
-          {route.kind}
+          {t(route.kind)}
         </span>
         <span className="route-play">
           <AppIcon name="play" size={21} />
@@ -65,13 +69,15 @@ export function RouteCard({
       </button>
       <div className="route-details">
         <small>
-          {route.kind} ·{" "}
-          {route.format === "route" ? "Nature route" : "Scenic loop"}
+          {t(route.kind)} ·{" "}
+          {route.format === "route" ? t("Nature route") : t("Scenic loop")}
         </small>
         <h3>{route.name.replace(" · scenic loop", "")}</h3>
         <p>
-          {route.format === "route" ? "Continuous footage" : "Scenic loop"} ·
-          moves at your pace
+          {route.format === "route"
+            ? t("Continuous footage")
+            : t("Scenic loop")}
+          {routeDetails(route) ? " · " + routeDetails(route) : ""}
         </p>
       </div>
     </article>
@@ -97,9 +103,9 @@ export function Explore({
     <section className="explore-screen">
       <div className="screen-heading">
         <div>
-          <p className="eyebrow">THE SCENERY COLLECTION</p>
-          <h1>Choose your elsewhere.</h1>
-          <p>A woodland path. An autumn ride. A river with no hurry.</p>
+          <p className="eyebrow">{t("THE SCENERY COLLECTION")}</p>
+          <h1>{t("Choose your elsewhere.")}</h1>
+          <p>{t("A woodland path. An autumn ride. A river with no hurry.")}</p>
         </div>
         <span className="inventory-count">{scenes.length} scenes</span>
       </div>
@@ -115,7 +121,7 @@ export function Explore({
           size={pageSize}
           count={scenes.length}
           onChange={setPage}
-          label="Scenery pages"
+          label={t("Scenery pages")}
         />
       )}
     </section>
@@ -164,7 +170,7 @@ export function RoutePreview({
         ref={dialog}
         role="dialog"
         aria-modal="true"
-        aria-label="Scenery preview"
+        aria-label={t("Scenery preview")}
         tabIndex={-1}
         onKeyDown={(e) => {
           if (e.key === "Escape") onClose();
@@ -192,12 +198,12 @@ export function RoutePreview({
         <div className="preview-heading">
           <span>
             <AppIcon name={route.kind} size={21} />
-            {route.kind} scenery
+            {t(route.kind)} scenery
           </span>
           <button
             className="icon-button"
             onClick={onClose}
-            aria-label="Close scenery preview"
+            aria-label={t("Close scenery preview")}
           >
             <AppIcon name="close" />
           </button>
@@ -218,6 +224,14 @@ export function RoutePreview({
             {route.format === "route" ? "NATURE ROUTE" : "SCENIC LOOP"}
           </small>
           <h2>{route.name.replace(" · scenic loop", "")}</h2>
+          {routeDetails(route) && <p>{routeDetails(route)}</p>}
+          {route.originalName && route.originalName !== route.name && (
+            <p>
+              {t("Original title")}
+              {": "}
+              {route.originalName}
+            </p>
+          )}
           <p>
             Connect your {route.kind.toLowerCase()} to match video playback to
             your speed.{" "}
@@ -226,10 +240,10 @@ export function RoutePreview({
               : "This is a short scenic loop, not a full-length route."}
           </p>
           <a href={route.source} target="_blank" rel="noreferrer">
-            Footage by {route.author}
+            {t("Footage by")} {t(route.author)}
           </a>
           <button className="primary" onClick={onTrain}>
-            Use this scene
+            {t("Use this scene")}
             <AppIcon name="Train" size={19} />
           </button>
         </div>

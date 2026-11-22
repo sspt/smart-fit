@@ -17,7 +17,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {t,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -51,7 +51,6 @@ const built = await build({
     },
   ],
 });
-code = built.outputFiles[0].text + "\n" + code;
 // The released UI passes a legacy picker flag before its remembered device.
 const hookStart = code.indexOf("function Gv() {");
 const hookEnd = code.indexOf("function Gf(", hookStart);
@@ -69,22 +68,82 @@ code =
   code.slice(hookEnd);
 once("oe,\n            !0,\n            k,", "oe, k,");
 once("W,\n      !0,\n    ),\n      oe &&", "W,\n    ),\n      oe &&");
+const parserStart = code.indexOf("function ih(a) {");
+const parserEnd = code.indexOf("const Ll =", parserStart);
+if (
+  parserStart < 0 ||
+  parserEnd <= parserStart ||
+  !code.slice(parserStart, parserEnd).includes("Invalid info.json")
+)
+  throw Error("Production catalogue parser changed");
+code =
+  code.slice(0, parserStart) +
+  "function ih(data){return __routeRelease.parseVideoInfo(data, Sa)}\n" +
+  code.slice(parserEnd);
+
 once(
-  "return i.flatMap((d) => {",
-  `return i.flatMap((d) => {
-  if (d?.path !== undefined) {
-    if (typeof d.path !== "string" || !/^(?:[a-zA-Z0-9_-]+\\/)*[a-zA-Z0-9_-]+\\/?$/.test(d.path)) throw Error("Invalid video folder.");
-    d = {...d, file:d.path.replace(/\\/?$/, "/video.mp4")};
-  }`,
+  'm.createElement("div", { className: "settings-units" }, u.units)',
+  'm.createElement("div", { className: "settings-units" }, u.units, m.createElement(__routeRelease.LanguagePicker,{disabled:u.busy}))',
 );
 once(
-  "skipSeconds: N,\n      seconds: 0,",
-  "skipSeconds:N, seconds:Number.isFinite(d.durationSeconds)?d.durationSeconds:0,",
+  'm.createElement("h1", null, "Settings")',
+  'm.createElement("h1", null, __routeRelease.t("Settings"))',
 );
 once(
-  "src: p.href,\n      poster: h,",
-  'src:p.href, ...(d.path ? {percursoSrc:new URL("percurso.json",p).href} : {}), poster:h,',
+  'children:\n                        {\n                          Train: "Home",',
+  'children:__routeRelease.t({\n                          Train: "Home",',
 );
+once("}[k] ?? k,", "}[k] ?? k),");
+once(
+  "c.jsx(ch, { src: a.src, poster: a.poster }, a.src + a.poster)",
+  'c.jsx(ch, {src:a.src, poster:a.poster || (!matchMedia("(prefers-reduced-motion: reduce)").matches && a.gif) || ""}, a.src + a.poster)',
+);
+once(
+  "children: [c.jsx(Ye, { name: a.kind, size: 17 }), a.kind]",
+  "children: [c.jsx(Ye, { name: a.kind, size: 17 }), __routeRelease.t(a.kind)]",
+);
+once('children: d === "All" ? "All" : d', "children: __routeRelease.t(d)");
+once(
+  '"aria-label": "Preview " + a.name',
+  '"aria-label": __routeRelease.t("Preview")+" "+a.name',
+);
+once(
+  '              " \\xB7 moves at your pace",',
+  '              __routeRelease.routeDetails(a) ? " · "+__routeRelease.routeDetails(a) : "",',
+);
+once(
+  'children: ["Footage by ", a.author]',
+  'children: [__routeRelease.t("Footage by")+" ",__routeRelease.t(a.author)]',
+);
+once(
+  'children: a.name.replace(" \\xB7 scenic loop", ""),\n              }),\n              c.jsxs("p", {',
+  'children:a.name.replace(" · scenic loop",""),}), __routeRelease.routeDetails(a) && c.jsx("p",{children:__routeRelease.routeDetails(a)}), a.originalName && a.originalName !== a.name && c.jsxs("p",{children:[__routeRelease.t("Original title"),": ",a.originalName]}),c.jsxs("p",{',
+);
+for (const label of [
+  "Display units",
+  "Kilometres",
+  "Miles",
+  "Set up workout",
+  "Review workout",
+  "Open workout",
+  "THE SCENERY COLLECTION",
+  "Choose your elsewhere.",
+  "A woodland path. An autumn ride. A river with no hurry.",
+  "Filter by equipment",
+  "Scenery preview",
+  "Close scenery preview",
+  "Use this scene",
+  "Scenery pages",
+  "Nature route",
+  "Scenic loop",
+  "Continuous footage",
+  "Your data",
+  "App & data tools",
+]) {
+  const literal = JSON.stringify(label);
+  if (!code.includes(literal)) continue;
+  code = code.split(literal).join(`__routeRelease.t(${literal})`);
+}
 once(
   "[tt, ae] = m.useState(M[0].reference)",
   "[fallbackReference,ae]=m.useState(M[0].reference)",
@@ -101,6 +160,10 @@ once(
   "value: tt,\n                          onChange:",
   "value:fallbackReference,\n                          onChange:",
 );
+code =
+  built.outputFiles[0].text +
+  "\n__routeRelease.setDocumentLanguage();\n" +
+  code;
 code = (await transform(code, { minify: true, target: "es2022" })).code;
 const hash = createHash("sha256").update(code).digest("hex").slice(0, 12),
   path = "/assets/feedback-" + hash + ".js";

@@ -1,3 +1,8 @@
+import type {
+  ActivityType,
+  LengthCategory,
+  RouteLocation,
+} from "./routePresentation";
 import type { Kind } from "./store";
 import forestPoster from "./assets/forest.jpg";
 import cyclingPoster from "./assets/cycling.jpg";
@@ -6,6 +11,13 @@ export type VideoRoute = {
   skipSeconds?: number;
   hlsSrc?: string;
   percursoSrc?: string;
+  gif?: string;
+  originalName?: string;
+  country?: string;
+  distanceKm?: number;
+  lengthCategory?: LengthCategory;
+  activityType?: ActivityType;
+  location?: RouteLocation;
   format?: "loop" | "route";
   id: string;
   name: string;

@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+import { LanguagePicker } from "./i18n/LanguagePicker";
 import { AccountPanel } from "./Accounts";
 import { accountState } from "./accountClient";
 import type { ReactNode } from "react";
@@ -13,16 +15,17 @@ type Props = {
 export function SettingsLayout(p: Props) {
   return (
     <section className="clean-settings">
-      <h1>Settings</h1>
+      <h1>{t("Settings")}</h1>
       <div className="panel settings">
         <section className="settings-group">
-          <h2>Preferences</h2>
+          <h2>{t("Preferences")}</h2>
           {p.units}
+          <LanguagePicker disabled={p.busy} />
         </section>
         <AccountPanel disabled={p.busy} />
         {p.connection}
         <section className="settings-group">
-          <h2>Your data</h2>
+          <h2>{t("Your data")}</h2>
           <p className="subtle">
             {accountState().user
               ? "Saved to your account and available offline. Keep a backup."
@@ -31,7 +34,7 @@ export function SettingsLayout(p: Props) {
           <div className="actions">{p.backup}</div>
         </section>
         <details className="settings-tools">
-          <summary>App & data tools</summary>
+          <summary>{t("App & data tools")}</summary>
           <div className="settings-tools-content">
             <p className="subtle">
               Refresh the app without deleting your data.

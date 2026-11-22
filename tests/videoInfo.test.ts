@@ -62,3 +62,56 @@ it("resolves both files relative to the catalogue folder", () => {
   );
   expect(route.seconds).toBe(442);
 });
+
+it("preserves route metadata and derives localized names without changing the route ID", async () => {
+  const { routeName } = await import("../src/routePresentation");
+  const [route] = parseVideoInfo({
+    videos: [
+      {
+        path: "cycling/calvi/",
+        name: "Short Ride in Calvi",
+        originalName: "Fango – Galéria",
+        deviceTypes: ["Bike"],
+        durationSeconds: 442,
+        distanceKm: 3.914,
+        lengthCategory: "short",
+        activityType: "ride",
+        gif: "cycling/calvi/preview.gif",
+        location: {
+          name: "Calvi",
+          countryCode: "fr",
+          latitude: 42.4,
+          longitude: 8.7,
+          source: "nearest_geonames_populated_place",
+        },
+      },
+    ],
+  });
+  expect(route).toMatchObject({
+    id: "nas-info-%2Fcycling%2Fcalvi%2Fvideo.mp4-bike",
+    gif: "https://media.kwest.fit/cycling/calvi/preview.gif",
+    originalName: "Fango – Galéria",
+    distanceKm: 3.914,
+    seconds: 442,
+    location: {
+      name: "Calvi",
+      countryCode: "FR",
+      latitude: 42.4,
+      longitude: 8.7,
+    },
+  });
+  expect(
+    ["en", "es", "pt", "fr", "it", "pl", "de", "nl"].map((language) =>
+      routeName(route, language as Parameters<typeof routeName>[1]),
+    ),
+  ).toEqual([
+    "Short Ride in Calvi",
+    "Paseo en bici corto en Calvi",
+    "Passeio de bicicleta curto em Calvi",
+    "Sortie à vélo courte à Calvi",
+    "Giro in bici breve a Calvi",
+    "Krótka trasa rowerowa · Calvi",
+    "Kurze Radtour in Calvi",
+    "Korte fietsrit in Calvi",
+  ]);
+});

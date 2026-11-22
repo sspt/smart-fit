@@ -1,3 +1,4 @@
+import { setDocumentLanguage, t } from "./i18n";
 import { WorkoutContinuation } from "./WorkoutContinuation";
 import { disconnectWorkoutDevices } from "./workoutCompletion";
 import { WorkoutAdjustments } from "./WorkoutAdjustments";
@@ -1126,15 +1127,17 @@ function App() {
                 name={n === "Train" ? "Home" : n === "Programmes" ? "Train" : n}
               />
               <span>
-                {(
-                  {
-                    Train: "Home",
-                    Explore: "Discover",
-                    History: "Journal",
-                    Devices: "Equipment",
-                    Programmes: "Library",
-                  } as Record<string, string>
-                )[n] ?? n}
+                {t(
+                  (
+                    {
+                      Train: "Home",
+                      Explore: "Discover",
+                      History: "Journal",
+                      Devices: "Equipment",
+                      Programmes: "Library",
+                    } as Record<string, string>
+                  )[n] ?? n,
+                )}
               </span>
             </button>
           ))}
@@ -1632,13 +1635,13 @@ function App() {
             busy={!!session}
             units={
               <label>
-                Display units
+                {t("Display units")}
                 <select
                   value={units}
                   onChange={(e) => setUnits(e.target.value)}
                 >
-                  <option value="km">Kilometres</option>
-                  <option value="mi">Miles</option>
+                  <option value="km">{t("Kilometres")}</option>
+                  <option value="mi">{t("Miles")}</option>
                 </select>
               </label>
             }
@@ -1826,6 +1829,7 @@ function Metric({
     </div>
   );
 }
+setDocumentLanguage();
 createRoot(document.getElementById("root")!).render(
   needsIPhoneLanding() ? (
     <IPhoneLanding />
