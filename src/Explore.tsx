@@ -104,7 +104,6 @@ export function Explore({
       <div className="screen-heading">
         <div>
           <p className="eyebrow">{t("THE SCENERY COLLECTION")}</p>
-          <h1>{t("Choose your elsewhere.")}</h1>
           <p>{t("A woodland path. An autumn ride. A river with no hurry.")}</p>
         </div>
         <span className="inventory-count">{scenes.length} scenes</span>

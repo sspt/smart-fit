@@ -67,9 +67,9 @@ export function WeightLossBuilder({
               value={kind}
               onChange={(e) => setKind(e.target.value as Kind)}
             >
-              <option>Treadmill</option>
-              <option>Bike</option>
-              <option>Rower</option>
+              <option value="Treadmill">Treadmill</option>
+              <option value="Bike">Bike</option>
+              <option value="Rower">Rower</option>
             </select>
           </label>
           <label>

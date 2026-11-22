@@ -120,6 +120,13 @@ once(
   'children: a.name.replace(" \\xB7 scenic loop", ""),\n              }),\n              c.jsxs("p", {',
   'children:a.name.replace(" · scenic loop",""),}), __routeRelease.routeDetails(a) && c.jsx("p",{children:__routeRelease.routeDetails(a)}), a.originalName && a.originalName !== a.name && c.jsxs("p",{children:[__routeRelease.t("Original title"),": ",a.originalName]}),c.jsxs("p",{',
 );
+for (const kind of ["Treadmill", "Bike", "Rower"]) {
+  once(
+    `m.createElement("option", null, "${kind}")`,
+    `m.createElement("option", { value: "${kind}" }, "${kind}")`,
+  );
+}
+once('c.jsx("h1", { children: "Choose your elsewhere." }),', "");
 for (const label of [
   "Display units",
   "Kilometres",

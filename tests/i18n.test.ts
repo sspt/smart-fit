@@ -1,3 +1,6 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { WeightLossBuilder } from "../src/WeightLossBuilder";
 import { describe, expect, it, vi } from "vitest";
 import { getLanguage, languages, uiText } from "../src/i18n";
 import messages from "../src/i18n/uiMessages.json";
@@ -29,4 +32,22 @@ describe("interface translations", () => {
       vi.unstubAllGlobals();
     }
   });
+});
+
+it("keeps equipment option values stable when the labels are translated", () => {
+  vi.stubGlobal("localStorage", { getItem: () => "pt" });
+  try {
+    const markup = renderToStaticMarkup(
+      createElement(WeightLossBuilder, {
+        initialKind: "Bike",
+        onCreate: () => {},
+      }),
+    );
+    expect(markup).toContain(
+      '<option value="Bike" selected="">Bicicleta</option>',
+    );
+    expect(markup).toContain('<option value="Rower">Remo</option>');
+  } finally {
+    vi.unstubAllGlobals();
+  }
 });
