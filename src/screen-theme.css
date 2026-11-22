@@ -27,13 +27,6 @@ main > nav,
   background-color: var(--app-scrim);
 }
 
-.list-heading.setup-topline {
-  color: var(--app-text);
-  background-color: var(--app-surface);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-
 .list-heading
   :is(.activity-chips button, .duration-chips button, .programme-search),
 .control-mode,
@@ -97,10 +90,6 @@ main .clean-settings :is(.settings-group, .strava-settings) {
     --app-surface: #191b19;
     --surface: #191b19;
   }
-
-  .list-heading.setup-topline {
-    backdrop-filter: none;
-  }
 }
 
 #root > header {
@@ -119,7 +108,8 @@ body.editing > #root > header {
   pointer-events: none;
 }
 
-.list-heading:is(.library-toolbar, .discover-toolbar) {
+.list-heading:is(.library-toolbar, .discover-toolbar, .setup-topline) {
+  color: var(--app-text);
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;

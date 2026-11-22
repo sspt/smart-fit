@@ -55,6 +55,11 @@ try {
           backdropFilter: "none",
         });
       }
+      await page.goto(origin + "/#setup");
+      await page.locator(".setup-topline").waitFor();
+      await assertTransparentToolbar(".setup-topline");
+      await assertHeaderVisible();
+
       await page.goto(origin + "/#home");
       const install = page.getByRole("button", {
         name: /^Instalar kwest\.fit/,
