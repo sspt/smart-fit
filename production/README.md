@@ -19,3 +19,9 @@ The account release additionally compiles the reviewed `worker/` source using
 and provisioning the D1 binding. Static-only releases continue to retain live
 Worker code. The verified live Worker digest is recorded separately after an
 account-enabled deployment. See `docs/accounts.md` for setup and rollback notes.
+
+The current production build overlays the verified public frontend captured in
+`live-frontend/` on the original assets. This snapshot preserves the deployed
+Library filters and history navigation. `scripts/build-live-audit-release.mjs`
+applies the audit fixes to that snapshot with guarded replacements. The older
+`scripts/build-production.mjs` still rebuilds the earlier frontend baseline.

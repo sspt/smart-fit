@@ -19,7 +19,7 @@
     "media:upload-r2": "node scripts/upload-hls.mjs",
     "test:nas": "node scripts/nas-smoke.mjs",
     "test:hls": "node scripts/hls-smoke.mjs",
-    "build:production": "tsc --noEmit && node scripts/build-production.mjs",
+    "build:production": "tsc --noEmit && node scripts/build-live-audit-release.mjs",
     "test:accounts": "node scripts/accounts-api-test.mjs",
     "test:accounts:browser": "node scripts/accounts-browser-test.mjs",
     "build:worker": "node scripts/build-accounts-worker.mjs",
