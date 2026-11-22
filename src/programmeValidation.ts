@@ -14,6 +14,7 @@ export function validProgramme(p: any): p is Programme {
     p.blocks.length <= 100 &&
     p.blocks.every(
       (b: any) =>
+        b != null &&
         typeof b.name === "string" &&
         Number.isFinite(b.duration) &&
         b.duration >= 5 &&
@@ -48,4 +49,9 @@ export function validProgramme(p: any): p is Programme {
             b.endPower! <= 2000)),
     )
   );
+}
+
+/** Incomplete legacy entries stay in storage and backups, outside interactive lists. */
+export function availableProgrammes(saved: unknown): Programme[] {
+  return Array.isArray(saved) ? saved.filter(validProgramme) : [];
 }

@@ -188,7 +188,7 @@ export function installDefaults(saved: Programme[]): Programme[] {
     (p) =>
       !legacyExamples.some((old) => JSON.stringify(old) === JSON.stringify(p)),
   );
-  const existing = new Set(kept.map((p) => p.id));
+  const existing = new Set(kept.map((p) => p?.id));
   return [
     ...structuredClone(defaultProgrammes.filter((p) => !existing.has(p.id))),
     ...kept,

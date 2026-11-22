@@ -14,7 +14,9 @@ export function WeightLossBuilder({
   onCreate: (p: Programme) => void;
   disabled?: boolean;
 }) {
-  const [kind, setKind] = useState<Kind>(initialKind),
+  const [kind, setKind] = useState<Kind>(
+      Object.hasOwn(weightLossLimits, initialKind) ? initialKind : "Treadmill",
+    ),
     [minutes, setMinutes] = useState<WeightLossOptions["minutes"]>(20),
     [level, setLevel] = useState<WeightLossOptions["level"]>("starting"),
     [values, setValues] = useState({ Treadmill: "4", Bike: "60", Rower: "3" }),

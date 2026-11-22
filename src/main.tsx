@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { availableProgrammes } from "./programmeValidation";
 import { setDocumentLanguage, t } from "./i18n";
 import { WorkoutContinuation } from "./WorkoutContinuation";
 import { disconnectWorkoutDevices } from "./workoutCompletion";
@@ -918,7 +920,11 @@ function App() {
       .filter(Boolean)
       .join(" + ");
   };
-  const filteredProgrammes = programmes.filter(
+  const usableProgrammes = useMemo(
+    () => availableProgrammes(programmes),
+    [programmes],
+  );
+  const filteredProgrammes = usableProgrammes.filter(
     (p) =>
       (activityFilter === "All" || p.kind === activityFilter) &&
       (durationFilter === "All" ||
@@ -928,7 +934,7 @@ function App() {
   );
   useEffect(
     () => setLibraryPage(0),
-    [activityFilter, durationFilter, search, pageSize, programmes.length],
+    [activityFilter, durationFilter, search, pageSize, usableProgrammes.length],
   );
   useEffect(() => setHistoryPage(0), [pageSize, history.length]);
   async function reconnectKnownDevice() {
@@ -1011,7 +1017,7 @@ function App() {
     }
     const nextKind = connected ? kind : (scene?.kind ?? kind);
     const previous = lastJourney?.kind === nextKind ? lastJourney : null;
-    const programme = programmes.find(
+    const programme = usableProgrammes.find(
       (p) => p.id === previous?.programmeId && p.kind === nextKind,
     );
     const route =
@@ -1029,7 +1035,9 @@ function App() {
   function advanceSetup(step: number) {
     if (
       step === 1 &&
-      programmes.some((p) => p.id === setupProgramme && p.kind === kind) &&
+      usableProgrammes.some(
+        (p) => p.id === setupProgramme && p.kind === kind,
+      ) &&
       videoRoutes.some((r) => r.id === setupScene && r.kind === kind) &&
       setupStep === 0
     )
@@ -1154,7 +1162,7 @@ function App() {
             onStep={advanceSetup}
             connected={connected}
             kind={kind}
-            programmes={programmes}
+            programmes={usableProgrammes}
             programmeId={setupProgramme}
             onProgramme={setSetupProgramme}
             sceneId={setupScene}
@@ -1166,7 +1174,7 @@ function App() {
             busy={busy || !ready}
             onCancel={() => setPage("Train")}
             onStart={() => {
-              const p = programmes.find(
+              const p = usableProgrammes.find(
                 (p) => p.id === setupProgramme && p.kind === kind,
               );
               const scene = videoRoutes.find(
@@ -1768,7 +1776,7 @@ function App() {
         {draft && (
           <ProgrammeEditor
             value={draft}
-            existing={programmes.some((p) => p.id === draft.id)}
+            existing={usableProgrammes.some((p) => p.id === draft.id)}
             onClose={() => setDraft(null)}
             onSave={(programme) => {
               setPage("Programmes");
@@ -1776,14 +1784,14 @@ function App() {
               setSearch("");
               setActivityFilter((v) => (v === "All" ? "All" : programme.kind));
               setProgrammes((p) => {
-                const i = p.findIndex((x) => x.id === programme.id);
+                const i = p.findIndex((x) => x?.id === programme.id);
                 if (i < 0) return [programme, ...p];
-                return p.map((x) => (x.id === programme.id ? programme : x));
+                return p.map((x) => (x?.id === programme.id ? programme : x));
               });
               setDraft(null);
             }}
             onDelete={() => {
-              setProgrammes((p) => p.filter((x) => x.id !== draft.id));
+              setProgrammes((p) => p.filter((x) => x?.id !== draft.id));
               setDraft(null);
             }}
           />

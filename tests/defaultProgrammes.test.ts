@@ -83,3 +83,15 @@ describe("complete default workouts", () => {
     ).toContain("walk");
   });
 });
+
+it("keeps valid saved programmes visible when legacy entries are incomplete", async () => {
+  const { availableProgrammes } = await import("../src/programmeValidation");
+  const programme = defaultProgrammes[0];
+  const saved = [
+    { ...programme, id: "missing-blocks", blocks: undefined },
+    { ...programme, id: "invalid-block", blocks: [null] },
+    programme,
+  ];
+  expect(availableProgrammes(saved)).toEqual([programme]);
+  expect(saved).toHaveLength(3);
+});

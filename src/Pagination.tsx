@@ -1,22 +1,33 @@
 import { useEffect, useState } from "react";
 /** Content size follows available space; overflow remains accessible at high zoom. */
-export function usePageSize() {
+export function usePageSize(scenery = false) {
   const size = () =>
     window.innerWidth >= 1050
       ? window.innerHeight >= 760
-        ? 6
-        : 3
+        ? scenery
+          ? 9
+          : 6
+        : scenery
+          ? 6
+          : 3
       : window.innerWidth >= 701
-        ? 4
+        ? scenery
+          ? 6
+          : 4
         : window.innerHeight >= 760
-          ? 3
-          : 2;
+          ? scenery
+            ? 6
+            : 3
+          : scenery
+            ? 5
+            : 2;
   const [count, setCount] = useState(size);
   useEffect(() => {
     const change = () => setCount(size());
+    change();
     window.addEventListener("resize", change);
     return () => window.removeEventListener("resize", change);
-  }, []);
+  }, [scenery]);
   return count;
 }
 export function Pagination({

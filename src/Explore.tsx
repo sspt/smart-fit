@@ -93,8 +93,7 @@ export function Explore({
   onPreview: (r: VideoRoute) => void;
 }) {
   const videoRoutes = useVideoRoutes();
-  const size = usePageSize();
-  const pageSize = window.innerWidth <= 700 ? size + 1 : size;
+  const pageSize = usePageSize(true);
   const [page, setPage] = useState(0);
   const category = filter === "All" ? "Treadmill" : filter;
   const scenes = videoRoutes.filter((r) => r.kind === category);

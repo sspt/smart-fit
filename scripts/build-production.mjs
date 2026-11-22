@@ -18,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {usePageSize} from "./src/Pagination"; export {availableProgrammes} from "./src/programmeValidation"; export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -188,6 +188,43 @@ once(
   '"Connect your ",\n                  a.kind.toLowerCase(),\n                  " to match video playback to your speed.",',
   '"Connect your equipment to match video playback to your speed.",',
 );
+once(
+  "p = uc(),\n    h = window.innerWidth <= 700 ? p + 1 : p,",
+  "h = __routeRelease.usePageSize(true),",
+);
+once(
+  "Ht = he.filter(",
+  "usableProgrammes = m.useMemo(()=>__routeRelease.availableProgrammes(he),[he]), Ht = usableProgrammes.filter(",
+);
+once("[A, ce, K, Ae, he.length]", "[A, ce, K, Ae, usableProgrammes.length]");
+once("        he,\n        O,", "        usableProgrammes,\n        O,");
+once(
+  "journeySelection(we, he, O, Z, ut)",
+  "journeySelection(we, usableProgrammes, O, Z, ut)",
+);
+once(
+  "\n              programmes: he,",
+  "\n              programmes: usableProgrammes,",
+);
+once(
+  "he.find((oe) => oe.id === Z",
+  "usableProgrammes.find((oe) => oe.id === Z",
+);
+once("existing: he.some(", "existing: usableProgrammes.some(");
+once(
+  "W.findIndex((oe) => oe.id === k.id)",
+  "W.findIndex((oe) => oe?.id === k.id)",
+);
+once(
+  "W.map((oe) => (oe.id === k.id ? k : oe))",
+  "W.map((oe) => (oe?.id === k.id ? k : oe))",
+);
+once("k.filter((W) => W.id !== gt.id)", "k.filter((W) => W?.id !== gt.id)");
+once(
+  "[x, C] = Y(u)",
+  '[x, C] = Y(["Treadmill", "Bike", "Rower"].includes(u) ? u : "Treadmill")',
+);
+once('new Set(i.map((d) => d.id))', 'new Set(i.map((d) => d?.id))');
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),
 );
