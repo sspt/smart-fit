@@ -142,7 +142,7 @@ export function localizeUI(
       return;
     }
     if (
-      visible &&
+      visible && visible !== "state" &&
       ts.isPropertyAccessExpression(node) &&
       ["kind", "message", "name"].includes(node.name.text)
     ) {
