@@ -199,14 +199,9 @@ export function VideoScenic({
         await document.exitFullscreen();
       } catch {}
   }
-  async function enterImmersive() {
+  function enterImmersive() {
     returnFocus.current = document.activeElement as HTMLElement;
     setExpanded(true);
-    try {
-      await container.current?.requestFullscreen?.({ navigationUI: "hide" });
-    } catch {
-      /* The viewport-filling layout also works when browser fullscreen is unavailable. */
-    }
   }
   useEffect(() => {
     if (!expanded) return;

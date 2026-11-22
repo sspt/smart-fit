@@ -2314,7 +2314,7 @@
   ],
   "Install kwest.fit ›": [
     "Instalar kwest.fit ›",
-    "Instale o kwest.fit ›",
+    "Instalar kwest.fit ›",
     "Installer kwest.fit ›",
     "Installa kwest.fit ›",
     "Zainstaluj kwest.fit ›",
@@ -6028,5 +6028,23 @@
     "Rozpocznij trening, aby użyć sterowania automatycznego.",
     "Starte ein Training für die automatische Steuerung.",
     "Start een training voor automatische bediening."
+  ],
+  "Open Share and choose Add to Home Screen.": [
+    "Abre Compartir y elige Añadir a pantalla de inicio.",
+    "Abre Partilhar e escolhe Adicionar ao ecrã principal.",
+    "Ouvrez Partager et choisissez Sur l’écran d’accueil.",
+    "Apri Condividi e scegli Aggiungi alla schermata Home.",
+    "Otwórz menu Udostępnij i wybierz Dodaj do ekranu początkowego.",
+    "Öffne Teilen und wähle Zum Home-Bildschirm.",
+    "Open Deel en kies Zet op beginscherm."
+  ],
+  "Open the browser menu and choose Install app or Add to Home Screen.": [
+    "Abre el menú del navegador y elige Instalar aplicación o Añadir a pantalla de inicio.",
+    "Abre o menu do navegador e escolhe Instalar aplicação ou Adicionar ao ecrã principal.",
+    "Ouvrez le menu du navigateur et choisissez Installer l’application ou Ajouter à l’écran d’accueil.",
+    "Apri il menu del browser e scegli Installa app o Aggiungi alla schermata Home.",
+    "Otwórz menu przeglądarki i wybierz Zainstaluj aplikację lub Dodaj do ekranu głównego.",
+    "Öffne das Browsermenü und wähle App installieren oder Zum Startbildschirm hinzufügen.",
+    "Open het browsermenu en kies App installeren of Toevoegen aan startscherm."
   ]
 }

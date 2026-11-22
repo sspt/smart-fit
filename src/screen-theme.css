@@ -1,4 +1,5 @@
 :root {
+  --app-header-height: 76px;
   --app-text: #f2f4ef;
   --app-surface: #191b19ed;
   --app-control: #252925;
@@ -26,7 +27,7 @@ main > nav,
   background-color: var(--app-scrim);
 }
 
-.list-heading:is(.library-toolbar, .discover-toolbar, .setup-topline) {
+.list-heading.setup-topline {
   color: var(--app-text);
   background-color: var(--app-surface);
   backdrop-filter: blur(12px);
@@ -97,7 +98,78 @@ main .clean-settings :is(.settings-group, .strava-settings) {
     --surface: #191b19;
   }
 
-  .list-heading:is(.library-toolbar, .discover-toolbar, .setup-topline) {
+  .list-heading.setup-topline {
     backdrop-filter: none;
+  }
+}
+
+#root > header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--app-header-height);
+}
+
+body.previewing > #root > header {
+  visibility: visible;
+  pointer-events: none;
+}
+
+body.editing > #root > header {
+  pointer-events: none;
+}
+
+.list-heading:is(.library-toolbar, .discover-toolbar) {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
+  box-shadow: none;
+}
+
+.editor-backdrop,
+.route-preview-backdrop {
+  inset-block-start: var(--app-header-height);
+}
+
+.programme-editor,
+.programme-choice,
+.route-preview {
+  max-height: calc(100dvh - var(--app-header-height) - 32px);
+}
+
+:is(.video-mode, .scenic-mode).expanded {
+  inset-block-start: var(--app-header-height);
+  height: calc(100dvh - var(--app-header-height));
+}
+
+main[data-page="Train"] .home-install {
+  position: absolute;
+  inset-block-start: 22px;
+  inset-inline-end: 30px;
+  z-index: 1;
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  max-width: min(24rem, calc(100% - 32px));
+}
+
+.home-install p {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--app-text);
+  background-color: var(--app-surface);
+}
+
+@media (max-width: 700px) {
+  :root {
+    --app-header-height: calc(66px + env(safe-area-inset-top));
+  }
+
+  main[data-page="Train"] .home-install {
+    inset-block-start: 18px;
+    inset-inline-end: 16px;
   }
 }

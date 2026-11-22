@@ -38,16 +38,64 @@ try {
         );
       }
 
+      const header = page.locator("#root > header");
+      async function assertHeaderVisible() {
+        assert(await header.isVisible());
+        assert.equal((await header.boundingBox()).y, 0);
+      }
+      async function assertTransparentToolbar(selector) {
+        const style = await page.locator(selector).evaluate((item) => {
+          const { backgroundColor, backgroundImage, backdropFilter } =
+            getComputedStyle(item);
+          return { backgroundColor, backgroundImage, backdropFilter };
+        });
+        assert.deepEqual(style, {
+          backgroundColor: "rgba(0, 0, 0, 0)",
+          backgroundImage: "none",
+          backdropFilter: "none",
+        });
+      }
+      await page.goto(origin + "/#home");
+      const install = page.getByRole("button", {
+        name: /^Instalar kwest\.fit/,
+      });
+      await install.waitFor();
+      assert.equal(await install.count(), 1);
+      assert.equal(await page.locator(".home-library-link").count(), 0);
+      await install.click();
+      await page.locator(".home-install").getByRole("status").waitFor();
+      await page.evaluate(() => {
+        const event = new Event("beforeinstallprompt", { cancelable: true });
+        event.prompt = async () =>
+          document.body.setAttribute("data-install-requested", "true");
+        window.dispatchEvent(event);
+      });
+      await install.click();
+      assert.equal(
+        await page.locator("body").getAttribute("data-install-requested"),
+        "true",
+      );
+      await page.evaluate(() =>
+        window.dispatchEvent(new Event("appinstalled")),
+      );
+      await install.waitFor({ state: "detached" });
+      await assertHeaderVisible();
+
       await page.goto(origin + "/#library");
       await page
         .getByText("30 min · Remo por intervalos", { exact: true })
         .waitFor();
-      const surface = (locator) =>
-        locator.evaluate((item) => getComputedStyle(item).backgroundColor);
+      await assertTransparentToolbar(".library-toolbar");
+      const toolbarTop = (await page.locator(".library-toolbar").boundingBox())
+        .y;
+      await page.locator(".list-scroll").evaluate((item) => {
+        item.scrollTop = 180;
+      });
       assert.equal(
-        await surface(page.locator(".library-toolbar")),
-        await surface(page.locator("main > nav")),
+        (await page.locator(".library-toolbar").boundingBox()).y,
+        toolbarTop,
       );
+      await assertHeaderVisible();
       await page
         .getByRole("button", { name: "Criar programa", exact: true })
         .click();
@@ -77,8 +125,14 @@ try {
       const label = await preview.getAttribute("aria-label");
       assert(label);
       assert(!label.includes("Nature escape"));
+      await assertTransparentToolbar(".discover-toolbar");
       await preview.click();
       await page.getByRole("button", { name: "Usar este percurso" }).waitFor();
+      await assertHeaderVisible();
+      assert(
+        (await page.getByRole("dialog").boundingBox()).y >=
+          (await header.boundingBox()).height,
+      );
       await page.evaluate(async () => {
         const db = await new Promise((resolve, reject) => {
           const request = indexedDB.open("smart-fit", 1);
@@ -140,6 +194,20 @@ try {
         )
         .waitFor();
       await live.getByText("Passadeira · 00:23", { exact: true }).waitFor();
+      await live
+        .getByRole("button", { name: "Abrir vídeo", exact: true })
+        .click();
+      await live
+        .getByRole("button", { name: "Visão imersiva", exact: true })
+        .click();
+      const expanded = live.locator(".video-mode.expanded");
+      await expanded.waitFor();
+      await assertHeaderVisible();
+      assert(
+        (await expanded.boundingBox()).y >= (await header.boundingBox()).height,
+      );
+      await page.keyboard.press("Escape");
+      await expanded.waitFor({ state: "detached" });
       await live.getByRole("button", { name: "Sessão", exact: true }).click();
       await live
         .getByRole("button", {

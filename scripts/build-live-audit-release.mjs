@@ -73,6 +73,7 @@ async function buildLiveAuditRelease(root, snapshot) {
     "Start a journey to use automatic control.",
   ];
   const revisedMessages = [
+    "Install kwest.fit ›",
     "15 min · Easy ride",
     "30 min · Brisk walk intervals",
     "30 min · Row intervals",
@@ -225,6 +226,47 @@ async function buildLiveAuditRelease(root, snapshot) {
                   m.createElement("p", {className: "subtle"}, ${localized(recovery)}),
                 ),`,
   );
+
+  replaceOnce(
+    '      { className: "install-suggestion" },',
+    '      { className: "home-install" },',
+  );
+  replaceOnce(
+    '          "p",\n          null,\n          le(\n            ye',
+    '          "p",\n          { role: "status" },\n          le(\n            ye',
+  );
+  replaceOnce(
+    "                c.jsx(__routeRelease.InstallSuggestion, { prompt: Yt }),\n",
+    "",
+  );
+  replaceOnce(
+    `                c.jsxs("button", {
+                  className: "home-library-link",
+                  onClick: () => K("Programmes"),
+                  children: [
+                    __routeRelease.uiText("Programmes & editor "),
+                    c.jsx(Ye, { name: "arrow", size: 16 }),
+                  ],
+                }),`,
+    "                c.jsx(__routeRelease.InstallSuggestion, { prompt: Yt }),",
+  );
+  // Keep scenic playback inside the app viewport, below the persistent header.
+  const enterScenery = code.indexOf("  async function vn() {\n    var ie, We;");
+  const expandEffect = code.indexOf("  m.useEffect", enterScenery);
+  if (
+    enterScenery < 0 ||
+    expandEffect < 0 ||
+    !code.slice(enterScenery, expandEffect).includes("ie.requestFullscreen")
+  )
+    throw new Error("Scenic expansion contract changed");
+  code =
+    code.slice(0, enterScenery) +
+    `  function vn() {
+    tt.current = document.activeElement;
+    zt(!0);
+  }
+` +
+    code.slice(expandEffect);
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";

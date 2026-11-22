@@ -1,3 +1,4 @@
+import { InstallSuggestion, type InstallPrompt } from "./InstallSuggestion";
 import { copyProgramme, programmeId } from "./programmeDraft";
 import { startMobileFullscreen } from "./mobileFullscreen";
 import "./infinite-scroll.css";
@@ -123,7 +124,7 @@ function App() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [ready, setReady] = useState(false),
-    [install, setInstall] = useState<any>(null),
+    [install, setInstall] = useState<InstallPrompt | null>(null),
     [units, setUnits] = useState("km"),
     [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
@@ -296,9 +297,9 @@ function App() {
           );
       })
       .catch((e) => setError("Storage unavailable: " + e.message));
-    const fn = (e: any) => {
+    const fn = (e: Event) => {
       e.preventDefault();
-      setInstall(e);
+      setInstall(e as InstallPrompt);
     };
     window.addEventListener("beforeinstallprompt", fn);
     return () => window.removeEventListener("beforeinstallprompt", fn);
@@ -1197,12 +1198,7 @@ function App() {
               onStart={() => beginJourney()}
               hasSession={!!session}
             />
-            <button
-              className="home-library-link"
-              onClick={() => setPage("Programmes")}
-            >
-              Programmes & editor <AppIcon name="arrow" size={16} />
-            </button>
+            <InstallSuggestion prompt={install} />
           </>
         )}
         {page === "Programmes" && (
