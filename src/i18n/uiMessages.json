@@ -19,7 +19,7 @@
   ],
   "15 min · Easy ride": [
     "15 min · Paseo fácil",
-    "15 min · Passeio fácil",
+    "15 min · Pedalada leve",
     "15 min · Balade facile",
     "15 minuti · Giro facile",
     "15 min · Łatwa jazda",
@@ -46,7 +46,7 @@
   ],
   "30 min · Brisk walk intervals": [
     "30 min · Intervalos de caminata rápida",
-    "30 min · Intervalos de marcha rápida",
+    "30 min · Caminhada rápida por intervalos",
     "30 min · Intervalles de marche rapide",
     "30 min · Intervalli di camminata veloce",
     "30 min · Szybkie interwały marszu",
@@ -64,7 +64,7 @@
   ],
   "30 min · Row intervals": [
     "30 min · Intervalos de fila",
-    "30 min · Intervalos entre linhas",
+    "30 min · Remo por intervalos",
     "30 min · Intervalles entre les rangs",
     "30 min · Intervalli di fila",
     "30 min · Przerwy w rzędach",
@@ -82,7 +82,7 @@
   ],
   "45 min · Endurance row": [
     "45 min · Remo de resistencia",
-    "45 min · Remada de resistência",
+    "45 min · Treino de resistência em remo",
     "45 min · Row d'endurance",
     "45 min · Fila di resistenza",
     "45 min · Wiersz wytrzymałościowy",
@@ -469,7 +469,7 @@
   ],
   "Build your session": [
     "Construye tu sesión",
-    "Configura o treino",
+    "Configurar treino",
     "Construisez votre session",
     "Costruisci la tua sessione",
     "Zbuduj swoją sesję",
@@ -550,7 +550,7 @@
   ],
   "Change scene": [
     "cambiar de escena",
-    "Mudar de cena",
+    "Mudar percurso",
     "Changer de scène",
     "Cambia scena",
     "Zmień scenę",
@@ -613,7 +613,7 @@
   ],
   "Choose a scene": [
     "Elige una escena",
-    "Escolha uma cena",
+    "Escolher percurso",
     "Choisissez une scène",
     "Scegli una scena",
     "Wybierz scenę",
@@ -739,7 +739,7 @@
   ],
   "Close": [
     "Cerrar",
-    "Sair",
+    "Fechar",
     "Fermer",
     "Chiudi",
     "Zamknij",
@@ -901,7 +901,7 @@
   ],
   "Connect equipment": [
     "Conectar equipo",
-    "Conectar equipamentos",
+    "Ligar equipamento",
     "Connecter l'équipement",
     "Collegare l'apparecchiatura",
     "Podłącz sprzęt",
@@ -928,7 +928,7 @@
   ],
   "Connect your equipment to match video playback to your speed.": [
     "Conecta tu equipo para adaptar el vídeo a tu velocidad.",
-    "Liga o equipamento para ajustar o vídeo à tua velocidade.",
+    "Ligue o equipamento para ajustar o vídeo à sua velocidade.",
     "Connectez votre équipement pour adapter la vidéo à votre vitesse.",
     "Collega l’attrezzo per adattare il video alla tua velocità.",
     "Połącz sprzęt, aby dostosować odtwarzanie do swojej prędkości.",
@@ -1486,7 +1486,7 @@
   ],
   "Dismiss": [
     "Descartar",
-    "Dispensar",
+    "Fechar aviso",
     "Rejeter",
     "Ignora",
     "Odrzuć",
@@ -1837,7 +1837,7 @@
   ],
   "Export backup": [
     "Exportar copia de seguridad",
-    "Exportar backup",
+    "Exportar cópia de segurança",
     "Exporter la sauvegarde",
     "Esporta backup",
     "Eksportuj kopię zapasową",
@@ -2044,7 +2044,7 @@
   ],
   "First, connect the machine you’ll be moving with.": [
     "Primero, conecta la máquina con la que vas a entrenar.",
-    "Começa por ligar o equipamento que vais usar no treino.",
+    "Comece por ligar o equipamento que vai usar no treino.",
     "Commencez par connecter l’appareil que vous allez utiliser.",
     "Per prima cosa, collega l’attrezzo con cui ti allenerai.",
     "Najpierw połącz urządzenie, na którym będziesz trenować.",
@@ -2062,7 +2062,7 @@
   ],
   "Follow machine": [
     "Seguir la máquina",
-    "Siga a máquina",
+    "Seguir o equipamento",
     "Suivre la machine",
     "Segui la macchina",
     "Podążaj za maszyną",
@@ -2458,7 +2458,7 @@
   ],
   "Keep a conversational effort. Hills use your mid-range speed; warm-up, recovery and cooldown stay flat at your minimum. Use 0% for flat walking.": [
     "Mantenga un esfuerzo conversacional. Las colinas usan tu velocidad de rango medio; El calentamiento, la recuperación y el enfriamiento se mantienen estables al mínimo. Utilice 0% para caminar en plano.",
-    "Mantenha um esforço de conversação. Hills utilizam a sua velocidade média; aquecimento, recuperação e arrefecimento permanecem no mínimo. Utilize 0% para caminhada plana.",
+    "Caminhe a um ritmo que lhe permita conversar. Nas subidas, o programa usa a velocidade intermédia. No aquecimento, na recuperação e no regresso à calma, usa a velocidade mínima e mantém a passadeira plana. Para caminhar sempre em plano, escolha 0%.",
     "Gardez un effort de conversation. Les collines utilisent votre vitesse moyenne ; l'échauffement, la récupération et le temps de recharge restent stables à votre minimum. Utilisez 0 % pour la marche à plat.",
     "Mantieni uno sforzo di conversazione. Le colline usano la tua velocità media; il riscaldamento, il recupero e il defaticamento rimangono al minimo. Utilizzare 0% per la camminata in piano.",
     "Utrzymuj wysiłek konwersacyjny. Wzgórza wykorzystują prędkość średniego zasięgu; rozgrzewka, regeneracja i czas schładzania pozostają na stałym poziomie minimalnym. Użyj 0% dla chodzenia po płaskim.",
@@ -2593,7 +2593,7 @@
   ],
   "Manual": [
     "manuales",
-    "Manuais",
+    "Manual",
     "Manuel",
     "Manuale",
     "Instrukcja",
@@ -2872,7 +2872,7 @@
   ],
   "Open scenery": [
     "paisaje abierto",
-    "Cenário aberto",
+    "Abrir percurso",
     "Paysage ouvert",
     "Scenario aperto",
     "Otwarta sceneria",
@@ -2881,7 +2881,7 @@
   ],
   "Open scenery to move through nature at your own pace.": [
     "Paisajes abiertos para moverte por la naturaleza a tu propio ritmo.",
-    "Cenário aberto para percorrer a natureza ao seu ritmo.",
+    "Abra o vídeo para percorrer o trajeto ao seu ritmo.",
     "Des paysages ouverts pour évoluer dans la nature à votre rythme.",
     "Paesaggi aperti per muoverti nella natura al tuo ritmo.",
     "Otwarta sceneria, aby poruszać się wśród natury we własnym tempie.",
@@ -2962,7 +2962,7 @@
   ],
   "Pause": [
     "Pausa",
-    "Pausa",
+    "Pausar",
     "Pause",
     "Pausa",
     "Pauza",
@@ -3241,7 +3241,7 @@
   ],
   "Real-world scenery": [
     "Paisaje del mundo real",
-    "Cenário do mundo real",
+    "Percurso panorâmico",
     "Paysages du monde réel",
     "Scenario del mondo reale",
     "Sceneria z prawdziwego świata",
@@ -3286,7 +3286,7 @@
   ],
   "Recovered workout. Reconnect equipment and explicitly resume.": [
     "Entrenamiento recuperado. Vuelva a conectar el equipo y reanude explícitamente.",
-    "Treino recuperado. Volte a ligar o equipamento e retome explicitamente.",
+    "Treino recuperado. Volte a ligar o equipamento e selecione Retomar.",
     "Entraînement récupéré. Rebranchez l'équipement et reprenez explicitement.",
     "Allenamento recuperato. Ricollegare l'apparecchiatura e riprendere esplicitamente.",
     "Odzyskany trening. Podłącz ponownie sprzęt i jawnie wznów.",
@@ -3475,7 +3475,7 @@
   ],
   "Resume": [
     "Currículum",
-    "Currículo",
+    "Retomar",
     "CV",
     "Riprendi",
     "Wznów",
@@ -3538,7 +3538,7 @@
   ],
   "Review programme": [
     "Programa de revisión",
-    "Programa de revisão",
+    "Rever programa",
     "Programme de révision",
     "Programma di revisione",
     "Przegląd programu",
@@ -3745,7 +3745,7 @@
   ],
   "Scene": [
     "Escena",
-    "Cena",
+    "Percurso",
     "Scène",
     "Scena",
     "Scena",
@@ -3754,7 +3754,7 @@
   ],
   "Scenery": [
     "paisaje",
-    "Cenário",
+    "Percurso",
     "Paysage",
     "Scenario",
     "Sceneria",
@@ -3889,7 +3889,7 @@
   ],
   "Select your machine using the Bluetooth picker.": [
     "Seleccione su máquina usando el selector de Bluetooth.",
-    "Selecione a sua máquina utilizando o seletor Bluetooth.",
+    "Selecione o equipamento na lista de dispositivos Bluetooth.",
     "Sélectionnez votre machine à l'aide du sélecteur Bluetooth.",
     "Seleziona la tua macchina utilizzando il selettore Bluetooth.",
     "Wybierz swoje urządzenie za pomocą selektora Bluetooth.",
@@ -3943,7 +3943,7 @@
   ],
   "Sessions recorded": [
     "Sesiones grabadas",
-    "Sessões gravadas",
+    "Treinos registados",
     "Séances enregistrées",
     "Sessioni registrate",
     "Sesje nagrane",
@@ -3988,7 +3988,7 @@
   ],
   "Set up your journey": [
     "Configura tu viaje",
-    "Configure a sua jornada",
+    "Configurar treino",
     "Configurez votre voyage",
     "Imposta il tuo viaggio",
     "Skonfiguruj swoją podróż",
@@ -4096,7 +4096,7 @@
   ],
   "Sign out": [
     "Cerrar sesión",
-    "Sair",
+    "Terminar sessão",
     "Se déconnecter",
     "Esci",
     "Wyloguj się",
@@ -4204,7 +4204,7 @@
   ],
   "Starting out": [
     "empezando",
-    "Começando",
+    "A começar",
     "Commencer",
     "Cominciando",
     "Zaczynam",
@@ -4276,7 +4276,7 @@
   ],
   "Stop": [
     "Detener",
-    "Pare",
+    "Parar",
     "Arrêter",
     "Fermare",
     "Zatrzymaj się",
@@ -4285,7 +4285,7 @@
   ],
   "Stop & finish": [
     "Detener y terminar",
-    "Pare e termine",
+    "Parar e terminar treino",
     "Arrêter et terminer",
     "Fermati e finisci",
     "Zatrzymaj się i zakończ",
@@ -4483,7 +4483,7 @@
   ],
   "Tailor a session": [
     "Adaptar una sesión",
-    "Personalizar uma sessão",
+    "Personalizar treino",
     "Personnaliser une séance",
     "Personalizza una sessione",
     "Dostosuj sesję",
@@ -4492,7 +4492,7 @@
   ],
   "Tailor a steady session or gentle intervals to your comfortable effort.": [
     "Adapte una sesión constante o intervalos suaves a su esfuerzo cómodo.",
-    "Adapte uma sessão constante ou intervalos suaves ao seu esforço confortável.",
+    "Ajuste o treino ao seu ritmo, com esforço constante ou intervalos suaves.",
     "Adaptez une séance régulière ou des intervalles doux à votre effort confortable.",
     "Personalizza una sessione costante o intervalli delicati in base al tuo sforzo confortevole.",
     "Dostosuj stałą sesję lub delikatne interwały do swojego komfortowego wysiłku.",
@@ -4519,7 +4519,7 @@
   ],
   "Tap a segment to change its targets.": [
     "Toque un segmento para cambiar sus objetivos.",
-    "Toca num segmento para alterar os objetivos.",
+    "Toque num segmento para alterar os valores-alvo.",
     "Appuyez sur un segment pour modifier ses cibles.",
     "Tocca un segmento per modificarne i target.",
     "Kliknij segment, aby zmienić jego cele.",
@@ -4969,7 +4969,7 @@
   ],
   "Use this scene": [
     "Usa esta escena",
-    "Utilize esta cena",
+    "Usar este percurso",
     "Utilisez cette scène",
     "Usa questa scena",
     "Użyj tej sceny",
@@ -5113,7 +5113,7 @@
   ],
   "WORKOUT SETUP": [
     "CONFIGURACIÓN DEL ENTRENAMIENTO",
-    "CONFIGURAÇÃO DO EXERCÍCIO",
+    "CONFIGURAÇÃO DO TREINO",
     "CONFIGURATION DE L'ENTRAÎNEMENT",
     "IMPOSTAZIONE ALLENAMENTO",
     "USTAWIENIA TRENINGU",
@@ -5185,7 +5185,7 @@
   ],
   "Weight change also depends on nutrition and recovery.": [
     "El cambio de peso también depende de la nutrición y la recuperación.",
-    "A mudança de peso depende também da nutrição e da recuperação.",
+    "A perda de peso também depende da alimentação e da recuperação.",
     "La variation de poids dépend également de la nutrition et de la récupération.",
     "La variazione di peso dipende anche dall’alimentazione e dal recupero.",
     "Zmiana masy ciała zależy również od odżywiania i regeneracji.",
@@ -5194,7 +5194,7 @@
   ],
   "Weight-loss programmes": [
     "Programas para bajar de peso",
-    "Programas de perda de peso",
+    "Programas para perder peso",
     "Programmes de perte de poids",
     "Programmi di perdita di peso",
     "Programy odchudzające",
@@ -5365,7 +5365,7 @@
   ],
   "Your completed sessions will find a home here.": [
     "Sus sesiones completadas encontrarán un hogar aquí.",
-    "As suas sessões concluídas encontrarão um lar aqui.",
+    "Os treinos concluídos aparecem aqui.",
     "Vos sessions terminées trouveront une maison ici.",
     "Le tue sessioni completate troveranno una casa qui.",
     "Twoje ukończone sesje znajdą tutaj swój dom.",
@@ -5455,7 +5455,7 @@
   ],
   "Your scene is set.": [
     "Tu escenario está listo.",
-    "A sua cena está definida.",
+    "O percurso está selecionado.",
     "Votre scène est plantée.",
     "La tua scena è pronta.",
     "Twoja scena jest gotowa.",
@@ -5473,7 +5473,7 @@
   ],
   "Your story starts here.": [
     "Tu historia comienza aquí.",
-    "A sua história começa aqui.",
+    "Ainda não há treinos registados.",
     "Votre histoire commence ici.",
     "La tua storia inizia qui.",
     "Twoja historia zaczyna się tutaj.",
@@ -5869,7 +5869,7 @@
   ],
   "○ Offline equipment": [
     "○ Equipo fuera de línea",
-    "○ Equipamento offline",
+    "○ Equipamento desligado",
     "○ Équipement hors ligne",
     "○ Attrezzatura offline",
     "○ Sprzęt offline",
@@ -5884,5 +5884,149 @@
     "● Połączono",
     "● Verbunden",
     "● Verbonden"
+  ],
+  "Minimum walking speed (km/h)": [
+    "Velocidad mínima al caminar (km/h)",
+    "Velocidade mínima de caminhada (km/h)",
+    "Vitesse de marche minimale (km/h)",
+    "Velocità minima di camminata (km/h)",
+    "Minimalna prędkość marszu (km/h)",
+    "Minimales Gehtempo (km/h)",
+    "Minimale wandelsnelheid (km/h)"
+  ],
+  "Maximum walking speed (km/h)": [
+    "Velocidad máxima al caminar (km/h)",
+    "Velocidade máxima de caminhada (km/h)",
+    "Vitesse de marche maximale (km/h)",
+    "Velocità massima di camminata (km/h)",
+    "Maksymalna prędkość marszu (km/h)",
+    "Maximales Gehtempo (km/h)",
+    "Maximale wandelsnelheid (km/h)"
+  ],
+  "Maximum incline (%)": [
+    "Inclinación máxima (%)",
+    "Inclinação máxima (%)",
+    "Inclinaison maximale (%)",
+    "Inclinazione massima (%)",
+    "Maksymalne nachylenie (%)",
+    "Maximale Steigung (%)",
+    "Maximale helling (%)"
+  ],
+  "Weight-loss walk": [
+    "Caminata para perder peso",
+    "Caminhada para perder peso",
+    "Marche pour perdre du poids",
+    "Camminata per dimagrire",
+    "Marsz na redukcję wagi",
+    "Gehen zum Abnehmen",
+    "Wandelen om af te vallen"
+  ],
+  "Weight-loss ride": [
+    "Ciclismo para perder peso",
+    "Ciclismo para perder peso",
+    "Vélo pour perdre du poids",
+    "Ciclismo per dimagrire",
+    "Rower na redukcję wagi",
+    "Radfahren zum Abnehmen",
+    "Fietsen om af te vallen"
+  ],
+  "Weight-loss row": [
+    "Remo para perder peso",
+    "Remo para perder peso",
+    "Rameur pour perdre du poids",
+    "Vogatore per dimagrire",
+    "Wiosłowanie na redukcję wagi",
+    "Rudern zum Abnehmen",
+    "Roeien om af te vallen"
+  ],
+  "Intervals": [
+    "Intervalos",
+    "Intervalos",
+    "Intervalles",
+    "Intervalli",
+    "Interwały",
+    "Intervalle",
+    "Intervallen"
+  ],
+  "Live": [
+    "En curso",
+    "Em treino",
+    "En cours",
+    "In corso",
+    "W trakcie",
+    "Live",
+    "Live"
+  ],
+  "Session": [
+    "Sesión",
+    "Sessão",
+    "Séance",
+    "Sessione",
+    "Sesja",
+    "Einheit",
+    "Sessie"
+  ],
+  "Connect the equipment used by this workout.": [
+    "Conecta el equipo de este entrenamiento.",
+    "Ligue o equipamento usado neste treino.",
+    "Connectez l’appareil utilisé pour cet entraînement.",
+    "Collega l’attrezzo usato per questo allenamento.",
+    "Połącz sprzęt używany w tym treningu.",
+    "Verbinde das Gerät für dieses Training.",
+    "Verbind het apparaat voor deze training."
+  ],
+  "Manual control is not available for this equipment.": [
+    "El control manual no está disponible para este equipo.",
+    "O controlo manual está indisponível para este equipamento.",
+    "Le contrôle manuel est indisponible pour cet appareil.",
+    "Il controllo manuale non è disponibile per questo attrezzo.",
+    "Sterowanie ręczne jest niedostępne dla tego sprzętu.",
+    "Für dieses Gerät ist keine manuelle Steuerung verfügbar.",
+    "Handmatige bediening is niet beschikbaar voor dit apparaat."
+  ],
+  "Connect the equipment type used by this session.": [
+    "Conecta el tipo de equipo de esta sesión.",
+    "Ligue o tipo de equipamento usado nesta sessão.",
+    "Connectez le type d’appareil utilisé pour cette séance.",
+    "Collega il tipo di attrezzo usato per questa sessione.",
+    "Połącz typ sprzętu używany w tej sesji.",
+    "Verbinde den Gerätetyp für diese Einheit.",
+    "Verbind het apparaattype voor deze sessie."
+  ],
+  "This bike uses resistance levels. Adjust them in Manual mode.": [
+    "Esta bicicleta usa niveles de resistencia. Ajústalos en modo Manual.",
+    "Esta bicicleta usa níveis de resistência. Ajuste-os no modo Manual.",
+    "Ce vélo utilise des niveaux de résistance. Réglez-les en mode Manuel.",
+    "Questa bici usa livelli di resistenza. Regolali in modalità Manuale.",
+    "Ten rower ma poziomy oporu. Zmieniaj je w trybie ręcznym.",
+    "Dieses Rad verwendet Widerstandsstufen. Passe sie im manuellen Modus an.",
+    "Deze fiets gebruikt weerstandsniveaus. Pas ze aan in de handmatige modus."
+  ],
+  "Equipment control is not available. Check the Bluetooth connection.": [
+    "El control del equipo no está disponible. Comprueba la conexión Bluetooth.",
+    "O controlo do equipamento está indisponível. Verifique a ligação Bluetooth.",
+    "Le contrôle de l’appareil est indisponible. Vérifiez la connexion Bluetooth.",
+    "Il controllo dell’attrezzo non è disponibile. Controlla la connessione Bluetooth.",
+    "Sterowanie sprzętem jest niedostępne. Sprawdź połączenie Bluetooth.",
+    "Die Gerätesteuerung ist nicht verfügbar. Prüfe die Bluetooth-Verbindung.",
+    "Apparaatbediening is niet beschikbaar. Controleer de Bluetooth-verbinding."
+  ],
+  "Reconnect equipment to use automatic control.": [
+    "Vuelve a conectar el equipo para usar el control automático.",
+    "Volte a ligar o equipamento para usar o controlo automático.",
+    "Reconnectez l’appareil pour utiliser le contrôle automatique.",
+    "Ricollega l’attrezzo per usare il controllo automatico.",
+    "Połącz sprzęt ponownie, aby użyć sterowania automatycznego.",
+    "Verbinde das Gerät erneut für die automatische Steuerung.",
+    "Verbind het apparaat opnieuw voor automatische bediening."
+  ],
+  "Start a journey to use automatic control.": [
+    "Inicia un entrenamiento para usar el control automático.",
+    "Inicie um treino para usar o controlo automático.",
+    "Lancez un entraînement pour utiliser le contrôle automatique.",
+    "Avvia un allenamento per usare il controllo automatico.",
+    "Rozpocznij trening, aby użyć sterowania automatycznego.",
+    "Starte ein Training für die automatische Steuerung.",
+    "Start een training voor automatische bediening."
   ]
 }

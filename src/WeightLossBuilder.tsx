@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { useState } from "react";
 import type { Kind, Programme } from "./store";
 import {
@@ -68,6 +69,7 @@ export function WeightLossBuilder({
           <label>
             Equipment
             <select
+              aria-label={t("Equipment")}
               value={kind}
               onChange={(e) => setKind(e.target.value as Kind)}
             >
@@ -79,6 +81,7 @@ export function WeightLossBuilder({
           <label>
             Session length
             <select
+              aria-label={t("Session length")}
               value={minutes}
               onChange={(e) =>
                 setMinutes(
@@ -96,6 +99,7 @@ export function WeightLossBuilder({
           <label>
             Activity level
             <select
+              aria-label={t("Activity level")}
               value={level}
               onChange={(e) =>
                 setLevel(e.target.value as WeightLossOptions["level"])
@@ -115,7 +119,7 @@ export function WeightLossBuilder({
                 ] as const
               ).map(([key, label, min, max, step]) => (
                 <label key={key}>
-                  {label}
+                  {t(label)}
                   <input
                     required
                     type="number"
@@ -135,7 +139,7 @@ export function WeightLossBuilder({
           ) : (
             <>
               <label>
-                {limits.label}
+                {t(limits.label)}
                 <input
                   required
                   type="number"

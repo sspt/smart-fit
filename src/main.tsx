@@ -82,6 +82,7 @@ import "./cinematic.css";
 import "./compact.css";
 import "./immersive.css";
 import "./modern.css";
+import "./screen-theme.css";
 type LastJourney = { programmeId: string; sceneId: string; kind: Kind };
 const clock = (s: number) =>
   `${Math.floor(s / 60)
@@ -1381,7 +1382,7 @@ function App() {
                   aria-pressed={liveTab === tab}
                   onClick={() => setLiveTab(tab)}
                 >
-                  {tab}
+                  {t(tab)}
                 </button>
               ))}
             </div>

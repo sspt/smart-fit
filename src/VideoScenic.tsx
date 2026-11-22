@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { useRouteSpeed } from "./useRouteSpeed";
 import type { ReactNode } from "react";
 import { IntervalCue } from "./WorkoutFeedback";
@@ -311,7 +312,7 @@ export function VideoScenic({
         <div>
           <strong>Real-world scenery</strong>
           <small>
-            {kind} · {time}
+            {t(kind)} · {time}
           </small>
         </div>
         <button
@@ -415,7 +416,7 @@ export function VideoScenic({
               <div className="immersion-top">
                 <div className="immersion-route">
                   <span>
-                    {kind} ·{" "}
+                    {t(kind)} ·{" "}
                     {route === "local"
                       ? "Your video"
                       : selected.format === "route"

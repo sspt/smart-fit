@@ -1,0 +1,103 @@
+:root {
+  --app-text: #f2f4ef;
+  --app-surface: #191b19ed;
+  --app-control: #252925;
+  --app-control-border: #687167;
+  --app-selected: #d5ff1824;
+  --app-scrim: #080a08ad;
+}
+
+header,
+main > nav,
+.setup-footer,
+.immersion-bottom,
+.programme-editor,
+.programme-choice,
+.route-preview,
+.equipment-type-dialog {
+  color: var(--app-text);
+  background-color: var(--app-surface);
+  border-color: var(--line);
+}
+
+.editor-backdrop,
+.route-preview-backdrop,
+.equipment-type-dialog::backdrop {
+  background-color: var(--app-scrim);
+}
+
+.list-heading:is(.library-toolbar, .discover-toolbar, .setup-topline) {
+  color: var(--app-text);
+  background-color: var(--app-surface);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.list-heading
+  :is(.activity-chips button, .duration-chips button, .programme-search),
+.control-mode,
+.device-picker button {
+  color: var(--app-text);
+  background-color: var(--app-control);
+  border-color: var(--app-control-border);
+}
+
+.library-toolbar .programme-search input {
+  color: var(--app-text);
+  background: transparent;
+}
+
+main > nav button[aria-current="page"],
+.list-heading :is(.activity-chips, .duration-chips) button[aria-pressed="true"],
+.control-mode button[aria-pressed="true"],
+.device-picker button[aria-pressed="true"],
+.programme-editor .equipment-picker button.selected,
+.programme-editor .segmented-control button[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--app-selected);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+.view-tabs button[aria-pressed="true"] {
+  color: var(--accent);
+  box-shadow: inset 0 -2px var(--accent);
+}
+
+.route-profile figure,
+.setup-review,
+.explore-screen .route-card {
+  color: var(--app-text);
+  background-color: var(--app-surface);
+  border-color: var(--line);
+}
+
+main .clean-settings :is(.settings-group, .strava-settings) {
+  background-color: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+:where(button, a, input, select, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.list-heading .duration-chips button {
+  border: 1px solid var(--app-control-border);
+}
+
+.list-heading .duration-chips button[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --app-surface: #191b19;
+    --surface: #191b19;
+  }
+
+  .list-heading:is(.library-toolbar, .discover-toolbar, .setup-topline) {
+    backdrop-filter: none;
+  }
+}
