@@ -1203,65 +1203,63 @@ function App() {
         )}
         {page === "Programmes" && (
           <section className="programme-library">
-            <section className="section-head list-heading" id="programmes">
-              <div>
-                <p className="eyebrow">MAKE TIME FOR YOURSELF</p>
-                <h2>Your programmes</h2>
+            <div className="list-heading library-toolbar">
+              <section className="section-head" id="programmes">
+                <button
+                  onClick={() =>
+                    setDraft({
+                      id: crypto.randomUUID(),
+                      name: "My programme",
+                      kind: activityFilter === "All" ? kind : activityFilter,
+                      repeat: 1,
+                      blocks: [block()],
+                    })
+                  }
+                >
+                  <AppIcon name="plus" size={18} />
+                  <span>Create programme</span>
+                </button>
+              </section>
+              <div className="programme-filters">
+                <label className="programme-search">
+                  <AppIcon name="search" size={18} />
+                  <input
+                    aria-label="Search programmes"
+                    placeholder="Search programmes"
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </label>
               </div>
-              <button
-                onClick={() =>
-                  setDraft({
-                    id: crypto.randomUUID(),
-                    name: "My programme",
-                    kind: activityFilter === "All" ? kind : activityFilter,
-                    repeat: 1,
-                    blocks: [block()],
-                  })
-                }
-              >
-                <AppIcon name="plus" size={18} />
-                <span>Create programme</span>
-              </button>
-            </section>
+              <details className="library-filters">
+                <summary>Filter programmes</summary>
+                <ActivityChips
+                  value={activityFilter}
+                  onChange={setActivityFilter}
+                />
+                <div
+                  className="duration-chips"
+                  role="group"
+                  aria-label="Filter by duration"
+                >
+                  {["All", "15", "20", "30", "45"].map((duration) => (
+                    <button
+                      key={duration}
+                      aria-pressed={durationFilter === duration}
+                      onClick={() => setDurationFilter(duration)}
+                    >
+                      {duration === "All" ? "Any duration" : duration + " min"}
+                    </button>
+                  ))}
+                </div>
+              </details>
+            </div>
             <WeightLossBuilder
               initialKind={kind}
               onCreate={setDraft}
               disabled={!!session || busy}
             />
-            <div className="programme-filters">
-              <label className="programme-search">
-                <AppIcon name="search" size={18} />
-                <input
-                  aria-label="Search programmes"
-                  placeholder="Search programmes"
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </label>
-            </div>
-            <details className="library-filters">
-              <summary>Filter programmes</summary>
-              <ActivityChips
-                value={activityFilter}
-                onChange={setActivityFilter}
-              />
-              <div
-                className="duration-chips"
-                role="group"
-                aria-label="Filter by duration"
-              >
-                {["All", "15", "20", "30", "45"].map((duration) => (
-                  <button
-                    key={duration}
-                    aria-pressed={durationFilter === duration}
-                    onClick={() => setDurationFilter(duration)}
-                  >
-                    {duration === "All" ? "Any duration" : duration + " min"}
-                  </button>
-                ))}
-              </div>
-            </details>
             <div className="cards">
               {filteredProgrammes
                 .slice(0, (libraryPage + 1) * pageSize)
@@ -1546,10 +1544,6 @@ function App() {
         )}
         {page === "History" && (
           <section>
-            <div className="list-heading">
-              <p className="eyebrow">SCENES FROM YOUR JOURNEY</p>
-              <h1>Your journey.</h1>
-            </div>
             <WorkoutRecap
               session={recap}
               history={history}

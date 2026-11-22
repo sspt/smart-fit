@@ -15,7 +15,6 @@ type Props = {
 export function SettingsLayout(p: Props) {
   return (
     <section className="clean-settings">
-      <h1>{t("Settings")}</h1>
       <div className="panel settings">
         <section className="settings-group">
           <h2>{t("Preferences")}</h2>

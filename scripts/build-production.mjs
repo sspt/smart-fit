@@ -251,17 +251,52 @@ for (const [page, size] of [
   );
 }
 once("M.slice($, $ + 1)", "M.slice(0, $ + 1)");
-for (const name of ["screen-heading", "section-head", "setup-topline"]) {
-  const anchor =
-    name === "section-head" ? ',\n                  id: "programmes"' : "";
-  once(
-    `className: "${name}"${anchor}`,
-    `className: "${name} list-heading"${anchor}`,
-  );
-}
+const discoverHeader = code.indexOf('          className: "screen-heading",');
+const discoverFilters = code.indexOf(
+  "        c.jsx(Rf, { value: j, onChange: i, includeAll: !1 }),",
+  discoverHeader,
+);
+if (discoverHeader < 0 || discoverFilters < 0)
+  throw Error("Production Discover header changed");
+const discoverEnd = code.indexOf("\n", discoverFilters);
+const discoverStart = code.lastIndexOf(
+  '        c.jsxs("div", {',
+  discoverHeader,
+);
+code =
+  code.slice(0, discoverStart) +
+  '        c.jsx("div",{className:"list-heading discover-toolbar",children:c.jsx(Rf,{value:j,onChange:i,includeAll:!1})}),' +
+  code.slice(discoverEnd);
+once(
+  '                c.jsxs("section", {\n                  className: "section-head",\n                  id: "programmes",',
+  '                c.jsxs("div",{className:"list-heading library-toolbar",children:[c.jsxs("section",{className:"section-head",id:"programmes",',
+);
+const libraryTitle = code.indexOf('children: "MAKE TIME FOR YOURSELF"');
+const titleStart = code.lastIndexOf(
+  '                    c.jsxs("div", {',
+  libraryTitle,
+);
+const titleEnd = code.indexOf(
+  '                    c.jsxs("button", {',
+  libraryTitle,
+);
+if (libraryTitle < 0 || titleStart < 0 || titleEnd < 0)
+  throw Error("Production Library title changed");
+code = code.slice(0, titleStart) + code.slice(titleEnd);
+const builder =
+  "                c.jsx(__feedback.WeightLossBuilder, {\n                  initialKind: we,\n                  onCreate: ft,\n                  disabled: !!L || ot,\n                }),\n";
+once(builder, "");
+once(
+  '                c.jsx("div", {\n                  className: "cards",',
+  "                ]}),\n" +
+    builder +
+    '                c.jsx("div", {\n                  className: "cards",',
+);
+once('className: "setup-topline"', 'className: "setup-topline list-heading"');
+once('m.createElement("h1", null, __routeRelease.t("Settings")),', "");
 once(
   'c.jsx("p", {\n                  className: "eyebrow",\n                  children: "SCENES FROM YOUR JOURNEY",\n                }),\n                c.jsx("h1", { children: "Your journey." }),',
-  'c.jsxs("div", {className:"list-heading", children:[c.jsx("p",{className:"eyebrow",children:"SCENES FROM YOUR JOURNEY"}),c.jsx("h1",{children:"Your journey."})]}),',
+  "",
 );
 const uiMessages = JSON.parse(
   await fs.readFile("src/i18n/uiMessages.json", "utf8"),

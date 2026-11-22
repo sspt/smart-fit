@@ -6,7 +6,6 @@ header {
   position: sticky;
   top: 76px;
   z-index: 8;
-  background: var(--bg, #f7f8fa);
   padding-block: 8px;
 }
 .list-sentinel {
@@ -16,4 +15,32 @@ header {
   .list-heading {
     top: calc(66px + env(safe-area-inset-top));
   }
+}
+
+.list-heading {
+  background: #161817;
+  color: #f2f4ef;
+}
+.list-heading .section-head {
+  justify-content: flex-end;
+}
+.list-heading
+  :is(
+    .activity-chips button,
+    .programme-search,
+    .programme-search input,
+    .library-filters,
+    .duration-chips button
+  ) {
+  background: #242824;
+  color: #f2f4ef;
+  border-color: #494f48;
+}
+.list-heading button[aria-pressed="true"] {
+  background: #c5e1b5;
+  color: #182318;
+  border-color: #c5e1b5;
+}
+.list-heading input::placeholder {
+  color: #c0c8be;
 }

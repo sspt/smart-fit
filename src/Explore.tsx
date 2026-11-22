@@ -100,14 +100,13 @@ export function Explore({
   useEffect(() => setPage(0), [filter, pageSize, videoRoutes.length]);
   return (
     <section className="explore-screen">
-      <div className="screen-heading list-heading">
-        <div>
-          <p className="eyebrow">{t("THE SCENERY COLLECTION")}</p>
-          <p>{t("A woodland path. An autumn ride. A river with no hurry.")}</p>
-        </div>
-        <span className="inventory-count">{scenes.length} scenes</span>
+      <div className="list-heading discover-toolbar">
+        <ActivityChips
+          value={category}
+          onChange={onFilter}
+          includeAll={false}
+        />
       </div>
-      <ActivityChips value={category} onChange={onFilter} includeAll={false} />
       <div className="routes-grid">
         {scenes.slice(0, (page + 1) * pageSize).map((route) => (
           <RouteCard key={route.id} route={route} onPreview={onPreview} />
