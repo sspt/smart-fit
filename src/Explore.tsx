@@ -233,8 +233,7 @@ export function RoutePreview({
             </p>
           )}
           <p>
-            Connect your {route.kind.toLowerCase()} to match video playback to
-            your speed.{" "}
+            Connect your equipment to match video playback to your speed.{" "}
             {route.format === "route"
               ? "Continuous footage, repeated if your session outlasts the recording."
               : "This is a short scenic loop, not a full-length route."}

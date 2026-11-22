@@ -1,3 +1,4 @@
+import { localizeUI } from "./localize-ui.mjs";
 import fs from "node:fs/promises";
 import prettier from "prettier";
 import { build, transform } from "esbuild";
@@ -17,7 +18,7 @@ function once(from, to) {
 }
 const built = await build({
   stdin: {
-    contents: `export {t,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
+    contents: `export {t,uiText,setDocumentLanguage} from "./src/i18n"; export {LanguagePicker} from "./src/i18n/LanguagePicker"; export {routeDetails} from "./src/routePresentation"; export {parseVideoInfo} from "./src/videoInfo"; export {useFtms} from "./src/ble"; export {useRouteSpeed} from "./src/useRouteSpeed";`,
     resolveDir: process.cwd(),
   },
   bundle: true,
@@ -160,6 +161,33 @@ once(
   "value: tt,\n                          onChange:",
   "value:fallbackReference,\n                          onChange:",
 );
+once(
+  'const uh = ["Connect", "Programme", "Scene", "Start"]',
+  'const uh = ["Connect", "Programme", "Scene", "Start"].map(label => __routeRelease.uiText(label))',
+);
+once(
+  'className: "eyebrow", children: [d]',
+  'className: "eyebrow", children: [__routeRelease.t(d)]',
+);
+once(
+  'm.createElement("option", { key: g, value: g }, g)',
+  'm.createElement("option", { key: g, value: g }, __routeRelease.t(g))',
+);
+once(
+  "`Choose a programme for your ${d.toLowerCase()}.`",
+  "`Choose a programme for your ${__routeRelease.t(d)}.`",
+);
+once(
+  '"Connect your ",\n                  a.kind.toLowerCase(),\n                  " to match video playback to your speed.",',
+  '"Connect your equipment to match video playback to your speed.",',
+);
+const uiMessages = JSON.parse(
+  await fs.readFile("src/i18n/uiMessages.json", "utf8"),
+);
+code = localizeUI(code, "production.js", {
+  callee: "__routeRelease.uiText",
+  hasMessage: (key) => Object.hasOwn(uiMessages, key),
+});
 code =
   built.outputFiles[0].text +
   "\n__routeRelease.setDocumentLanguage();\n" +

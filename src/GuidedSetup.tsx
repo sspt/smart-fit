@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Pagination, usePageSize } from "./Pagination";
 import { AppIcon } from "./AppIcon";
@@ -112,12 +113,14 @@ export function GuidedSetup({
             <span>
               {index < step ? <AppIcon name="check" size={15} /> : index + 1}
             </span>
-            {label}
+            {t(label)}
           </li>
         ))}
       </ol>
       <div className="setup-intro">
-        <p className="eyebrow">STEP {step + 1} OF 4</p>
+        <p className="eyebrow">
+          {t("Step")} {step + 1} / 4
+        </p>
         <h1 ref={heading} tabIndex={-1}>
           {
             [
@@ -132,7 +135,7 @@ export function GuidedSetup({
           {
             [
               "First, connect the machine you’ll be moving with.",
-              `Choose a programme for your ${kind.toLowerCase()}.`,
+              `Choose a programme for your ${t(kind)}.`,
               "Pick the scenery that will move at your pace.",
               "Everything is ready. Start when you are.",
             ][step]
@@ -373,7 +376,7 @@ export function GuidedSetup({
                 : "Waiting for your equipment"
               : programme
                 ? `${kind} · ${duration(programme)}`
-                : `Choose a ${kind.toLowerCase()} programme`}
+                : `Choose a ${t(kind)} programme`}
           </span>
           {(step === 3 || (step === 0 && connected)) && (
             <button

@@ -1,3 +1,6 @@
+import builtInTitleKeys from "./builtInTitles.json";
+import uiMessages from "./uiMessages.json";
+
 export const languages = {
   en: "English",
   es: "Español",
@@ -32,11 +35,19 @@ export function setLanguage(language: Language) {
   localStorage.setItem(preferenceKey, language);
 }
 export function setDocumentLanguage() {
-  if (typeof document !== "undefined")
-    document.documentElement.lang = getLanguage();
+  if (typeof document === "undefined") return;
+  document.documentElement.lang = getLanguage();
+  document.title = "kwest.fit — " + t("Somewhere beyond the everyday");
+  document
+    .querySelector('meta[name="description"]')
+    ?.setAttribute(
+      "content",
+      t("Immersive nature journeys that unfold at your pace."),
+    );
 }
 
-const messages = {
+const messages: Record<string, readonly string[]> = {
+  ...uiMessages,
   Home: [
     "Inicio",
     "Início",
@@ -349,5 +360,23 @@ const messages = {
 } as const;
 export function t(message: string, language = getLanguage()): string {
   const index = Object.keys(languages).indexOf(language) - 1;
-  return messages[message as keyof typeof messages]?.[index] ?? message;
+  return messages[message]?.[index] ?? message;
 }
+
+export function uiText(
+  message: unknown,
+  values: unknown[] = [],
+  title = false,
+): string {
+  if (typeof message !== "string") return message as string;
+  if (title && !builtInTitles.has(message)) return message;
+  const key = message.trim();
+  const localized = t(key);
+  const padded =
+    localized === key ? message : message.replace(key, () => localized);
+  return padded.replace(/\{v(\d+)\}/g, (placeholder, index) =>
+    index < values.length ? String(values[Number(index)]) : placeholder,
+  );
+}
+
+const builtInTitles = new Set(builtInTitleKeys);
