@@ -163,3 +163,176 @@ main[data-page="Train"] .home-install {
     inset-inline-end: 16px;
   }
 }
+
+/* Home keeps the scenery visible above and beside the workout actions. */
+#root:has(main[data-page="Train"]) .world-shade {
+  background: linear-gradient(
+    180deg,
+    #070d0b1a,
+    transparent 28%,
+    #070d0b80 62%,
+    #070d0bf2
+  );
+}
+
+main[data-page="Train"] .cinema-entrance {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  min-height: calc(100svh - var(--app-header-height));
+  height: auto;
+  margin: 0;
+  padding: clamp(140px, 27svh, 260px) clamp(8px, 3vw, 44px)
+    clamp(32px, 7svh, 72px);
+  overflow: visible;
+}
+
+main[data-page="Train"] .entrance-shade {
+  background: radial-gradient(ellipse at 7% 78%, #07100bb8, transparent 70%);
+}
+
+main[data-page="Train"] .entrance-story {
+  position: relative;
+  inset: auto;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  animation: none;
+}
+
+main[data-page="Train"] .entrance-story h1 {
+  max-width: 12ch;
+  margin: 0;
+  color: #f6f8f2;
+  font-size: clamp(2.8rem, 7.1vw, 6.5rem);
+  line-height: 0.99;
+  font-weight: 730;
+  letter-spacing: -0.072em;
+  overflow-wrap: anywhere;
+}
+
+main[data-page="Train"] .entrance-description {
+  max-width: 34ch;
+  margin: clamp(12px, 2svh, 20px) 0 0;
+  color: #e4eae1;
+  font-size: clamp(0.9rem, 1.45vw, 1.125rem);
+  line-height: 1.5;
+  text-shadow: 0 1px 12px #000b;
+}
+
+main[data-page="Train"] .entrance-actions {
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(16px, 3svh, 28px);
+}
+
+main[data-page="Train"] :is(.entrance-start, .home-discover) {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 52px;
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+main[data-page="Train"] .home-discover,
+main[data-page="Train"] .home-install > button {
+  color: var(--app-text);
+  background: #101a15c9;
+  border: 1px solid #fff5;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+main[data-page="Train"] :is(.home-discover, .home-install > button):hover {
+  background: #293a2ded;
+  color: var(--app-text);
+}
+
+main[data-page="Train"] .home-install > button {
+  border-radius: 100px;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 0.75rem;
+}
+
+.home-route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+  max-width: min(100%, 18rem);
+  padding: 12px 15px;
+  color: var(--app-text);
+  background: #101a15d9;
+  border: 1px solid #fff3;
+  border-radius: 15px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.home-route-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #d5ff181c;
+  color: var(--accent);
+}
+
+.home-route small,
+.home-route strong {
+  display: block;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+}
+
+.home-route small {
+  color: #bfcbbf;
+  margin-bottom: 3px;
+}
+
+.home-route strong {
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 700px) {
+  main[data-page="Train"] .cinema-entrance {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: end;
+    gap: 18px;
+    min-height: calc(
+      100svh - var(--app-header-height) - 75px - env(safe-area-inset-bottom)
+    );
+    padding: clamp(100px, 20svh, 175px) clamp(2px, 2vw, 12px) 22px;
+  }
+
+  main[data-page="Train"] .entrance-story h1 {
+    font-size: clamp(2.65rem, 12.2vw, 4.6rem);
+  }
+
+  main[data-page="Train"] :is(.entrance-start, .home-discover) {
+    min-height: 48px;
+    padding-inline: 11px;
+    font-size: clamp(0.75rem, 3.3vw, 0.875rem);
+  }
+
+  .home-route {
+    justify-self: start;
+    padding: 8px 11px;
+  }
+}
+
+@media (forced-colors: active) {
+  .home-route-icon {
+    color: CanvasText;
+  }
+}

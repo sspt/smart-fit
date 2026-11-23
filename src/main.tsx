@@ -1196,7 +1196,10 @@ function App() {
             <CinematicEntrance
               route={ambientRoute}
               onStart={() => beginJourney()}
+              onDiscover={() => setPage("Explore")}
               hasSession={!!session}
+              connected={connected}
+              ready={ready && !busy}
             />
             <InstallSuggestion prompt={install} />
           </>

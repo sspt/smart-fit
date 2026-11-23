@@ -73,6 +73,9 @@ async function buildLiveAuditRelease(root, snapshot) {
     "Start a journey to use automatic control.",
   ];
   const revisedMessages = [
+    "Train at your own pace",
+    "Choose a programme and train along scenic routes.",
+    "Discover routes",
     "Install kwest.fit ›",
     "15 min · Easy ride",
     "30 min · Brisk walk intervals",
@@ -250,6 +253,41 @@ async function buildLiveAuditRelease(root, snapshot) {
                 }),`,
     "                c.jsx(__routeRelease.InstallSuggestion, { prompt: Yt }),",
   );
+  const entranceStart = code.indexOf(
+    "  function I({ route: u, onStart: x, hasSession: b, connected: k, ready: j })",
+  );
+  const entranceEnd = code.indexOf(
+    "  function K(u, x, b, k, j)",
+    entranceStart,
+  );
+  if (
+    entranceStart < 0 ||
+    entranceEnd < 0 ||
+    !code.slice(entranceStart, entranceEnd).includes('"cinema-entrance"')
+  )
+    throw new Error("Home screen contract changed");
+  const entrance = (await fs.readFile("src/CinematicEntrance.tsx", "utf8"))
+    .replace(/^import .*;\n/gm, "")
+    .replace("export function CinematicEntrance", "function CinematicEntrance");
+  const { code: entranceCode } = await transform(entrance, {
+    loader: "tsx",
+    jsxFactory: "m.createElement",
+  });
+  code =
+    code.slice(0, entranceStart) +
+    `  function I(props) {
+    const AppIcon = T;
+    const { t, uiText } = __routeRelease;
+    ${entranceCode}
+    return CinematicEntrance(props);
+  }
+` +
+    code.slice(entranceEnd);
+  replaceOnce(
+    "                  route: jr,\n                  onStart: () => Nr(),",
+    '                  route: jr,\n                  onStart: () => Nr(),\n                  onDiscover: () => K("Explore"),',
+  );
+
   // Keep scenic playback inside the app viewport, below the persistent header.
   const enterScenery = code.indexOf("  async function vn() {\n    var ie, We;");
   const expandEffect = code.indexOf("  m.useEffect", enterScenery);

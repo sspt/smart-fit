@@ -61,6 +61,16 @@ try {
       await assertHeaderVisible();
 
       await page.goto(origin + "/#home");
+      await page
+        .getByRole("heading", { name: "Treine ao seu ritmo" })
+        .waitFor();
+      await page.locator("video.world-film").waitFor({ state: "attached" });
+      await page.getByRole("button", { name: "Descobrir percursos" }).click();
+      await page.locator('main[data-page="Explore"]').waitFor();
+      await page.goBack();
+      await page.getByRole("button", { name: "Configurar treino" }).click();
+      await page.locator('main[data-page="Setup"]').waitFor();
+      await page.goBack();
       const install = page.getByRole("button", {
         name: /^Instalar kwest\.fit/,
       });
