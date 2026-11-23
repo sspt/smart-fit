@@ -65,6 +65,20 @@ try {
         .getByRole("heading", { name: "Treine ao seu ritmo" })
         .waitFor();
       await page.locator("video.world-film").waitFor({ state: "attached" });
+      const shade = await page.locator(".world-shade").evaluate((element) => {
+        const { x, y, width, height } = element.getBoundingClientRect();
+        return {
+          coversViewport:
+            x === 0 &&
+            y === 0 &&
+            width === innerWidth &&
+            height === innerHeight,
+          background: getComputedStyle(element).backgroundImage,
+        };
+      });
+      assert(shade.coversViewport, "Home gradient covers the full viewport");
+      assert.match(shade.background, /radial-gradient.*linear-gradient/);
+      assert.equal(await page.locator(".entrance-shade").count(), 0);
       await page.getByRole("button", { name: "Descobrir percursos" }).click();
       await page.locator('main[data-page="Explore"]').waitFor();
       await page.goBack();

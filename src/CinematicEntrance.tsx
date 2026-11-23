@@ -19,7 +19,6 @@ export function CinematicEntrance({
 }) {
   return (
     <section className="cinema-entrance" aria-labelledby="entrance-title">
-      <div className="entrance-shade" />
       <div className="entrance-story">
         <h1 id="entrance-title">
           {t(hasSession ? "Back to your workout" : "Train at your own pace")}

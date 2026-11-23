@@ -166,13 +166,15 @@ main[data-page="Train"] .home-install {
 
 /* Home keeps the scenery visible above and beside the workout actions. */
 #root:has(main[data-page="Train"]) .world-shade {
-  background: linear-gradient(
-    180deg,
-    #070d0b1a,
-    transparent 28%,
-    #070d0b80 62%,
-    #070d0bf2
-  );
+  background:
+    radial-gradient(ellipse at 13% 78%, #07100ba8, transparent 74%),
+    linear-gradient(
+      180deg,
+      #070d0b1a,
+      transparent 28%,
+      #070d0b80 62%,
+      #070d0bf2
+    );
 }
 
 main[data-page="Train"] .cinema-entrance {
@@ -186,10 +188,6 @@ main[data-page="Train"] .cinema-entrance {
   padding: clamp(140px, 27svh, 260px) clamp(8px, 3vw, 44px)
     clamp(32px, 7svh, 72px);
   overflow: visible;
-}
-
-main[data-page="Train"] .entrance-shade {
-  background: radial-gradient(ellipse at 7% 78%, #07100bb8, transparent 70%);
 }
 
 main[data-page="Train"] .entrance-story {
