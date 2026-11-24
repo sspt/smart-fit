@@ -218,54 +218,17 @@ try {
         });
         db.close();
       });
-      if (width === 1024) {
-        await page.goto(origin + "/#settings");
+      await page.goto(origin + "/#settings");
+      await page.locator(".clean-settings").waitFor();
+      assert.equal(
         await page
           .getByText("Personalizar vista imersiva", { exact: true })
-          .click();
-        const editor = page.locator(".immersive-layout-editor");
-        const simulation = editor.locator(".immersive-layout-preview");
-        await simulation
-          .getByRole("button", { name: "Pausar", exact: true })
-          .click();
-        await simulation
-          .getByText("Simulação em pausa", { exact: true })
-          .waitFor();
-        await editor.getByLabel("Equipamento simulado").selectOption("Bike");
-        await simulation.getByText("Bicicleta", { exact: true }).waitFor();
-        await simulation.getByText("140", { exact: false }).first().waitFor();
-        const metricFontSize = () =>
-          simulation
-            .locator(".immersion-readings strong")
-            .first()
-            .evaluate((element) =>
-              parseFloat(getComputedStyle(element).fontSize),
-            );
-        const embeddedFontSize = await metricFontSize();
-        await editor
-          .getByRole("button", { name: "Pré-visualizar em ecrã inteiro" })
-          .click();
-        await page.waitForFunction(() =>
-          document.fullscreenElement?.matches(".immersive-layout-preview"),
-        );
-        assert(
-          (await metricFontSize()) > embeddedFontSize,
-          "Metric text scales with the preview width",
-        );
-        await simulation
-          .getByRole("button", { name: "Sair", exact: true })
-          .click();
-        await page.waitForFunction(() => !document.fullscreenElement);
-        await editor.getByLabel("Percurso", { exact: true }).selectOption("0");
-        await editor.getByLabel("Métricas", { exact: true }).selectOption("9");
-        await editor
-          .getByRole("button", { name: "Guardar disposição" })
-          .click();
-        await editor
-          .getByRole("status")
-          .getByText("Disposição guardada.")
-          .waitFor();
-      }
+          .count(),
+        0,
+      );
+      await page.evaluate(() =>
+        localStorage.setItem("kwest-immersive-layout", "[0,2,3,4,5,9,7,8]"),
+      );
       await page.goto(origin + "/#live");
       await page.reload();
       await page
@@ -302,18 +265,17 @@ try {
           );
         }),
       );
-      if (width === 1024) {
-        assert(await expanded.locator(".immersion-route").isHidden());
-        assert.equal(
-          await expanded
-            .locator(".immersion-readings")
-            .evaluate(
-              (element) => getComputedStyle(element.parentElement).gridArea,
-            ),
-          "3 / 3",
-        );
-        assert(await expanded.locator(".immersion-stop").isVisible());
-      }
+      assert(
+        await expanded.locator(".immersion-top .immersion-route").isVisible(),
+      );
+      assert(
+        await expanded
+          .locator(".immersion-bottom .immersion-readings")
+          .isVisible(),
+      );
+      assert(
+        await expanded.locator(".immersion-bottom .immersion-stop").isVisible(),
+      );
       if (width === 1024) await page.evaluate(() => document.exitFullscreen());
       else await expanded.locator(".immersion-exit").click();
       await expanded.waitFor({ state: "detached" });

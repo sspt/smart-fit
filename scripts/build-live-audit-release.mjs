@@ -312,91 +312,36 @@ async function buildLiveAuditRelease(root, snapshot) {
     "        document.fullscreenElement !== xt.current && zt(!1);",
   );
 
-  const immersiveSource = (await fs.readFile("src/ImmersiveLayout.tsx", "utf8"))
-    .replace(/^import .*;\n/gm, "")
-    .replace(/^export /gm, "");
-  const { code: immersiveCode } = await transform(immersiveSource, {
-    loader: "tsx",
-    jsxFactory: "m.createElement",
-    jsxFragment: "m.Fragment",
-  });
+  const fullscreenSource = (
+    await fs.readFile("src/workoutFullscreen.ts", "utf8")
+  ).replace(/^export /gm, "");
 
-  replaceOnce(
-    '        { className: "panel settings" },',
-    '        { className: "panel settings" }, m.createElement(immersive.ImmersiveLayoutEditor),',
-  );
   replaceOnce(
     "                w && Y && It && Ge(() => va(w, Y.id));",
     `                if (w && Y && It) {
-                  immersive.startWorkoutFullscreen();
+                  workoutFullscreen.startWorkoutFullscreen();
                   Ge(() => va(w, Y.id).catch(error => {
-                    immersive.exitWorkoutFullscreen();
+                    workoutFullscreen.exitWorkoutFullscreen();
                     throw error;
                   }));
                 }`,
   );
   replaceOnce(
     "    if ((zt(!1), document.fullscreenElement === xt.current))",
-    "    immersive.exitWorkoutFullscreen();\n    if ((zt(!1), document.fullscreenElement === xt.current))",
+    "    workoutFullscreen.exitWorkoutFullscreen();\n    if ((zt(!1), document.fullscreenElement === xt.current))",
   );
   replaceOnce(
     "        document.fullscreenElement !== xt.current && zt(!1);",
-    "        if (!immersive.isWorkoutFullscreen() && document.fullscreenElement !== xt.current) zt(!1);",
+    "        if (!workoutFullscreen.isWorkoutFullscreen() && document.fullscreenElement !== xt.current) zt(!1);",
   );
   replaceOnce(
     '        (document.body.classList.remove("scenic-expanded"),',
-    '        (document.body.classList.remove("scenic-expanded"), immersive.exitWorkoutFullscreen(),',
+    '        (document.body.classList.remove("scenic-expanded"), workoutFullscreen.exitWorkoutFullscreen(),',
   );
-  replaceOnce(
-    '  return c.jsxs("section", {\n    className: "scenic-mode video-mode "',
-    '  const layout = Be ? immersive.readImmersiveLayout() : null;\n  return c.jsxs("section", {\n    "data-custom-immersive": layout ? "" : undefined,\n    className: "scenic-mode video-mode "',
-  );
-  for (const [name, index] of [
-    ["immersion-route", 0],
-    ["immersion-exit", 2],
-    ["immersion-adjustments", 3],
-    ["immersion-pause", 6],
-    ["danger immersion-stop", 7],
-  ]) {
-    const anchor = `className: "${name}",`;
-    replaceOnce(
-      anchor,
-      `${anchor} ...immersive.immersiveSlot(layout, ${index}),`,
-    );
-  }
-  for (const [start, end, index] of [
-    [
-      "                      c.jsx(__feedback.ControlMode, {\n                        value: f,",
-      "                        manualUnavailable: T,\n                      }),",
-      1,
-    ],
-    [
-      "                      c.jsx(__feedback.WorkoutReadings, {\n                        kind: I,",
-      "                        calories: p,\n                      }),",
-      5,
-    ],
-  ]) {
-    replaceOnce(
-      start,
-      `c.jsx("div", {className: "immersive-slot", ...immersive.immersiveSlot(layout, ${index}), children: ${start}`,
-    );
-    replaceOnce(end, end.slice(0, -1) + "}),");
-  }
-  replaceOnce(
-    "c.jsx(__feedback.IntervalCue, { text: lt }),",
-    'c.jsx("div", {className: "immersive-slot", ...immersive.immersiveSlot(layout, 4), children: c.jsx(__feedback.IntervalCue, { text: lt })}),',
-  );
-
   code =
-    `const immersive = (() => {
-    const useState = (...args) => m.useState(...args);
-    const useEffect = (...args) => m.useEffect(...args);
-    const useRef = (...args) => m.useRef(...args);
-    const ControlMode = props => m.createElement(__feedback.ControlMode, props);
-    const WorkoutReadings = props => m.createElement(__feedback.WorkoutReadings, props);
-    const IntervalCue = props => m.createElement(__feedback.IntervalCue, props);
-    ${immersiveCode}
-    return { ImmersiveLayoutEditor, readImmersiveLayout, immersiveSlot, startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
+    `const workoutFullscreen = (() => {
+    ${fullscreenSource}
+    return { startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
   })();\n` + code;
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;

@@ -1,7 +1,7 @@
 import {
   startWorkoutFullscreen,
   exitWorkoutFullscreen,
-} from "./ImmersiveLayout";
+} from "./workoutFullscreen";
 import { InstallSuggestion, type InstallPrompt } from "./InstallSuggestion";
 import { copyProgramme, programmeId } from "./programmeDraft";
 import { startMobileFullscreen } from "./mobileFullscreen";
