@@ -318,13 +318,8 @@ async function buildLiveAuditRelease(root, snapshot) {
   const { code: immersiveCode } = await transform(immersiveSource, {
     loader: "tsx",
     jsxFactory: "m.createElement",
+    jsxFragment: "m.Fragment",
   });
-  code =
-    `const immersive = (() => {
-    const useState = (...args) => m.useState(...args);
-    ${immersiveCode}
-    return { ImmersiveLayoutEditor, readImmersiveLayout, immersiveSlot, startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
-  })();\n` + code;
 
   replaceOnce(
     '        { className: "panel settings" },',
@@ -391,6 +386,18 @@ async function buildLiveAuditRelease(root, snapshot) {
     "c.jsx(__feedback.IntervalCue, { text: lt }),",
     'c.jsx("div", {className: "immersive-slot", ...immersive.immersiveSlot(layout, 4), children: c.jsx(__feedback.IntervalCue, { text: lt })}),',
   );
+
+  code =
+    `const immersive = (() => {
+    const useState = (...args) => m.useState(...args);
+    const useEffect = (...args) => m.useEffect(...args);
+    const useRef = (...args) => m.useRef(...args);
+    const ControlMode = props => m.createElement(__feedback.ControlMode, props);
+    const WorkoutReadings = props => m.createElement(__feedback.WorkoutReadings, props);
+    const IntervalCue = props => m.createElement(__feedback.IntervalCue, props);
+    ${immersiveCode}
+    return { ImmersiveLayoutEditor, readImmersiveLayout, immersiveSlot, startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
+  })();\n` + code;
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";

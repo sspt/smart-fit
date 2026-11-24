@@ -224,6 +224,26 @@ try {
           .getByText("Personalizar vista imersiva", { exact: true })
           .click();
         const editor = page.locator(".immersive-layout-editor");
+        const simulation = editor.locator(".immersive-layout-preview");
+        await simulation
+          .getByRole("button", { name: "Pausar", exact: true })
+          .click();
+        await simulation
+          .getByText("Simulação em pausa", { exact: true })
+          .waitFor();
+        await editor.getByLabel("Equipamento simulado").selectOption("Bike");
+        await simulation.getByText("Bicicleta", { exact: true }).waitFor();
+        await simulation.getByText("140", { exact: false }).first().waitFor();
+        await editor
+          .getByRole("button", { name: "Pré-visualizar em ecrã inteiro" })
+          .click();
+        await page.waitForFunction(() =>
+          document.fullscreenElement?.matches(".immersive-layout-preview"),
+        );
+        await simulation
+          .getByRole("button", { name: "Sair", exact: true })
+          .click();
+        await page.waitForFunction(() => !document.fullscreenElement);
         await editor.getByLabel("Percurso", { exact: true }).selectOption("0");
         await editor.getByLabel("Métricas", { exact: true }).selectOption("9");
         await editor
