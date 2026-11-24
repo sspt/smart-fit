@@ -1,11 +1,11 @@
 {
   "origin": "https://kwest.fit",
   "capturedAt": "2026-11-16T17:42:10.745Z",
-  "originalHtmlSha256": "1b9ff73cd5f7449d0fc6a6d443c4ed33d01839734f467090e5d1ca4642e34fcb",
-  "visualVersion": "05fe05a8c8fe",
+  "originalHtmlSha256": "99abbb79002f75036899b4ea654a5d82e9c86a23c69358c504cc9d5970b17f88",
+  "visualVersion": "b84541386884",
   "applicationScripts": [
-    "/assets/feedback-05fe05a8c8fe.js"
+    "/assets/feedback-b84541386884.js"
   ],
   "note": "Reconciled with the live frontend before applying the platform audit fixes.",
-  "verifiedDeployment": "bfe28b6b-0f0b-42a5-8a4e-de77ab6ce050"
+  "verifiedDeployment": "0fba522c-98d4-4e4b-9039-25f0be6642fa"
 }
