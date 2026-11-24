@@ -234,11 +234,23 @@ try {
         await editor.getByLabel("Equipamento simulado").selectOption("Bike");
         await simulation.getByText("Bicicleta", { exact: true }).waitFor();
         await simulation.getByText("140", { exact: false }).first().waitFor();
+        const metricFontSize = () =>
+          simulation
+            .locator(".immersion-readings strong")
+            .first()
+            .evaluate((element) =>
+              parseFloat(getComputedStyle(element).fontSize),
+            );
+        const embeddedFontSize = await metricFontSize();
         await editor
           .getByRole("button", { name: "Pré-visualizar em ecrã inteiro" })
           .click();
         await page.waitForFunction(() =>
           document.fullscreenElement?.matches(".immersive-layout-preview"),
+        );
+        assert(
+          (await metricFontSize()) > embeddedFontSize,
+          "Metric text scales with the preview width",
         );
         await simulation
           .getByRole("button", { name: "Sair", exact: true })

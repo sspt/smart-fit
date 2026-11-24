@@ -547,3 +547,47 @@ main[data-page="Train"] .home-install > button {
   border-radius: 8px;
   background: #111814db;
 }
+
+/* Size the simulated overlay against the preview, including in fullscreen. */
+.immersive-layout-preview[data-custom-immersive] {
+  container-type: inline-size;
+}
+
+.immersive-layout-preview[data-custom-immersive]
+  :is(button, summary, output, .interval-cue, .immersion-status) {
+  font-size: clamp(0.5625rem, 1.4cqi, 0.9375rem);
+  line-height: 1.2;
+}
+
+.immersive-layout-preview[data-custom-immersive] button {
+  min-height: clamp(1.375rem, 3.5cqi, 2.75rem);
+  padding: clamp(0.1875rem, 0.55cqi, 0.5rem) clamp(0.25rem, 0.8cqi, 0.75rem);
+}
+
+.immersive-layout-preview[data-custom-immersive] .immersion-route > strong {
+  font-size: clamp(0.625rem, 1.7cqi, 1.1875rem);
+}
+
+.immersive-layout-preview[data-custom-immersive]
+  :is(
+    .immersion-route > span,
+    .immersion-readings small,
+    .immersion-readings strong > span
+  ) {
+  font-size: clamp(0.5rem, 1cqi, 0.6875rem);
+  letter-spacing: normal;
+}
+
+.immersive-layout-preview[data-custom-immersive] .immersion-readings strong {
+  font-size: clamp(0.6875rem, 2.2cqi, 1.5rem);
+  line-height: 1.1;
+}
+
+.immersive-layout-preview[data-custom-immersive] .immersion-readings > div {
+  flex-basis: clamp(2rem, 8cqi, 4.5rem);
+}
+
+.immersive-layout-preview[data-custom-immersive] .control-mode button {
+  flex-basis: clamp(2rem, 6cqi, 4rem);
+  overflow-wrap: anywhere;
+}
