@@ -694,26 +694,35 @@ function App() {
       kind !== session.programme.kind
     )
       throw Error("Reconnect the equipment type used by this session.");
-    await takeLock();
-    const resumeToken = ++epoch.current;
-    if (!demo && session?.automatic && session.controlMode !== "follow") {
-      if (it.connected) await it.resumeDevice();
-      else await ft.startDevice();
+    const requestedFullscreen =
+      !!session?.sceneryId &&
+      immersiveSession !== session.id &&
+      startWorkoutFullscreen();
+    try {
+      await takeLock();
+      const resumeToken = ++epoch.current;
+      if (!demo && session?.automatic && session.controlMode !== "follow") {
+        if (it.connected) await it.resumeDevice();
+        else await ft.startDevice();
+      }
+      if (resumeToken !== epoch.current) return;
+      sent.current = "";
+      lastTick.current = performance.now();
+      if (session?.sceneryId && immersiveSession !== session.id) {
+        setLiveTab("Scenery");
+        setImmersiveSession(session.id);
+      }
+      setRunning(true);
+      setHold(
+        !session?.automatic ||
+          session?.controlMode === "follow" ||
+          session?.controlMode === "manual",
+      );
+      event("Resumed explicitly");
+    } catch (error) {
+      if (requestedFullscreen) exitWorkoutFullscreen();
+      throw error;
     }
-    if (resumeToken !== epoch.current) return;
-    sent.current = "";
-    lastTick.current = performance.now();
-    if (session?.sceneryId && immersiveSession !== session.id) {
-      setLiveTab("Scenery");
-      setImmersiveSession(session.id);
-    }
-    setRunning(true);
-    setHold(
-      !session?.automatic ||
-        session?.controlMode === "follow" ||
-        session?.controlMode === "manual",
-    );
-    event("Resumed explicitly");
   }
   const automaticUnavailable = !session
     ? "Start a journey to use automatic control."

@@ -2,11 +2,17 @@ let workoutFullscreen = false;
 
 export function startWorkoutFullscreen() {
   const root = document.documentElement;
-  if (document.fullscreenElement || !root.requestFullscreen) return;
+  if (
+    workoutFullscreen ||
+    document.fullscreenElement ||
+    !root.requestFullscreen
+  )
+    return false;
   workoutFullscreen = true;
   void root.requestFullscreen({ navigationUI: "hide" }).catch(() => {
     workoutFullscreen = false;
   });
+  return true;
 }
 
 export function isWorkoutFullscreen() {

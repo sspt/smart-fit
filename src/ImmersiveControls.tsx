@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { startWorkoutFullscreen } from "./workoutFullscreen";
 import { AppIcon } from "./AppIcon";
 import { getLanguage, t } from "./i18n";
 
@@ -39,6 +40,15 @@ export function ImmersiveControls({
       >
         <AppIcon name="close" size={20} />
       </button>
+      {document.fullscreenEnabled && (
+        <button
+          type="button"
+          className="immersion-fullscreen-retry"
+          onClick={startWorkoutFullscreen}
+        >
+          {t("Full screen")}
+        </button>
+      )}
       <div className="immersion-essential">
         <div className="immersion-essential-alerts">{alerts}</div>
         <div className="immersion-essential-bar">

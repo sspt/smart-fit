@@ -506,3 +506,19 @@ main[data-page="Train"] .home-install > button {
     transform: translateX(-50%);
   }
 }
+
+.immersion-fullscreen-retry {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  left: max(8px, env(safe-area-inset-left));
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #ffffff40;
+  background: #293129e8;
+  color: #fff;
+}
+
+:fullscreen .immersion-fullscreen-retry {
+  display: none;
+}

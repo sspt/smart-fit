@@ -245,14 +245,34 @@ try {
       await live
         .getByRole("button", { name: "Abrir vídeo", exact: true })
         .click();
+      if (width === 1024) {
+        await live.locator(".video-mode").evaluate((element) => {
+          element.requestFullscreen = () =>
+            Promise.reject(
+              new DOMException("Request denied", "NotAllowedError"),
+            );
+        });
+      }
       await live
         .getByRole("button", { name: "Visão imersiva", exact: true })
         .click();
       const expanded = live.locator(".video-mode.expanded");
       await expanded.waitFor();
-      await page.waitForFunction(() =>
-        document.fullscreenElement?.matches(".video-mode.expanded"),
-      );
+      const fullscreenRetry = expanded.getByRole("button", {
+        name: "Ecrã inteiro",
+        exact: true,
+      });
+      if (width === 1024) {
+        await fullscreenRetry.click();
+        await page.waitForFunction(
+          () => document.fullscreenElement === document.documentElement,
+        );
+      } else {
+        await page.waitForFunction(() =>
+          document.fullscreenElement?.matches(".video-mode.expanded"),
+        );
+      }
+      assert(await fullscreenRetry.isHidden());
       assert(await header.isHidden());
       assert(
         await expanded.evaluate((element) => {

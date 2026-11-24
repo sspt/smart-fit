@@ -73,6 +73,7 @@ async function buildLiveAuditRelease(root, snapshot) {
     "Start a journey to use automatic control.",
   ];
   const revisedMessages = [
+    "Full screen",
     "Adjust",
     "Manual adjustment",
     "Train at your own pace",
@@ -391,6 +392,28 @@ async function buildLiveAuditRelease(root, snapshot) {
             }),
 ` +
     code.slice(overlayEnd);
+  const resumeStart = code.indexOf("  async function V() {");
+  const resumeBody = code.indexOf("    await xn();", resumeStart);
+  const resumeEnd = code.indexOf("  }\n  const H =", resumeBody);
+  if (
+    resumeStart < 0 ||
+    resumeBody < 0 ||
+    resumeEnd < 0 ||
+    !code.slice(resumeBody, resumeEnd).includes('ut("Resumed explicitly")')
+  )
+    throw new Error("Workout resume contract changed");
+  code =
+    code.slice(0, resumeBody) +
+    `    const requestedFullscreen = !!q?.sceneryId && A !== q.id && workoutFullscreen.startWorkoutFullscreen();
+    try {
+` +
+    code.slice(resumeBody, resumeEnd) +
+    `    } catch (error) {
+      if (requestedFullscreen) workoutFullscreen.exitWorkoutFullscreen();
+      throw error;
+    }
+` +
+    code.slice(resumeEnd);
   const essentialSource = (
     await fs.readFile("src/ImmersiveControls.tsx", "utf8")
   )
@@ -404,6 +427,7 @@ async function buildLiveAuditRelease(root, snapshot) {
   code =
     `function ImmersiveControls(props) {
     const AppIcon = Ye;
+    const startWorkoutFullscreen = workoutFullscreen.startWorkoutFullscreen;
     const t = __routeRelease.t;
     const getLanguage = () => document.documentElement.lang || "en";
     ${essentialCode}
