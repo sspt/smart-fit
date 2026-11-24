@@ -7,9 +7,17 @@ const browser = await chromium.launch({
   args: ["--no-sandbox"],
 });
 try {
-  for (const width of [320, 412, 1280]) {
+  for (const width of [320, 412, 1024, 1280]) {
     const page = await browser.newPage({
-      viewport: { width, height: 844 },
+      viewport: { width, height: width === 1024 ? 768 : 844 },
+      ...(width === 1024
+        ? {
+            isMobile: true,
+            hasTouch: true,
+            userAgent:
+              "Mozilla/5.0 (Linux; Android 14; Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+          }
+        : {}),
       locale: "pt-PT",
       serviceWorkers: "block",
     });
@@ -231,12 +239,25 @@ try {
         .click();
       const expanded = live.locator(".video-mode.expanded");
       await expanded.waitFor();
-      await assertHeaderVisible();
-      assert(
-        (await expanded.boundingBox()).y >= (await header.boundingBox()).height,
+      await page.waitForFunction(() =>
+        document.fullscreenElement?.matches(".video-mode.expanded"),
       );
-      await page.keyboard.press("Escape");
+      assert(await header.isHidden());
+      assert(
+        await expanded.evaluate((element) => {
+          const rect = element.getBoundingClientRect();
+          return (
+            rect.x === 0 &&
+            rect.y === 0 &&
+            rect.width === innerWidth &&
+            rect.height === innerHeight
+          );
+        }),
+      );
+      if (width === 1024) await page.evaluate(() => document.exitFullscreen());
+      else await expanded.locator(".immersion-exit").click();
       await expanded.waitFor({ state: "detached" });
+      await assertHeaderVisible();
       await live.getByRole("button", { name: "Sessão", exact: true }).click();
       await live
         .getByRole("button", {

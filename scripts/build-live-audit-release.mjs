@@ -288,7 +288,7 @@ async function buildLiveAuditRelease(root, snapshot) {
     '                  route: jr,\n                  onStart: () => Nr(),\n                  onDiscover: () => K("Explore"),',
   );
 
-  // Keep scenic playback inside the app viewport, below the persistent header.
+  // Request native fullscreen from the immersive-view button gesture.
   const enterScenery = code.indexOf("  async function vn() {\n    var ie, We;");
   const expandEffect = code.indexOf("  m.useEffect", enterScenery);
   if (
@@ -302,9 +302,15 @@ async function buildLiveAuditRelease(root, snapshot) {
     `  function vn() {
     tt.current = document.activeElement;
     zt(!0);
+    void xt.current?.requestFullscreen?.({navigationUI:"hide"}).catch(() => {});
   }
 ` +
     code.slice(expandEffect);
+
+  replaceOnce(
+    "        document.fullscreenElement || zt(!1);",
+    "        document.fullscreenElement !== xt.current && zt(!1);",
+  );
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";

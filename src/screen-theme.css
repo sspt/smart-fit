@@ -128,9 +128,14 @@ body.editing > #root > header {
   max-height: calc(100dvh - var(--app-header-height) - 32px);
 }
 
+body.scenic-expanded #root > header {
+  visibility: hidden;
+}
+
 :is(.video-mode, .scenic-mode).expanded {
-  inset-block-start: var(--app-header-height);
-  height: calc(100dvh - var(--app-header-height));
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
 }
 
 main[data-page="Train"] .home-install {

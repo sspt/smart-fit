@@ -87,7 +87,10 @@ export function VideoScenic({
   const src = route === "local" ? file?.url : found?.src;
   const profileUrl =
     enabled && route !== "local" ? found?.percursoSrc : undefined;
-  const { reference, profileActive, setVideoTime } = useRouteSpeed(profileUrl, fallbackReference);
+  const { reference, profileActive, setVideoTime } = useRouteSpeed(
+    profileUrl,
+    fallbackReference,
+  );
   const adaptive = useAdaptiveVideo(
     video,
     enabled ? src : undefined,
@@ -202,6 +205,11 @@ export function VideoScenic({
   function enterImmersive() {
     returnFocus.current = document.activeElement as HTMLElement;
     setExpanded(true);
+    void container.current
+      ?.requestFullscreen?.({ navigationUI: "hide" })
+      .catch(() => {
+        // The viewport layout also works when the browser declines fullscreen.
+      });
   }
   useEffect(() => {
     if (!expanded) return;
@@ -245,7 +253,7 @@ export function VideoScenic({
       }
     };
     const fullscreen = () => {
-      if (!document.fullscreenElement) setExpanded(false);
+      if (document.fullscreenElement !== container.current) setExpanded(false);
     };
     document.addEventListener("keydown", keydown);
     document.addEventListener("fullscreenchange", fullscreen);
