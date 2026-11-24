@@ -312,6 +312,86 @@ async function buildLiveAuditRelease(root, snapshot) {
     "        document.fullscreenElement !== xt.current && zt(!1);",
   );
 
+  const immersiveSource = (await fs.readFile("src/ImmersiveLayout.tsx", "utf8"))
+    .replace(/^import .*;\n/gm, "")
+    .replace(/^export /gm, "");
+  const { code: immersiveCode } = await transform(immersiveSource, {
+    loader: "tsx",
+    jsxFactory: "m.createElement",
+  });
+  code =
+    `const immersive = (() => {
+    const useState = (...args) => m.useState(...args);
+    ${immersiveCode}
+    return { ImmersiveLayoutEditor, readImmersiveLayout, immersiveSlot, startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
+  })();\n` + code;
+
+  replaceOnce(
+    '        { className: "panel settings" },',
+    '        { className: "panel settings" }, m.createElement(immersive.ImmersiveLayoutEditor),',
+  );
+  replaceOnce(
+    "                w && Y && It && Ge(() => va(w, Y.id));",
+    `                if (w && Y && It) {
+                  immersive.startWorkoutFullscreen();
+                  Ge(() => va(w, Y.id).catch(error => {
+                    immersive.exitWorkoutFullscreen();
+                    throw error;
+                  }));
+                }`,
+  );
+  replaceOnce(
+    "    if ((zt(!1), document.fullscreenElement === xt.current))",
+    "    immersive.exitWorkoutFullscreen();\n    if ((zt(!1), document.fullscreenElement === xt.current))",
+  );
+  replaceOnce(
+    "        document.fullscreenElement !== xt.current && zt(!1);",
+    "        if (!immersive.isWorkoutFullscreen() && document.fullscreenElement !== xt.current) zt(!1);",
+  );
+  replaceOnce(
+    '        (document.body.classList.remove("scenic-expanded"),',
+    '        (document.body.classList.remove("scenic-expanded"), immersive.exitWorkoutFullscreen(),',
+  );
+  replaceOnce(
+    '  return c.jsxs("section", {\n    className: "scenic-mode video-mode "',
+    '  const layout = Be ? immersive.readImmersiveLayout() : null;\n  return c.jsxs("section", {\n    "data-custom-immersive": layout ? "" : undefined,\n    className: "scenic-mode video-mode "',
+  );
+  for (const [name, index] of [
+    ["immersion-route", 0],
+    ["immersion-exit", 2],
+    ["immersion-adjustments", 3],
+    ["immersion-pause", 6],
+    ["danger immersion-stop", 7],
+  ]) {
+    const anchor = `className: "${name}",`;
+    replaceOnce(
+      anchor,
+      `${anchor} ...immersive.immersiveSlot(layout, ${index}),`,
+    );
+  }
+  for (const [start, end, index] of [
+    [
+      "                      c.jsx(__feedback.ControlMode, {\n                        value: f,",
+      "                        manualUnavailable: T,\n                      }),",
+      1,
+    ],
+    [
+      "                      c.jsx(__feedback.WorkoutReadings, {\n                        kind: I,",
+      "                        calories: p,\n                      }),",
+      5,
+    ],
+  ]) {
+    replaceOnce(
+      start,
+      `c.jsx("div", {className: "immersive-slot", ...immersive.immersiveSlot(layout, ${index}), children: ${start}`,
+    );
+    replaceOnce(end, end.slice(0, -1) + "}),");
+  }
+  replaceOnce(
+    "c.jsx(__feedback.IntervalCue, { text: lt }),",
+    'c.jsx("div", {className: "immersive-slot", ...immersive.immersiveSlot(layout, 4), children: c.jsx(__feedback.IntervalCue, { text: lt })}),',
+  );
+
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";
   await fs.writeFile(root + path, code);

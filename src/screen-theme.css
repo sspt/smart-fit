@@ -339,3 +339,115 @@ main[data-page="Train"] .home-install > button {
     color: CanvasText;
   }
 }
+
+.immersive-layout-editor {
+  grid-column: 1 / -1;
+}
+
+.immersive-layout-editor summary {
+  cursor: pointer;
+  padding-block: 12px;
+}
+
+.immersive-layout-preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 10px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: #111814;
+}
+
+.immersive-layout-preview span {
+  padding: 8px 4px;
+  border: 1px solid var(--line);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.immersive-slot {
+  display: contents;
+}
+
+.expanded[data-custom-immersive] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(min-content, 1fr)) auto auto;
+  gap: 8px;
+  align-items: start;
+  padding: max(8px, env(safe-area-inset-top))
+    max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left));
+  overflow: auto;
+}
+
+.expanded[data-custom-immersive]
+  :is(.immersion-top, .immersion-bottom, .immersion-actions) {
+  display: contents;
+}
+
+.expanded[data-custom-immersive] [data-immersive-slot] {
+  position: relative;
+  display: block;
+  inset: auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px;
+  overflow-wrap: anywhere;
+}
+
+.expanded[data-custom-immersive] [data-immersive-slot="0"] {
+  display: none;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="1"] {
+  grid-area: 1 / 1;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="2"] {
+  grid-area: 1 / 2;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="3"] {
+  grid-area: 1 / 3;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="4"] {
+  grid-area: 2 / 1;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="5"] {
+  grid-area: 2 / 2;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="6"] {
+  grid-area: 2 / 3;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="7"] {
+  grid-area: 3 / 1;
+  align-self: end;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="8"] {
+  grid-area: 3 / 2;
+  align-self: end;
+}
+.expanded[data-custom-immersive] [data-immersive-slot="9"] {
+  grid-area: 3 / 3;
+  align-self: end;
+}
+
+.expanded[data-custom-immersive] .immersion-status {
+  grid-area: 4 / 1 / 5 / -1;
+}
+.expanded[data-custom-immersive] .immersion-retry {
+  grid-area: 5 / 1 / 6 / -1;
+}
+
+.expanded[data-custom-immersive] :is(.immersion-readings, .control-mode) {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.expanded[data-custom-immersive]
+  [data-immersive-slot]
+  :is(button, select, input) {
+  max-width: 100%;
+  white-space: normal;
+}

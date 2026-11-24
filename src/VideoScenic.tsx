@@ -1,3 +1,9 @@
+import {
+  readImmersiveLayout,
+  immersiveSlot,
+  isWorkoutFullscreen,
+  exitWorkoutFullscreen,
+} from "./ImmersiveLayout";
 import { t } from "./i18n";
 import { useRouteSpeed } from "./useRouteSpeed";
 import type { ReactNode } from "react";
@@ -195,8 +201,10 @@ export function VideoScenic({
       setError("This browser does not support the requested playback speed.");
     }
   }, [speed, running, reference, following, enabled, ready]);
+  const layout = expanded ? readImmersiveLayout() : null;
   async function exitImmersive() {
     setExpanded(false);
+    exitWorkoutFullscreen();
     if (document.fullscreenElement === container.current)
       try {
         await document.exitFullscreen();
@@ -253,12 +261,17 @@ export function VideoScenic({
       }
     };
     const fullscreen = () => {
-      if (document.fullscreenElement !== container.current) setExpanded(false);
+      if (
+        !isWorkoutFullscreen() &&
+        document.fullscreenElement !== container.current
+      )
+        setExpanded(false);
     };
     document.addEventListener("keydown", keydown);
     document.addEventListener("fullscreenchange", fullscreen);
     return () => {
       document.body.classList.remove("scenic-expanded");
+      exitWorkoutFullscreen();
       saved.forEach(({ element, inert }) => (element.inert = inert));
       document.removeEventListener("keydown", keydown);
       document.removeEventListener("fullscreenchange", fullscreen);
@@ -290,6 +303,7 @@ export function VideoScenic({
   return (
     <section
       className={"scenic-mode video-mode " + (expanded ? "expanded" : "")}
+      data-custom-immersive={layout ? "" : undefined}
       ref={container}
       role={expanded ? "dialog" : undefined}
       aria-modal={expanded ? true : undefined}
@@ -417,7 +431,7 @@ export function VideoScenic({
           {expanded && (
             <>
               <div className="immersion-top">
-                <div className="immersion-route">
+                <div className="immersion-route" {...immersiveSlot(layout, 0)}>
                   <span>
                     {t(kind)} ·{" "}
                     {route === "local"
@@ -434,35 +448,47 @@ export function VideoScenic({
                         : selected.name}
                   </strong>
                 </div>
-                <ControlMode
-                  value={controlMode}
-                  onChange={onControlMode}
-                  busy={busy}
-                  automaticUnavailable={automaticUnavailable}
-                  manualUnavailable={manualUnavailable}
-                />
+                <div className="immersive-slot" {...immersiveSlot(layout, 1)}>
+                  <ControlMode
+                    value={controlMode}
+                    onChange={onControlMode}
+                    busy={busy}
+                    automaticUnavailable={automaticUnavailable}
+                    manualUnavailable={manualUnavailable}
+                  />
+                </div>
                 <button
                   className="immersion-exit"
+                  {...immersiveSlot(layout, 2)}
                   aria-label="Exit immersive view"
                   onClick={() => void exitImmersive()}
                 >
                   <AppIcon name="close" size={22} />
                   <span>Exit</span>
                 </button>
-                <div className="immersion-adjustments">{manualControls}</div>
+                <div
+                  className="immersion-adjustments"
+                  {...immersiveSlot(layout, 3)}
+                >
+                  {manualControls}
+                </div>
               </div>
               <div className="immersion-bottom">
-                <IntervalCue text={nextCue ?? ""} />
-                <WorkoutReadings
-                  kind={kind}
-                  speed={speed}
-                  time={time}
-                  incline={incline}
-                  power={power}
-                  resistance={resistance}
-                  distance={distance}
-                  calories={calories}
-                />
+                <div className="immersive-slot" {...immersiveSlot(layout, 4)}>
+                  <IntervalCue text={nextCue ?? ""} />
+                </div>
+                <div className="immersive-slot" {...immersiveSlot(layout, 5)}>
+                  <WorkoutReadings
+                    kind={kind}
+                    speed={speed}
+                    time={time}
+                    incline={incline}
+                    power={power}
+                    resistance={resistance}
+                    distance={distance}
+                    calories={calories}
+                  />
+                </div>
                 <div
                   className={
                     "immersion-status " + (videoError ? "has-error" : "")
@@ -488,13 +514,18 @@ export function VideoScenic({
                 <div className="immersion-actions">
                   <button
                     className="immersion-pause"
+                    {...immersiveSlot(layout, 6)}
                     disabled={busy}
                     onClick={onPause}
                   >
                     <AppIcon name={running ? "pause" : "play"} size={20} />
                     {running ? "Pause workout" : "Resume workout"}
                   </button>
-                  <button className="danger immersion-stop" onClick={onStop}>
+                  <button
+                    className="danger immersion-stop"
+                    {...immersiveSlot(layout, 7)}
+                    onClick={onStop}
+                  >
                     <span className="stop-square" />
                     Stop workout
                   </button>

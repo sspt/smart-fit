@@ -218,6 +218,22 @@ try {
         });
         db.close();
       });
+      if (width === 1024) {
+        await page.goto(origin + "/#settings");
+        await page
+          .getByText("Personalizar vista imersiva", { exact: true })
+          .click();
+        const editor = page.locator(".immersive-layout-editor");
+        await editor.getByLabel("Percurso", { exact: true }).selectOption("0");
+        await editor.getByLabel("Métricas", { exact: true }).selectOption("9");
+        await editor
+          .getByRole("button", { name: "Guardar disposição" })
+          .click();
+        await editor
+          .getByRole("status")
+          .getByText("Disposição guardada.")
+          .waitFor();
+      }
       await page.goto(origin + "/#live");
       await page.reload();
       await page
@@ -254,6 +270,18 @@ try {
           );
         }),
       );
+      if (width === 1024) {
+        assert(await expanded.locator(".immersion-route").isHidden());
+        assert.equal(
+          await expanded
+            .locator(".immersion-readings")
+            .evaluate(
+              (element) => getComputedStyle(element.parentElement).gridArea,
+            ),
+          "3 / 3",
+        );
+        assert(await expanded.locator(".immersion-stop").isVisible());
+      }
       if (width === 1024) await page.evaluate(() => document.exitFullscreen());
       else await expanded.locator(".immersion-exit").click();
       await expanded.waitFor({ state: "detached" });

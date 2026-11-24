@@ -1,3 +1,7 @@
+import {
+  startWorkoutFullscreen,
+  exitWorkoutFullscreen,
+} from "./ImmersiveLayout";
 import { InstallSuggestion, type InstallPrompt } from "./InstallSuggestion";
 import { copyProgramme, programmeId } from "./programmeDraft";
 import { startMobileFullscreen } from "./mobileFullscreen";
@@ -1186,8 +1190,15 @@ function App() {
               const scene = videoRoutes.find(
                 (r) => r.id === setupScene && r.kind === kind,
               );
-              if (p && scene && connected)
-                void action(() => start(p, scene.id));
+              if (p && scene && connected) {
+                startWorkoutFullscreen();
+                void action(() =>
+                  start(p, scene.id).catch((error) => {
+                    exitWorkoutFullscreen();
+                    throw error;
+                  }),
+                );
+              }
             }}
           />
         )}
@@ -1507,7 +1518,10 @@ function App() {
                       : "Connection lost · physical state unknown"}
                     . Physical controls always take precedence.
                   </p>
-                  <p>Ending the workout recording leaves the equipment running if it is in motion.</p>
+                  <p>
+                    Ending the workout recording leaves the equipment running if
+                    it is in motion.
+                  </p>
                   <button
                     onClick={() => {
                       if (

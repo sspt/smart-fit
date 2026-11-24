@@ -1,3 +1,4 @@
+import { ImmersiveLayoutEditor } from "./ImmersiveLayout";
 import { t } from "./i18n";
 import { LanguagePicker } from "./i18n/LanguagePicker";
 import { AccountPanel } from "./Accounts";
@@ -21,6 +22,7 @@ export function SettingsLayout(p: Props) {
           {p.units}
           <LanguagePicker disabled={p.busy} />
         </section>
+        <ImmersiveLayoutEditor />
         <AccountPanel disabled={p.busy} />
         {p.connection}
         <section className="settings-group">
