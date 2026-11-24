@@ -265,19 +265,21 @@ try {
           );
         }),
       );
-      assert(
-        await expanded.locator(".immersion-top .immersion-route").isVisible(),
-      );
-      assert(
-        await expanded
-          .locator(".immersion-bottom .immersion-readings")
-          .isVisible(),
-      );
-      assert(
-        await expanded.locator(".immersion-bottom .immersion-stop").isVisible(),
-      );
+      const bar = expanded.locator(".immersion-essential-bar");
+      assert(await bar.getByText("00:23").isVisible());
+      const adjust = bar.getByText("Ajustar", { exact: true });
+      const panel = bar.locator(".immersion-essential-panel");
+      assert(await panel.isHidden());
+      await adjust.click();
+      await panel.getByText("Ajuste manual", { exact: true }).waitFor();
+      const bounds = await panel.boundingBox();
+      assert(bounds && bounds.x >= 0 && bounds.x + bounds.width <= width);
+      assert(await bar.locator(".immersion-pause").isVisible());
+      assert(await bar.locator(".immersion-stop").isVisible());
+      await adjust.click();
+      await panel.waitFor({ state: "hidden" });
       if (width === 1024) await page.evaluate(() => document.exitFullscreen());
-      else await expanded.locator(".immersion-exit").click();
+      else await expanded.locator(".immersion-essential-exit").click();
       await expanded.waitFor({ state: "detached" });
       await assertHeaderVisible();
       await live.getByRole("button", { name: "Sessão", exact: true }).click();

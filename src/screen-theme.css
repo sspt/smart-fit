@@ -339,3 +339,170 @@ main[data-page="Train"] .home-install > button {
     color: CanvasText;
   }
 }
+
+.video-mode.expanded:has(.immersion-essential)::after {
+  background: none;
+}
+
+.immersion-essential {
+  position: absolute;
+  inset-inline: max(8px, env(safe-area-inset-left))
+    max(8px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.immersion-essential-alerts {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  max-width: min(100%, 420px);
+}
+
+.immersion-essential-alerts > *,
+.immersion-essential-bar {
+  pointer-events: auto;
+}
+
+.immersion-essential-alerts:empty {
+  display: none;
+}
+
+.immersion-essential-alerts .immersion-status {
+  margin: 0;
+}
+
+.immersion-essential-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vw, 12px);
+  max-width: 100%;
+  padding: 5px clamp(6px, 1vw, 12px);
+  border: 1px solid #ffffff40;
+  border-radius: 999px;
+  background: #121711e8;
+  color: #fff;
+  backdrop-filter: blur(10px);
+  font-variant-numeric: tabular-nums;
+}
+
+.immersion-essential-time,
+.immersion-essential-speed {
+  white-space: nowrap;
+  font-size: clamp(0.75rem, 2.4vw, 1rem);
+}
+
+.immersion-essential-speed {
+  border-inline-start: 1px solid #ffffff40;
+  padding-inline-start: clamp(4px, 1vw, 12px);
+}
+
+.immersion-essential-speed small {
+  font-size: 0.7em;
+  letter-spacing: 0;
+}
+
+.immersion-essential-bar > button,
+.immersion-essential-adjust > summary,
+.immersion-essential-exit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.immersion-essential-bar > .immersion-pause,
+.immersion-essential-exit {
+  background: #293129e8;
+  color: #fff;
+  border: 1px solid #ffffff40;
+}
+
+.immersion-essential-exit {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+}
+
+.immersion-essential-adjust > summary {
+  cursor: pointer;
+  background: var(--accent);
+  color: #181b10;
+  font-weight: 700;
+}
+
+.immersion-essential-adjust > summary::-webkit-details-marker {
+  display: none;
+}
+
+.immersion-essential-panel {
+  position: absolute;
+  z-index: 1;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: min(340px, calc(100vw - 20px));
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  border: 1px solid #ffffff40;
+  border-radius: 14px;
+  background: #161b16f5;
+  box-shadow: 0 4px 18px #0006;
+}
+
+.immersion-essential-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.immersion-essential-panel-heading button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.immersion-essential-panel .workout-adjustments {
+  margin: 8px 0 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.immersion-essential-panel .adjustment-fields {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+}
+
+.immersion-essential-panel .control-mode {
+  flex-wrap: wrap;
+}
+
+.immersion-essential-panel .control-mode button {
+  white-space: normal;
+}
+
+@media (max-width: 520px) {
+  .immersion-essential-panel {
+    right: auto;
+    left: 50%;
+    width: min(340px, calc(100vw - 32px));
+    transform: translateX(-50%);
+  }
+}

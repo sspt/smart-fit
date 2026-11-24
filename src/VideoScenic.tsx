@@ -6,7 +6,7 @@ import { t } from "./i18n";
 import { useRouteSpeed } from "./useRouteSpeed";
 import type { ReactNode } from "react";
 import { IntervalCue } from "./WorkoutFeedback";
-import { WorkoutReadings } from "./WorkoutReadings";
+import { ImmersiveControls } from "./ImmersiveControls";
 import { ControlMode, type MachineControlMode } from "./ControlMode";
 import { AppIcon } from "./AppIcon";
 import { useEffect, useRef, useState } from "react";
@@ -23,11 +23,6 @@ export function VideoScenic({
   automaticUnavailable,
   manualUnavailable,
   speed,
-  incline,
-  power,
-  resistance,
-  distance,
-  calories,
   running,
   kind,
   time,
@@ -36,6 +31,7 @@ export function VideoScenic({
   busy,
   initialRouteId,
   manualControls,
+  continuationControls,
   nextCue,
   autoImmerse = false,
 }: {
@@ -44,11 +40,6 @@ export function VideoScenic({
   automaticUnavailable: string;
   manualUnavailable?: string;
   speed: number | null;
-  incline?: number | null;
-  power?: number | null;
-  resistance?: number | null;
-  distance?: number | null;
-  calories?: number | null;
   running: boolean;
   kind: Kind;
   time: string;
@@ -57,6 +48,7 @@ export function VideoScenic({
   busy: boolean;
   initialRouteId?: string;
   manualControls?: ReactNode;
+  continuationControls?: ReactNode;
   nextCue?: string;
   autoImmerse?: boolean;
 }) {
@@ -425,92 +417,47 @@ export function VideoScenic({
             }}
           />
           {expanded && (
-            <>
-              <div className="immersion-top">
-                <div className="immersion-route">
-                  <span>
-                    {t(kind)} ·{" "}
-                    {route === "local"
-                      ? "Your video"
-                      : selected.format === "route"
-                        ? "Nature route"
-                        : "Scenic loop"}
-                  </span>
-                  <strong>
-                    {route === "local"
-                      ? file?.name
-                      : unavailable
-                        ? "Saved scene unavailable"
-                        : selected.name}
-                  </strong>
-                </div>
-                <ControlMode
-                  value={controlMode}
-                  onChange={onControlMode}
-                  busy={busy}
-                  automaticUnavailable={automaticUnavailable}
-                  manualUnavailable={manualUnavailable}
-                />
-                <button
-                  className="immersion-exit"
-                  aria-label="Exit immersive view"
-                  onClick={() => void exitImmersive()}
-                >
-                  <AppIcon name="close" size={22} />
-                  <span>Exit</span>
-                </button>
-                <div className="immersion-adjustments">{manualControls}</div>
-              </div>
-              <div className="immersion-bottom">
-                <IntervalCue text={nextCue ?? ""} />
-                <WorkoutReadings
-                  kind={kind}
-                  speed={speed}
-                  time={time}
-                  incline={incline}
-                  power={power}
-                  resistance={resistance}
-                  distance={distance}
-                  calories={calories}
-                />
-                <div
-                  className={
-                    "immersion-status " + (videoError ? "has-error" : "")
-                  }
-                  role="status"
-                >
-                  {videoError ||
-                    (!running
-                      ? "Workout paused"
-                      : !following
-                        ? "Ready to follow your device"
-                        : status)}
-                </div>
-                {running && !following && (
-                  <button
-                    className="immersion-retry"
-                    disabled={!ready}
-                    onClick={follow}
-                  >
-                    Resume scenery
-                  </button>
-                )}
-                <div className="immersion-actions">
-                  <button
-                    className="immersion-pause"
-                    disabled={busy}
-                    onClick={onPause}
-                  >
-                    <AppIcon name={running ? "pause" : "play"} size={20} />
-                    {running ? "Pause workout" : "Resume workout"}
-                  </button>
-                  <button className="danger immersion-stop" onClick={onStop}>
-                    <span className="stop-square" />
-                    Stop workout
-                  </button>
-                </div>
-              </div>
-            </>
+            <ImmersiveControls
+              time={time}
+              speed={speed}
+              running={running}
+              busy={busy}
+              onPause={onPause}
+              onStop={onStop}
+              onExit={() => void exitImmersive()}
+              adjustmentPanel={
+                <>
+                  <ControlMode
+                    value={controlMode}
+                    onChange={onControlMode}
+                    busy={busy}
+                    automaticUnavailable={automaticUnavailable}
+                    manualUnavailable={manualUnavailable}
+                  />
+                  {manualControls}
+                </>
+              }
+              alerts={
+                <>
+                  {continuationControls}
+                  <IntervalCue text={nextCue ?? ""} />
+                  {videoError && (
+                    <div className="immersion-status has-error" role="status">
+                      {videoError}
+                    </div>
+                  )}
+                  {running && !following && (
+                    <button
+                      className="immersion-retry"
+                      disabled={!ready}
+                      onClick={follow}
+                    >
+                      Resume scenery
+                    </button>
+                  )}
+                </>
+              }
+            />
           )}
           <div
             className={"video-status " + (videoError ? "has-error" : "")}

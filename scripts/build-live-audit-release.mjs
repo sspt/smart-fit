@@ -73,6 +73,8 @@ async function buildLiveAuditRelease(root, snapshot) {
     "Start a journey to use automatic control.",
   ];
   const revisedMessages = [
+    "Adjust",
+    "Manual adjustment",
     "Train at your own pace",
     "Choose a programme and train along scenic routes.",
     "Discover routes",
@@ -343,6 +345,70 @@ async function buildLiveAuditRelease(root, snapshot) {
     ${fullscreenSource}
     return { startWorkoutFullscreen, isWorkoutFullscreen, exitWorkoutFullscreen };
   })();\n` + code;
+
+  replaceOnce(
+    '          "details",\n          { className: "workout-adjustments" },\n          m.createElement(',
+    '          u.embedded ? "div" : "details",\n          { className: "workout-adjustments" },\n          !u.embedded && m.createElement(',
+  );
+  replaceOnce(
+    "  manualControls: st,\n  nextCue: lt,",
+    "  manualControls: st,\n  continuationControls,\n  nextCue: lt,",
+  );
+  replaceOnce(
+    `                      manualControls: c.jsxs(c.Fragment, {
+                        children: [Oe, Gt],
+                      }),`,
+    `                      continuationControls: Oe,
+                      manualControls: c.jsx(__feedback.WorkoutAdjustments, {...Gt.props, embedded: true}),`,
+  );
+  const overlayStart = code.indexOf(
+    '            Be &&\n              c.jsxs(c.Fragment, {\n                children: [\n                  c.jsxs("div", {\n                    className: "immersion-top",',
+  );
+  const overlayEnd = code.indexOf(
+    '            c.jsxs("div", {\n              className: "video-status "',
+    overlayStart,
+  );
+  if (overlayStart < 0 || overlayEnd < 0)
+    throw new Error("Immersive controls contract changed");
+  code =
+    code.slice(0, overlayStart) +
+    `            Be && c.jsx(ImmersiveControls, {
+              time: K, speed: C, running: F, busy: Z,
+              onPause: be, onStop: Le, onExit: () => void qt(),
+              adjustmentPanel: c.jsxs(c.Fragment, {
+                children: [c.jsx(__feedback.ControlMode, {
+                  value: f, onChange: y, busy: Z, automaticUnavailable: R, manualUnavailable: T,
+                }), st],
+              }),
+              alerts: c.jsxs(c.Fragment, {
+                children: [continuationControls, c.jsx(__feedback.IntervalCue, {text: lt}),
+                  on && c.jsx("div", {className: "immersion-status has-error", role: "status", children: on}),
+                  F && !bt && c.jsx("button", {className: "immersion-retry", disabled: !De, onClick: tn,
+                    children: __routeRelease.uiText("Resume scenery"),
+                  }),
+                ],
+              }),
+            }),
+` +
+    code.slice(overlayEnd);
+  const essentialSource = (
+    await fs.readFile("src/ImmersiveControls.tsx", "utf8")
+  )
+    .replace(/^import .*;\n/gm, "")
+    .replace("export function ImmersiveControls", "function EssentialOverlay");
+  const { code: essentialCode } = await transform(essentialSource, {
+    loader: "tsx",
+    jsxFactory: "m.createElement",
+    jsxFragment: "m.Fragment",
+  });
+  code =
+    `function ImmersiveControls(props) {
+    const AppIcon = Ye;
+    const t = __routeRelease.t;
+    const getLanguage = () => document.documentElement.lang || "en";
+    ${essentialCode}
+    return EssentialOverlay(props);
+  }\n` + code;
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";

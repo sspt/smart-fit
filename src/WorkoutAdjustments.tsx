@@ -7,6 +7,7 @@ import {
 } from "./manualWorkoutControl";
 export type WorkoutAdjustmentsProps = {
   fields: ManualField[];
+  embedded?: boolean;
   disabled: boolean;
   onApply: (key: TargetKey, value: number) => Promise<number>;
 };
@@ -130,9 +131,10 @@ function TargetField({
 }
 export function WorkoutAdjustments(props: WorkoutAdjustmentsProps) {
   if (!props.fields.length) return null;
+  const Panel = props.embedded ? "div" : "details";
   return (
-    <details className="workout-adjustments">
-      <summary>Adjust equipment</summary>
+    <Panel className="workout-adjustments">
+      {!props.embedded && <summary>Adjust equipment</summary>}
       <div className="adjustment-fields">
         {props.fields.map((field) => (
           <TargetField
@@ -146,6 +148,6 @@ export function WorkoutAdjustments(props: WorkoutAdjustmentsProps) {
           Pause and Stop remain available.
         </p>
       </div>
-    </details>
+    </Panel>
   );
 }

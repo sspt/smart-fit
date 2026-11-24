@@ -1400,11 +1400,16 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
+                continuationControls={continuationControls}
                 manualControls={
-                  <>
-                    {continuationControls}
-                    {adjustmentControls}
-                  </>
+                  <WorkoutAdjustments
+                    embedded
+                    fields={adjustmentFields}
+                    disabled={
+                      !running || !connected || busy || machineRunning === false
+                    }
+                    onApply={adjustWorkout}
+                  />
                 }
                 nextCue={intervalCue(session, running, units)}
                 autoImmerse={immersiveSession === session.id}
@@ -1413,17 +1418,6 @@ function App() {
                 automaticUnavailable={automaticUnavailable}
                 manualUnavailable={manualUnavailable}
                 speed={connected ? (metrics.speedKmh ?? null) : null}
-                incline={connected ? (metrics.inclinePct ?? null) : null}
-                power={connected ? (metrics.powerW ?? null) : null}
-                resistance={
-                  connected ? (metrics.resistanceLevel ?? null) : null
-                }
-                distance={knownWorkoutDistance(
-                  session.distance,
-                  metrics.speedKmh,
-                  metrics.totalDistanceM,
-                )}
-                calories={connected ? (metrics.caloriesKcal ?? null) : null}
                 running={running}
                 kind={session.programme.kind}
                 time={clock(session.elapsed)}
