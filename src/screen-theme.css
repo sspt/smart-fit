@@ -591,3 +591,25 @@ main[data-page="Train"] .home-install > button {
   flex-basis: clamp(2rem, 6cqi, 4rem);
   overflow-wrap: anywhere;
 }
+
+.immersive-layout-preview[data-custom-immersive]:not(:fullscreen) {
+  grid-template-rows: repeat(3, minmax(min-content, auto)) auto auto;
+}
+
+@container (max-width: 420px) {
+  .immersive-layout-preview[data-custom-immersive] .control-mode button {
+    flex-basis: 100%;
+    overflow-wrap: normal;
+  }
+
+  .immersive-layout-preview[data-custom-immersive] .immersion-readings small {
+    font-size: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 540px) {
+  .immersive-layout-preview[data-custom-immersive]:not(:fullscreen) {
+    aspect-ratio: auto;
+  }
+}
