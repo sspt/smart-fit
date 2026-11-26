@@ -9,6 +9,7 @@ export function CinematicEntrance({
   hasSession,
   connected,
   ready,
+  lastWorkout,
 }: {
   route: VideoRoute;
   onStart: () => void;
@@ -16,6 +17,7 @@ export function CinematicEntrance({
   hasSession: boolean;
   connected: boolean;
   ready: boolean;
+  lastWorkout?: { name: string; detail: string } | null;
 }) {
   return (
     <section className="cinema-entrance" aria-labelledby="entrance-title">
@@ -32,6 +34,11 @@ export function CinematicEntrance({
                 : "Choose a programme and train along scenic routes.",
           )}
         </p>
+        {!hasSession && lastWorkout && (
+          <p className="last-workout">
+            <strong>{lastWorkout.name}</strong> · {lastWorkout.detail}
+          </p>
+        )}
         <div className="entrance-actions">
           <button
             type="button"
@@ -46,9 +53,11 @@ export function CinematicEntrance({
             {t(
               hasSession
                 ? "Open workout"
-                : connected
-                  ? "Review workout"
-                  : "Set up workout",
+                : lastWorkout
+                  ? "Repeat last workout"
+                  : connected
+                    ? "Review workout"
+                    : "Set up workout",
             )}
           </button>
           <button type="button" className="home-discover" onClick={onDiscover}>

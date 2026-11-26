@@ -23,6 +23,9 @@ export function VideoScenic({
   automaticUnavailable,
   manualUnavailable,
   speed,
+  power,
+  units,
+  connectionAlert,
   running,
   kind,
   time,
@@ -40,6 +43,9 @@ export function VideoScenic({
   automaticUnavailable: string;
   manualUnavailable?: string;
   speed: number | null;
+  power?: number | null;
+  units?: string;
+  connectionAlert?: ReactNode;
   running: boolean;
   kind: Kind;
   time: string;
@@ -420,6 +426,9 @@ export function VideoScenic({
             <ImmersiveControls
               time={time}
               speed={speed}
+              power={power}
+              kind={kind}
+              units={units}
               running={running}
               busy={busy}
               onPause={onPause}
@@ -439,6 +448,7 @@ export function VideoScenic({
               }
               alerts={
                 <>
+                  {connectionAlert}
                   {continuationControls}
                   <IntervalCue text={nextCue ?? ""} />
                   {videoError && (

@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import type { Kind } from "./store";
 type Props = {
   kind: Kind;
@@ -53,10 +54,16 @@ export function EquipmentConnection(p: Props) {
               ? "Connected"
               : p.busy
                 ? "Connecting…"
-                : "Connect equipment"}
+                : t("Connect {equipment} via Bluetooth").replace(
+                    "{equipment}",
+                    () => t(p.kind),
+                  )}
           </button>
-          <button onClick={p.onExport}>Export diagnostics</button>
         </div>
+        <details className="connection-help">
+          <summary>{t("Connection help")}</summary>
+          <button onClick={p.onExport}>{t("Export diagnostics")}</button>
+        </details>
         {p.error && <p role="status">{p.error}</p>}
         {p.hint && !p.connected && <p role="status">{p.hint}</p>}
       </div>

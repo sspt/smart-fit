@@ -120,9 +120,25 @@ try {
 
       await page.goto(origin + "/#library");
       await page
-        .getByText("30 min · Remo por intervalos", { exact: true })
+        .getByRole("heading", { name: "Remo por intervalos", exact: true })
         .waitFor();
       await assertTransparentToolbar(".library-toolbar");
+      await page
+        .getByRole("button", { name: "Preparar treino: Caminhada fácil" })
+        .click();
+      await page.locator('main[data-page="Setup"]').waitFor();
+      await page
+        .getByRole("button", { name: /Ligar passadeira por Bluetooth/i })
+        .waitFor();
+      await page.getByText("Ajuda de ligação", { exact: true }).click();
+      await page
+        .getByRole("button", { name: "Exportar diagnóstico" })
+        .waitFor();
+      await page.goto(origin + "/#journal");
+      await page
+        .getByRole("button", { name: "Escolher o primeiro treino" })
+        .click();
+      await page.locator('main[data-page="Programmes"]').waitFor();
       const toolbarTop = (await page.locator(".library-toolbar").boundingBox())
         .y;
       await page.locator(".list-scroll").evaluate((item) => {

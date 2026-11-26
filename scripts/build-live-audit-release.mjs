@@ -1,3 +1,4 @@
+import { applyTrainingUX } from "./apply-training-ux.mjs";
 import { localizeUI } from "./localize-ui.mjs";
 import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -20,8 +21,10 @@ async function buildLiveAuditRelease(root, snapshot) {
 
   function replaceOnce(from, to) {
     if (code.split(from).length !== 2)
-      throw new Error("Live frontend contract changed: " + from.slice(0, 90));
-    code = code.replace(from, () => to);
+      throw new Error(
+        "Live frontend contract changed: " + String(from).slice(0, 180),
+      );
+    code = code.replace(from, typeof to === "function" ? to : () => to);
   }
 
   replaceOnce(
@@ -73,6 +76,22 @@ async function buildLiveAuditRelease(root, snapshot) {
     "Start a journey to use automatic control.",
   ];
   const revisedMessages = [
+    "Prepare workout",
+    "segment",
+    "segments",
+    "Repeat last workout",
+    "Connect {equipment} via Bluetooth",
+    "Connection help",
+    "No Bluetooth connection",
+    "Walking",
+    "Running",
+    "Cycling",
+    "Rowing",
+    "The video restarts if the workout continues.",
+    "Connection lost · Recording paused",
+    "Reconnect equipment",
+    "Choose your first workout",
+    "Recording ended",
     "Full screen",
     "Adjust",
     "Manual adjustment",
@@ -84,6 +103,8 @@ async function buildLiveAuditRelease(root, snapshot) {
     "30 min · Brisk walk intervals",
     "30 min · Row intervals",
     "45 min · Endurance row",
+    "Choose your scenery.",
+    "Start workout",
     "Change scene",
     "Choose a scene",
     "Close",
@@ -433,6 +454,18 @@ async function buildLiveAuditRelease(root, snapshot) {
     ${essentialCode}
     return EssentialOverlay(props);
   }\n` + code;
+
+  applyTrainingUX(replaceOnce);
+  const presentation = (
+    await fs.readFile("src/trainingPresentation.ts", "utf8")
+  )
+    .replace(/^import .*;\n/gm, "")
+    .replace(/^export /gm, "")
+    .replace(/\b(t|uiText)\(/g, "__routeRelease.$1(");
+  const { code: presentationCode } = await transform(presentation, {
+    loader: "ts",
+  });
+  code = presentationCode + code;
 
   code = (await transform(code, { minify: true, target: "es2022" })).code;
   const path = "/assets/feedback-" + hash(code) + ".js";

@@ -522,3 +522,118 @@ main[data-page="Train"] .home-install > button {
 :fullscreen .immersion-fullscreen-retry {
   display: none;
 }
+
+.programme-library .card {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.programme-library .card .card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.programme-library .card .prepare-workout,
+.programme-card-menu > summary {
+  min-height: 44px;
+}
+
+.programme-library .card .prepare-workout {
+  width: auto;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  background: var(--accent);
+  color: #151716;
+}
+
+.programme-card-menu > summary {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  color: var(--app-text);
+  font-size: 22px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.programme-card-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.connection-help {
+  margin-top: 12px;
+}
+
+.connection-help > summary {
+  width: fit-content;
+  cursor: pointer;
+  padding-block: 10px;
+  color: var(--app-text);
+}
+
+.connection-help > button {
+  margin-top: 4px;
+}
+
+.setup-topline .setup-progress :is(li, span) {
+  color: var(--app-text);
+  opacity: 1;
+  text-shadow: 0 1px 3px #000, 0 1px 7px #000;
+}
+
+main[data-page="Train"] .last-workout {
+  color: var(--app-text);
+  text-shadow: 0 1px 4px #000;
+}
+
+.immersion-connection-alert {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 16px;
+  padding: 8px 12px;
+  color: var(--app-text);
+  background: var(--app-surface);
+  border: 1px solid var(--app-control-border);
+  border-radius: 12px;
+}
+
+.immersion-connection-alert button {
+  min-height: 44px;
+}
+
+.explore-screen .route-details > small {
+  display: block;
+  margin-top: 4px;
+}
+
+@media (min-width: 760px) {
+  .explore-screen .routes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .explore-screen .routes-grid .route-card {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .explore-screen .routes-grid .route-photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+.programme-library .card-body > small {
+  text-transform: none;
+}
+
+.explore-screen .route-details small {
+  text-transform: none;
+}

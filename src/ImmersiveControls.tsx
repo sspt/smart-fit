@@ -6,6 +6,9 @@ import { getLanguage, t } from "./i18n";
 type Props = {
   time: string;
   speed: number | null;
+  power?: number | null;
+  kind?: string;
+  units?: string;
   running: boolean;
   busy: boolean;
   onPause: () => void;
@@ -18,6 +21,9 @@ type Props = {
 export function ImmersiveControls({
   time,
   speed,
+  power,
+  kind,
+  units = "km",
   running,
   busy,
   onPause,
@@ -29,6 +35,13 @@ export function ImmersiveControls({
   const pauseLabel = t(running ? "Pause workout" : "Resume workout");
   const stopLabel = t("Stop workout");
   const exitLabel = t("Exit immersive view");
+  const showPower = kind === "Bike" && power != null && Number.isFinite(power);
+  const speedUnit = units === "mi" ? "mi" : "km";
+  const value = showPower
+    ? power
+    : speed == null
+      ? null
+      : speed * (speedUnit === "mi" ? 0.621371 : 1);
   return (
     <>
       <button
@@ -60,15 +73,15 @@ export function ImmersiveControls({
           </span>
           <span
             className="immersion-essential-speed"
-            aria-label={t("DEVICE SPEED")}
+            aria-label={t(showPower ? "POWER" : "DEVICE SPEED")}
           >
-            {speed != null && Number.isFinite(speed)
-              ? speed.toLocaleString(getLanguage(), {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1,
+            {value != null && Number.isFinite(value)
+              ? value.toLocaleString(getLanguage(), {
+                  minimumFractionDigits: showPower ? 0 : 1,
+                  maximumFractionDigits: showPower ? 0 : 1,
                 })
               : "—"}{" "}
-            <small>km/h</small>
+            <small>{showPower ? "W" : `${speedUnit}/h`}</small>
           </span>
           <details className="immersion-essential-adjust">
             <summary aria-label={t("Adjust equipment")}>

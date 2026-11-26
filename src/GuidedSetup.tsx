@@ -131,16 +131,18 @@ export function GuidedSetup({
             ][step]
           }
         </h1>
-        <p>
-          {
-            [
-              "First, connect the machine you’ll be moving with.",
-              `Choose a programme for your ${t(kind)}.`,
-              "Pick the scenery that will move at your pace.",
-              "Everything is ready. Start when you are.",
-            ][step]
-          }
-        </p>
+        {step !== 0 && (
+          <p>
+            {
+              [
+                null,
+                `Choose a programme for your ${t(kind)}.`,
+                "Pick the scenery that will move at your pace.",
+                "Everything is ready. Start when you are.",
+              ][step]
+            }
+          </p>
+        )}
       </div>
       {step === 0 && devicePanel}
       {step === 1 && (

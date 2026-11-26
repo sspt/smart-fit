@@ -1,3 +1,8 @@
+import {
+  routeCardTitle,
+  routeCardActivity,
+  routeCardDuration,
+} from "./trainingPresentation";
 import { t } from "./i18n";
 import { routeDetails } from "./routePresentation";
 import { useEffect, useRef, useState } from "react";
@@ -51,7 +56,9 @@ export function RouteCard({
       <button
         onClick={() => onPreview(route)}
         className="route-photo"
-        aria-label={t("Preview") + " " + route.name}
+        aria-label={t("Preview route: {title}").replace("{title}", () =>
+          routeCardTitle(route),
+        )}
         style={{
           backgroundImage: `url(${route.poster || (!matchMedia("(prefers-reduced-motion: reduce)").matches && route.gif) || ""})`,
         }}
@@ -63,22 +70,13 @@ export function RouteCard({
         <span className="route-play">
           <AppIcon name="play" size={21} />
         </span>
-        <span className="route-length">
-          {sceneDuration(route)} {route.format === "route" ? "route" : "loop"}
-        </span>
       </button>
       <div className="route-details">
+        <h3>{routeCardTitle(route)}</h3>
         <small>
-          {t(route.kind)} ·{" "}
-          {route.format === "route" ? t("Nature route") : t("Scenic loop")}
+          {routeCardActivity(route)} · {routeCardDuration(route)}
+          {route.format === "route" ? "" : " · " + t("Scenic loop")}
         </small>
-        <h3>{route.name.replace(" · scenic loop", "")}</h3>
-        <p>
-          {route.format === "route"
-            ? t("Continuous footage")
-            : t("Scenic loop")}
-          {routeDetails(route) ? " · " + routeDetails(route) : ""}
-        </p>
       </div>
     </article>
   );
@@ -234,7 +232,7 @@ export function RoutePreview({
           <p>
             Connect your equipment to match video playback to your speed.{" "}
             {route.format === "route"
-              ? "Continuous footage, repeated if your session outlasts the recording."
+              ? t("The video restarts if the workout continues.")
               : "This is a short scenic loop, not a full-length route."}
           </p>
           <a href={route.source} target="_blank" rel="noreferrer">

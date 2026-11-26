@@ -1,4 +1,10 @@
 import {
+  programmeDisplayName,
+  programmeDurationLabel,
+  workoutDistanceLabel,
+  workoutStatus,
+} from "./trainingPresentation";
+import {
   startWorkoutFullscreen,
   exitWorkoutFullscreen,
 } from "./workoutFullscreen";
@@ -1020,24 +1026,26 @@ function App() {
     );
     if (fallback) await fallback;
   }
-  function beginJourney(scene?: VideoRoute) {
+  function beginJourney(scene?: VideoRoute, selectedProgramme?: Programme) {
     if (session) {
       setPage("Live");
-      if (connected && !running) void action(resume);
       return;
     }
-    if (connected && scene && scene.kind !== kind) {
+    const requestedKind = selectedProgramme?.kind ?? scene?.kind;
+    if (connected && requestedKind && requestedKind !== kind) {
       setError(
-        `Disconnect your ${kind.toLowerCase()} before choosing ${scene.kind.toLowerCase()} scenery.`,
+        `Disconnect your ${kind.toLowerCase()} before choosing ${requestedKind.toLowerCase()} equipment.`,
       );
       setPreviewRoute(null);
       setPage("Devices");
       return;
     }
-    const nextKind = connected ? kind : (scene?.kind ?? kind);
+    const nextKind = connected ? kind : (requestedKind ?? kind);
     const previous = lastJourney?.kind === nextKind ? lastJourney : null;
     const programme = usableProgrammes.find(
-      (p) => p.id === previous?.programmeId && p.kind === nextKind,
+      (p) =>
+        p.id === (selectedProgramme?.id ?? previous?.programmeId) &&
+        p.kind === nextKind,
     );
     const route =
       scene ??
@@ -1063,6 +1071,18 @@ function App() {
       setSetupStep(3);
     else setSetupStep(step);
   }
+  const lastProgramme = usableProgrammes.find(
+    (programme) =>
+      programme.id === lastJourney?.programmeId &&
+      programme.kind === lastJourney.kind &&
+      (!connected || programme.kind === kind),
+  );
+  const lastScene =
+    lastProgramme &&
+    videoRoutes.find(
+      (route) =>
+        route.id === lastJourney?.sceneId && route.kind === lastProgramme.kind,
+    );
   const sessionActions = (
     <div className="actions session-actions">
       <button
@@ -1131,7 +1151,7 @@ function App() {
             aria-label="Equipment connection"
             className={"connection " + (connected ? "on" : "")}
           >
-            {connected ? "● Connected" : "○ Offline equipment"}
+            {t(connected ? "Connected" : "No Bluetooth connection")}
           </button>
         </div>
       </header>
@@ -1215,7 +1235,23 @@ function App() {
           <>
             <CinematicEntrance
               route={ambientRoute}
-              onStart={() => beginJourney()}
+              lastWorkout={
+                lastProgramme && lastScene
+                  ? {
+                      name: programmeDisplayName(lastProgramme),
+                      detail:
+                        programmeDurationLabel(
+                          lastProgramme,
+                          programmeSummary(lastProgramme),
+                        ) +
+                        " · " +
+                        t(lastProgramme.kind),
+                    }
+                  : null
+              }
+              onStart={() =>
+                beginJourney(lastScene, lastScene ? lastProgramme : undefined)
+              }
               onDiscover={() => setPage("Explore")}
               hasSession={!!session}
               connected={connected}
@@ -1274,16 +1310,14 @@ function App() {
                   .slice(0, (libraryPage + 1) * pageSize)
                   .map((p) => (
                     <article key={p.id} className="card">
-                      <div className="programme-duration-tile">
-                        <AppIcon name="clock" size={28} />
-                        <strong>{programmeSummary(p)}</strong>
-                      </div>
                       <div className="card-body">
                         <small>
-                          {p.kind} · {p.blocks.length} segments ·{" "}
-                          {programmeSummary(p)}
+                          {programmeDurationLabel(p, programmeSummary(p))} ·{" "}
+                          {p.blocks.length}{" "}
+                          {t(p.blocks.length === 1 ? "segment" : "segments")} ·{" "}
+                          {t(p.kind)}
                         </small>
-                        <h3>{p.name}</h3>
+                        <h3>{programmeDisplayName(p)}</h3>
                         <div className="mini-bars">
                           {p.blocks.map((b, j) => (
                             <i
@@ -1305,17 +1339,42 @@ function App() {
                           ))}
                         </div>
                         <div className="card-actions">
-                          <button onClick={() => setDraft(copyProgramme(p))}>
-                            Edit programme
-                          </button>
                           <button
-                            className="round"
-                            aria-label={"Start " + p.name}
+                            className="primary prepare-workout"
+                            aria-label={
+                              t("Prepare workout") +
+                              ": " +
+                              programmeDisplayName(p)
+                            }
                             disabled={busy || !!session}
-                            onClick={() => void action(() => start(p))}
+                            onClick={() => beginJourney(undefined, p)}
                           >
-                            ›
+                            {t("Prepare workout")}
                           </button>
+                          <details className="programme-card-menu">
+                            <summary
+                              aria-label={
+                                t("Edit programme") +
+                                ": " +
+                                programmeDisplayName(p)
+                              }
+                            >
+                              ⋯
+                            </summary>
+                            <button
+                              onClick={(event) => {
+                                const menu =
+                                  event.currentTarget.closest("details");
+                                if (menu) {
+                                  menu.open = false;
+                                  menu.querySelector("summary")?.focus();
+                                }
+                                setDraft(copyProgramme(p));
+                              }}
+                            >
+                              {t("Edit programme")}
+                            </button>
+                          </details>
                         </div>
                       </div>
                     </article>
@@ -1409,6 +1468,25 @@ function App() {
               <ScenicMode
                 key={session.id}
                 initialRouteId={session.sceneryId}
+                units={units}
+                power={connected ? metrics.powerW : null}
+                connectionAlert={
+                  !demo &&
+                  !connected &&
+                  hold && (
+                    <div className="immersion-connection-alert">
+                      <span role="status">
+                        {t("Connection lost · Recording paused")}
+                      </span>
+                      <button
+                        disabled={busy}
+                        onClick={() => void action(connectEquipment)}
+                      >
+                        {t("Reconnect equipment")}
+                      </button>
+                    </div>
+                  )
+                }
                 continuationControls={continuationControls}
                 manualControls={
                   <WorkoutAdjustments
@@ -1558,35 +1636,40 @@ function App() {
               units={units}
               onDismiss={() => setRecap(null)}
             />
-            <WeeklyProgress history={history} />
-            <div className="history-overview">
-              <div>
-                <strong>{visibleHistory.length}</strong>
-                <span>Sessions recorded</span>
+            {visibleHistory.length > 0 && <WeeklyProgress history={history} />}
+            {visibleHistory.length > 0 && (
+              <div className="history-overview">
+                <div>
+                  <strong>{visibleHistory.length}</strong>
+                  <span>Sessions recorded</span>
+                </div>
+                <div>
+                  <strong>
+                    {Math.floor(
+                      visibleHistory.reduce(
+                        (n, s) =>
+                          n +
+                          (Number.isFinite(s.elapsed)
+                            ? Math.max(0, s.elapsed)
+                            : 0),
+                        0,
+                      ) / 60,
+                    )}{" "}
+                    min
+                  </strong>
+                  <span>Total training time</span>
+                </div>
               </div>
-              <div>
-                <strong>
-                  {Math.floor(
-                    visibleHistory.reduce(
-                      (n, s) =>
-                        n +
-                        (Number.isFinite(s.elapsed)
-                          ? Math.max(0, s.elapsed)
-                          : 0),
-                      0,
-                    ) / 60,
-                  )}{" "}
-                  min
-                </strong>
-                <span>Total training time</span>
-              </div>
-            </div>
+            )}
             {visibleHistory.length === 0 ? (
               <div className="empty">
                 <h2>Your story starts here.</h2>
                 <p>Your completed sessions will find a home here.</p>
-                <button onClick={() => setPage("Train")}>
-                  Find a programme ›
+                <button
+                  className="primary"
+                  onClick={() => setPage("Programmes")}
+                >
+                  {t("Choose your first workout")}
                 </button>
               </div>
             ) : (
@@ -1599,8 +1682,8 @@ function App() {
                     </small>
                     <h3>{s.programme.name}</h3>
                     <p>
-                      {clock(s.elapsed)} · {s.status} · {s.samples.length}{" "}
-                      samples
+                      {clock(s.elapsed)} · {workoutStatus(s.status)}
+                      {workoutDistanceLabel(s, units).join("")}
                     </p>
                     <div className="spark">
                       {s.samples

@@ -694,7 +694,7 @@
   ],
   "Choose your scenery.": [
     "Elige tu paisaje.",
-    "Escolha o seu cenário.",
+    "Escolha um percurso.",
     "Choisissez votre décor.",
     "Scegli il tuo scenario.",
     "Wybierz swoją scenerię.",
@@ -4168,7 +4168,7 @@
   ],
   "Start journey": [
     "Iniciar viaje",
-    "Iniciar jornada",
+    "Iniciar treino",
     "Commencer le voyage",
     "Inizia il viaggio",
     "Rozpocznij podróż",
@@ -4177,7 +4177,7 @@
   ],
   "Start workout": [
     "Iniciar entrenamiento",
-    "Comece o treino",
+    "Iniciar treino",
     "Commencer l'entraînement",
     "Inizia l'allenamento",
     "Rozpocznij trening",
@@ -6100,5 +6100,149 @@
     "Pełny ekran",
     "Vollbild",
     "Volledig scherm"
+  ],
+  "Prepare workout": [
+    "Preparar entrenamiento",
+    "Preparar treino",
+    "Préparer la séance",
+    "Prepara allenamento",
+    "Przygotuj trening",
+    "Training vorbereiten",
+    "Training voorbereiden"
+  ],
+  "segment": [
+    "segmento",
+    "segmento",
+    "segment",
+    "segmento",
+    "segment",
+    "Abschnitt",
+    "segment"
+  ],
+  "segments": [
+    "segmentos",
+    "segmentos",
+    "segments",
+    "segmenti",
+    "segmenty",
+    "Abschnitte",
+    "segmenten"
+  ],
+  "Repeat last workout": [
+    "Repetir el último entrenamiento",
+    "Repetir último treino",
+    "Répéter la dernière séance",
+    "Ripeti l’ultimo allenamento",
+    "Powtórz ostatni trening",
+    "Letztes Training wiederholen",
+    "Laatste training herhalen"
+  ],
+  "Connect {equipment} via Bluetooth": [
+    "Conectar por Bluetooth: {equipment}",
+    "Ligar {equipment} por Bluetooth",
+    "Connecter via Bluetooth : {equipment}",
+    "Connetti via Bluetooth: {equipment}",
+    "Połącz przez Bluetooth: {equipment}",
+    "Per Bluetooth verbinden: {equipment}",
+    "Verbinden via Bluetooth: {equipment}"
+  ],
+  "Connection help": [
+    "Ayuda de conexión",
+    "Ajuda de ligação",
+    "Aide à la connexion",
+    "Guida alla connessione",
+    "Pomoc z połączeniem",
+    "Verbindungshilfe",
+    "Hulp bij verbinden"
+  ],
+  "No Bluetooth connection": [
+    "Sin conexión Bluetooth",
+    "Sem ligação Bluetooth",
+    "Aucune connexion Bluetooth",
+    "Nessuna connessione Bluetooth",
+    "Brak połączenia Bluetooth",
+    "Keine Bluetooth-Verbindung",
+    "Geen Bluetooth-verbinding"
+  ],
+  "Walking": [
+    "Caminata",
+    "Caminhada",
+    "Marche",
+    "Camminata",
+    "Marsz",
+    "Gehen",
+    "Wandelen"
+  ],
+  "Running": [
+    "Carrera",
+    "Corrida",
+    "Course",
+    "Corsa",
+    "Bieg",
+    "Laufen",
+    "Hardlopen"
+  ],
+  "Cycling": [
+    "Ciclismo",
+    "Ciclismo",
+    "Vélo",
+    "Ciclismo",
+    "Jazda na rowerze",
+    "Radfahren",
+    "Fietsen"
+  ],
+  "Rowing": [
+    "Remo",
+    "Remo",
+    "Aviron",
+    "Canottaggio",
+    "Wiosłowanie",
+    "Rudern",
+    "Roeien"
+  ],
+  "The video restarts if the workout continues.": [
+    "El vídeo vuelve a empezar si el entrenamiento continúa.",
+    "O vídeo volta ao início se o treino continuar.",
+    "La vidéo reprend au début si la séance continue.",
+    "Il video riparte dall’inizio se l’allenamento continua.",
+    "Film zacznie się od nowa, jeśli trening będzie kontynuowany.",
+    "Das Video beginnt von vorn, wenn das Training weiterläuft.",
+    "De video begint opnieuw als de training doorgaat."
+  ],
+  "Connection lost · Recording paused": [
+    "Conexión perdida · Registro en pausa",
+    "Ligação perdida · Registo em pausa",
+    "Connexion perdue · Enregistrement en pause",
+    "Connessione persa · Registrazione in pausa",
+    "Utracono połączenie · Zapis wstrzymany",
+    "Verbindung getrennt · Aufzeichnung pausiert",
+    "Verbinding verbroken · Registratie gepauzeerd"
+  ],
+  "Reconnect equipment": [
+    "Volver a conectar",
+    "Voltar a ligar",
+    "Reconnecter",
+    "Riconnetti",
+    "Połącz ponownie",
+    "Erneut verbinden",
+    "Opnieuw verbinden"
+  ],
+  "Choose your first workout": [
+    "Elegir el primer entrenamiento",
+    "Escolher o primeiro treino",
+    "Choisir la première séance",
+    "Scegli il primo allenamento",
+    "Wybierz pierwszy trening",
+    "Erstes Training auswählen",
+    "Kies je eerste training"
+  ],
+  "Recording ended": [
+    "Registro finalizado",
+    "Registo terminado",
+    "Enregistrement terminé",
+    "Registrazione terminata",
+    "Zapis zakończony",
+    "Aufzeichnung beendet",
+    "Registratie beëindigd"
   ]
 }
